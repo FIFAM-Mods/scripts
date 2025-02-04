@@ -1,6 +1,6 @@
 #name "OFC Chamions League"
-#version "24.0"
-#author "FM 2024 Team"
+#version "25.0"
+#author "FM 2025 Team"
 
 #define QG [227,234,241]  // quali group matches
 #define QR [227,234] // quali round matches
@@ -52,11 +52,11 @@ pool @CL_groups teams 8 sorting ChampionsCupGroup <- [@CL_preliminary,@CL_nation
     group @CL_b "B" teams 4 matchdays GM fixtures GF bonus [5000,0,0,0] att 10 trn 10 sorting DM subs NUM_SUBS { get(@prev, 5, 4) }
 }
 
-round type Semifinal teams 4 matchdays SM subs NUM_SUBS bonus [25000,0,0,0] <- [@CL_a,@CL_b] {
+round type Semifinal teams 4 matchdays SM subs NUM_SUBS bonus [25000,25000,0,0] <- [@CL_a,@CL_b] {
     get(@CL_a, 1); get(@CL_b, 1)
     get(@CL_b, 2); get(@CL_a, 2)
     
-    round index 22 type Final teams 2 matchdays FM subs NUM_SUBS bonus [75000,50000,0,0] { get(@prev) }
+    round index 22 type Final teams 2 matchdays FM subs NUM_SUBS bonus [25000,100000,0,0] { get(@prev) }
 }
 
 }

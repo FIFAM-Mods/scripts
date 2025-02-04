@@ -1,6 +1,6 @@
 #name "CONCACAF Champions Cup, CONCACAF Central American Cup, CONCACAF Caribbean Cup, CONCACAF Caribbean Shield, Leagues Cup, Campeones Cup"
-#author "FM 2024 Team"
-#version "24.0"
+#author "FM 2025 Team"
+#version "25.0"
 
 #define CC_1 [227,234]
 #define CC_16 [241,248]
@@ -15,6 +15,9 @@
 #define CARC_S [108,122]
 #define CARC_F [143,157]
 #define CARS_G [3,5,9,11,17]
+#define CARS_1 3
+#define CARS_2 9
+#define CARS_Q 17
 #define CARS_S 24
 #define CARS_F 31
 #define LC_G [3,7,11]
@@ -176,7 +179,7 @@ round @CaribbeanCup_semi type Semifinal teams 4 subs NUM_SUBS two_legs matchdays
 
 comp NorthAmerica.Continental1 {
 
-pool @CaribbeanShield_pool teams 20 sorting Random {
+pool @CaribbeanShield_pool teams 20 sorting countryStrength {
     getInternationalTeams(AntiguaAndBarbuda, 1)
     getInternationalTeams(Aruba, 1)
     getInternationalTeams(Bahamas, 1)
@@ -198,18 +201,27 @@ pool @CaribbeanShield_pool teams 20 sorting Random {
     getInternationalTeams(TurksAndCaicos, 1)
     getInternationalTeams(USVirginIslands, 1)
     
-    group "A" teams 5 matchdays CARS_G bonus [2000,0,0,0] sorting DM subs NUM_SUBS -> @CaribbeanShield_semi { get(@prev, 1, 5) }
-    group "B" teams 5 matchdays CARS_G bonus [2000,0,0,0] sorting DM subs NUM_SUBS -> @CaribbeanShield_semi { get(@prev, 6, 5) }
-    group "C" teams 5 matchdays CARS_G bonus [2000,0,0,0] sorting DM subs NUM_SUBS -> @CaribbeanShield_semi { get(@prev, 11, 5) }
-    group "D" teams 5 matchdays CARS_G bonus [2000,0,0,0] sorting DM subs NUM_SUBS -> @CaribbeanShield_semi { get(@prev, 16, 5) }
-}
-
-round @CaribbeanShield_semi type Semifinal teams 4 subs NUM_SUBS matchdays CARS_S bonus [10000,0,0,0] {
-    get(@prev, 1)
-    shuffleTeams()
-    
-    round type Final3rdPlace teams 2 subs NUM_SUBS matchdays CARS_F { getLoser(@prev) }
-    round @CaribbeanShield_final type Final teams 2 subs NUM_SUBS matchdays CARS_F { getWinner(@prev) }
+    round @CaribbeanShield_round1 type preRound1 teams 8 subs NUM_SUBS matchdays CARS_1 bonus [10000,0,0,0] {
+        get(@CaribbeanShield_pool, 12, 8)
+        getCCSpare()   
+        shuffleTeams()
+        
+        round type last16 teams 16 subs NUM_SUBS matchdays CARS_2 {
+            get(@CaribbeanShield_pool, 1, 12)
+            getWinner(@prev)
+            
+            round type Quarterfinal teams 8 subs NUM_SUBS  matchdays CARS_Q bonus [200000,0,0,0] {
+                get(@prev)
+                
+                round type Semifinal teams 4 subs NUM_SUBS  matchdays CARS_S bonus [500000,0,0,0] {
+                    get(@prev)
+                    
+                    round type Final3rdPlace teams 2 subs NUM_SUBS matchdays CARS_F { getLoser(@prev) }
+                    round @CaribbeanShield_final type Final teams 2 subs NUM_SUBS matchdays CARS_F { getWinner(@prev) }
+                }
+            }
+        }
+    }
 }
 
 }

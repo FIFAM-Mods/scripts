@@ -2,32 +2,31 @@
 #author "FM 2025 Team"
 #version "25.0"
 
-#define M_ACL_P1 38
-#define M_ACL_PR 45
-#define M_ACL_PO 52
-#define ACL_LG1 73
-#define ACL_LG2 87
-#define ACL_LG3 108
-#define ACL_LG4 122
-#define ACL_LG5 143
-#define ACL_LG6 157
-#define ACL_LG7 198
-#define ACL_LG8 205
-#define M_ACL_L [234, 248]
-#define M_ACL_Q 276 // 283
-#define M_ACL_S 304
-#define M_ACL_F 328 // 325
-#define M_ACUP_P1 25 // 18,25
-#define M_ACUP_P2 39 // 32,39
-#define M_ACUP_P3 53 // 46,53
-#define M_ACUP_G [74,88,109,123,144,158] // 74,88,109,123,144,158
-#define M_ACUP_R1 [228,235] // 228,235
-#define M_ACUP_R2 [242,249] // 242,249
-#define M_ACUP_R3 [277,284] // 277,284
-#define M_ACUP_R4 [298,305] // 298,305
-#define M_ACUP_F 325
+#define M_ACL_PO 39
+#define M_ACL_LG1 73
+#define M_ACL_LG2 87
+#define M_ACL_LG3 108
+#define M_ACL_LG4 122
+#define M_ACL_LG5 143
+#define M_ACL_LG6 157
+#define M_ACL_LG7 198
+#define M_ACL_LG8 205
+#define M_ACL_L [241,248]
+#define M_ACL_Q [276,283]
+#define M_ACL_S [283,297]
+#define M_ACL_F 304
+#define M_A2_PO 52
+#define M_A2_G [74,88,109,123,144,158]
+#define M_A2_L [228,235]
+#define M_A2_Q [242,249]
+#define M_A2_S [277,284]
+#define M_A2_F 305
+#define M_ACH_PRE 38
+#define M_ACH_G [88,109,123]
+#define M_ACH_Q [242,249]
+#define M_ACH_S [277,284]
+#define M_ACH_F 305
 #define SUBS 5
-#define G_FIXTURES [1,4,3,2,4,3,2,1,1,3,4,2,2,4,3,1,4,1,2,3,1,2,3,4]
 
 comp Asia.ChampionsLeague {
 
@@ -48,158 +47,82 @@ pool @ACL_participants teams 30 {
     // add winners of AFC CL Elite and AFC CL Two
     getCCSpare()
     
-    pool @ACL_West teams 15 {
-        get(@prev, 1, 15)
-        
-        // 1vs1
-        round "$ID_PLAYOFF_ROUND_WEST" type Quali @ACL_West_case_11_2 teams 2 matchdays M_ACL_PO subs SUBS bonus [0,0,0,40000] -> @ACL_West_league_pool {
-            get(@ACL_West, 12, 2)
-        }
-        
-        // 1vs1 => 1vs1
-        round "$ID_PRELIMINARY_ROUND_WEST" type Quali @ACL_West_case_11_3 teams 2 matchdays M_ACL_PR subs SUBS bonus [0,0,0,40000] {
-            get(@ACL_West, 13, 2)
-            
-            round "$ID_PLAYOFF_ROUND_WEST" type Quali @ACL_West_case_11_3_final teams 2 matchdays M_ACL_PO subs SUBS bonus [0,0,0,40000] -> @ACL_West_league_pool {
-                get(@ACL_West, 12, 1)
-                get(@prev)
-            }
-        }
-        
-        // 2vs2
-        round "$ID_PLAYOFF_ROUND_WEST" type Quali @ACL_West_case_10_4 teams 4 matchdays M_ACL_PO subs SUBS bonus [0,0,0,40000] -> @ACL_West_league_pool {
-            get(@ACL_West, 11, 1)
-            get(@ACL_West, 12, 1)
-            get(@ACL_West, 14, 1)
-            get(@ACL_West, 13, 1)
-        }
-        
-        // 2vs2 >= 1vs1
-        round "$ID_PRELIMINARY_ROUND_WEST" type Quali @ACL_West_case_11_4 teams 4 matchdays M_ACL_PR subs SUBS bonus [0,0,0,40000] {
-            get(@ACL_West, 12, 1)
-            get(@ACL_West, 13, 1)
-            get(@ACL_West, 15, 1)
-            get(@ACL_West, 14, 1)
-            
-            
-            round "$ID_PLAYOFF_ROUND_WEST" type Quali @ACL_West_case_11_4_final teams 2 matchdays M_ACL_PO subs SUBS bonus [0,0,0,40000] -> @ACL_West_league_pool {
-                get(@prev)
-            }
-        }
+    round @ACL_PO_W "$ID_PLAYOFF_ROUND_WEST" type PreRound1 teams 6 matchdays M_ACL_PO subs SUBS bonus [0,0,0,0] -> @ACL_league_pool_W {
+        get(@ACL_participants, 10, 6)
     }
     
-    pool @ACL_East teams 15 {
-        get(@prev, 16, 15)
-        
-        // 1vs1
-        round "$ID_PLAYOFF_ROUND_EAST" type Quali @ACL_case_11_2 teams 2 matchdays M_ACL_PO subs SUBS bonus [0,0,0,40000] -> @ACL_East_league_pool {
-            get(@ACL_East, 12, 2)
-        }
-        
-        // 1vs1 => 1vs1
-        round "$ID_PRELIMINARY_ROUND_EAST" type Quali @ACL_case_11_3 teams 2 matchdays M_ACL_PR subs SUBS bonus [0,0,0,40000] {
-            get(@ACL_East, 13, 2)
-            
-            round "$ID_PLAYOFF_ROUND_EAST" type Quali @ACL_case_11_3_final teams 2 matchdays M_ACL_PO subs SUBS bonus [0,0,0,40000] -> @ACL_East_league_pool {
-                get(@ACL_East, 12, 1)
-                get(@prev)
-            }
-        }
-        
-        // 2vs2
-        round "$ID_PLAYOFF_ROUND_EAST" type Quali @ACL_case_10_4 teams 4 matchdays M_ACL_PO subs SUBS bonus [0,0,0,40000] -> @ACL_East_league_pool {
-            get(@ACL_East, 11, 1)
-            get(@ACL_East, 12, 1)
-            get(@ACL_East, 14, 1)
-            get(@ACL_East, 13, 1)
-        }
-        
-        // 2vs2 >= 1vs1
-        round "$ID_PRELIMINARY_ROUND_EAST" type Quali @ACL_case_11_4 teams 4 matchdays M_ACL_PR subs SUBS bonus [0,0,0,40000] {
-            get(@ACL_East, 12, 1)
-            get(@ACL_East, 13, 1)
-            get(@ACL_East, 15, 1)
-            get(@ACL_East, 14, 1)
-            
-            
-            round "$ID_PLAYOFF_ROUND_EAST" type Quali @ACL_case_11_4_final teams 2 matchdays M_ACL_PO subs SUBS bonus [0,0,0,40000] -> @ACL_East_league_pool {
-                get(@prev)
-            }
-        }
+    round @ACL_PO_E "$ID_PLAYOFF_ROUND_EAST" type PreRound1 teams 6 matchdays M_ACL_PO subs SUBS bonus [0,0,0,0] -> @ACL_league_pool_E {
+        get(@ACL_participants, 25, 6)
     }
 }
 
-pool @ACL_West_league_pool teams 12 {
-    getCCSpare() // get teams
+pool @ACL_league_pool_W teams 12 {
+    get(@ACL_participants, 1, 9)
+    getWinner(@ACL_PO_W)
+    getCCSpare()
     
-    pool @ACL_West_league_matches teams 96 {
+    pool @ACL_league_matches_W teams 96 {
         getCCSpare() // generate 8 matchdays
         
-        round @ACL_West_lg1 "$ID_LEAGUE_PHASE_WEST_MATCH_1" type Round1 teams 12 no_flags matchdays ACL_LG1 bonus [18620000,2100000,700000,0] subs SUBS { get(@prev, 1, 12); }
-        round @ACL_West_lg2 "$ID_LEAGUE_PHASE_WEST_MATCH_2" type Round1 teams 12 no_flags matchdays ACL_LG2 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 13, 12); }
-        round @ACL_West_lg3 "$ID_LEAGUE_PHASE_WEST_MATCH_3" type Round1 teams 12 no_flags matchdays ACL_LG3 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 25, 12); }
-        round @ACL_West_lg4 "$ID_LEAGUE_PHASE_WEST_MATCH_4" type Round1 teams 12 no_flags matchdays ACL_LG4 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 37, 12); }
-        round @ACL_West_lg5 "$ID_LEAGUE_PHASE_WEST_MATCH_5" type Round1 teams 12 no_flags matchdays ACL_LG5 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 49, 12); }
-        round @ACL_West_lg6 "$ID_LEAGUE_PHASE_WEST_MATCH_6" type Round1 teams 12 no_flags matchdays ACL_LG6 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 61, 12); }
-        round @ACL_West_lg7 "$ID_LEAGUE_PHASE_WEST_MATCH_7" type Round1 teams 12 no_flags matchdays ACL_LG7 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 73, 12); }
-        round @ACL_West_lg8 "$ID_LEAGUE_PHASE_WEST_MATCH_8" type Round1 teams 12 no_flags matchdays ACL_LG8 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 85, 12); }
+        round @ACL_lg1_W "$ID_LEAGUE_PHASE_WEST_MATCH_1" type Round1 teams 12 no_flags matchdays M_ACL_LG1 bonus [767000,0,0,0] subs SUBS { get(@prev, 1, 12); }
+        round @ACL_lg2_W "$ID_LEAGUE_PHASE_WEST_MATCH_2" type Round1 teams 12 no_flags matchdays M_ACL_LG2 bonus [0,0,0,0] subs SUBS { get(@prev, 13, 12); }
+        round @ACL_lg3_W "$ID_LEAGUE_PHASE_WEST_MATCH_3" type Round1 teams 12 no_flags matchdays M_ACL_LG3 bonus [0,0,0,0] subs SUBS { get(@prev, 25, 12); }
+        round @ACL_lg4_W "$ID_LEAGUE_PHASE_WEST_MATCH_4" type Round1 teams 12 no_flags matchdays M_ACL_LG4 bonus [0,0,0,0] subs SUBS { get(@prev, 37, 12); }
+        round @ACL_lg5_W "$ID_LEAGUE_PHASE_WEST_MATCH_5" type Round1 teams 12 no_flags matchdays M_ACL_LG5 bonus [0,0,0,0] subs SUBS { get(@prev, 49, 12); }
+        round @ACL_lg6_W "$ID_LEAGUE_PHASE_WEST_MATCH_6" type Round1 teams 12 no_flags matchdays M_ACL_LG6 bonus [0,0,0,0] subs SUBS { get(@prev, 61, 12); }
+        round @ACL_lg7_W "$ID_LEAGUE_PHASE_WEST_MATCH_7" type Round1 teams 12 no_flags matchdays M_ACL_LG7 bonus [0,0,0,0] subs SUBS { get(@prev, 73, 12); }
+        round @ACL_lg8_W "$ID_LEAGUE_PHASE_WEST_MATCH_8" type Round1 teams 12 no_flags matchdays M_ACL_LG8 bonus [0,0,0,0] subs SUBS { get(@prev, 85, 12); }
     }
 }
 
-pool @ACL_East_league_pool teams 12 {
-    getCCSpare() // get teams
+pool @ACL_league_pool_E teams 12 {
+    get(@ACL_participants, 16, 9)
+    getWinner(@ACL_PO_E)
+    getCCSpare()
     
-    pool @ACL_East_league_matches teams 96 {
+    pool @ACL_league_matches_E teams 96 {
         getCCSpare() // generate 8 matchdays
         
-        round @ACL_East_lg1 "$ID_LEAGUE_PHASE_EAST_MATCH_1" type Round1 teams 12 no_flags matchdays ACL_LG1 bonus [18620000,2100000,700000,0] subs SUBS { get(@prev, 1, 12); }
-        round @ACL_East_lg2 "$ID_LEAGUE_PHASE_EAST_MATCH_2" type Round1 teams 12 no_flags matchdays ACL_LG2 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 13, 12); }
-        round @ACL_East_lg3 "$ID_LEAGUE_PHASE_EAST_MATCH_3" type Round1 teams 12 no_flags matchdays ACL_LG3 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 25, 12); }
-        round @ACL_East_lg4 "$ID_LEAGUE_PHASE_EAST_MATCH_4" type Round1 teams 12 no_flags matchdays ACL_LG4 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 37, 12); }
-        round @ACL_East_lg5 "$ID_LEAGUE_PHASE_EAST_MATCH_5" type Round1 teams 12 no_flags matchdays ACL_LG5 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 49, 12); }
-        round @ACL_East_lg6 "$ID_LEAGUE_PHASE_EAST_MATCH_6" type Round1 teams 12 no_flags matchdays ACL_LG6 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 61, 12); }
-        round @ACL_East_lg7 "$ID_LEAGUE_PHASE_EAST_MATCH_7" type Round1 teams 12 no_flags matchdays ACL_LG7 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 73, 12); }
-        round @ACL_East_lg8 "$ID_LEAGUE_PHASE_EAST_MATCH_8" type Round1 teams 12 no_flags matchdays ACL_LG8 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 85, 12); }
+        round @ACL_lg1_E "$ID_LEAGUE_PHASE_EAST_MATCH_1" type Round1 teams 12 no_flags matchdays M_ACL_LG1 bonus [767000,0,0,0] subs SUBS { get(@prev, 1, 12); }
+        round @ACL_lg2_E "$ID_LEAGUE_PHASE_EAST_MATCH_2" type Round1 teams 12 no_flags matchdays M_ACL_LG2 bonus [0,0,0,0] subs SUBS { get(@prev, 13, 12); }
+        round @ACL_lg3_E "$ID_LEAGUE_PHASE_EAST_MATCH_3" type Round1 teams 12 no_flags matchdays M_ACL_LG3 bonus [0,0,0,0] subs SUBS { get(@prev, 25, 12); }
+        round @ACL_lg4_E "$ID_LEAGUE_PHASE_EAST_MATCH_4" type Round1 teams 12 no_flags matchdays M_ACL_LG4 bonus [0,0,0,0] subs SUBS { get(@prev, 37, 12); }
+        round @ACL_lg5_E "$ID_LEAGUE_PHASE_EAST_MATCH_5" type Round1 teams 12 no_flags matchdays M_ACL_LG5 bonus [0,0,0,0] subs SUBS { get(@prev, 49, 12); }
+        round @ACL_lg6_E "$ID_LEAGUE_PHASE_EAST_MATCH_6" type Round1 teams 12 no_flags matchdays M_ACL_LG6 bonus [0,0,0,0] subs SUBS { get(@prev, 61, 12); }
+        round @ACL_lg7_E "$ID_LEAGUE_PHASE_EAST_MATCH_7" type Round1 teams 12 no_flags matchdays M_ACL_LG7 bonus [0,0,0,0] subs SUBS { get(@prev, 73, 12); }
+        round @ACL_lg8_E "$ID_LEAGUE_PHASE_EAST_MATCH_8" type Round1 teams 12 no_flags matchdays M_ACL_LG8 bonus [0,0,0,0] subs SUBS { get(@prev, 85, 12); }
     }
 }
 
-pool @ACL_West_league_sorted_pool teams 36 <- [@ACL_West_lg1,@ACL_West_lg2,@ACL_West_lg3,@ACL_West_lg4,@ACL_West_lg5,@ACL_West_lg6,@ACL_West_lg7,@ACL_West_lg8] {
-    get(@ACL_West_league_pool)
+pool @ACL_league_sorted_pool_W teams 12 <- [@ACL_lg1_W,@ACL_lg2_W,@ACL_lg3_W,@ACL_lg4_W,@ACL_lg5_W,@ACL_lg6_W,@ACL_lg7_W,@ACL_lg8_W] -> @ACL_last16 {
+    get(@ACL_league_pool_W)
     getCCSpare() // sort League table
 }
 
-pool @ACL_East_league_sorted_pool teams 36 <- [@ACL_East_lg1,@ACL_East_lg2,@ACL_East_lg3,@ACL_East_lg4,@ACL_East_lg5,@ACL_East_lg6,@ACL_East_lg7,@ACL_East_lg8] {
-    get(@ACL_West_league_pool)
+pool @ACL_league_sorted_pool_E teams 12 <- [@ACL_lg1_E,@ACL_lg2_E,@ACL_lg3_E,@ACL_lg4_E,@ACL_lg5_E,@ACL_lg6_E,@ACL_lg7_E,@ACL_lg8_E] -> @ACL_last16 {
+    get(@ACL_league_pool_E)
     getCCSpare() // sort League table
 }
 
-round @ACL_last16 "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 two_legs matchdays M_ACL_L subs SUBS bonus [100000,0,0,60000] {
-    get(@ACL_West_league_sorted_pool, 8, 1)
-    get(@ACL_West_league_sorted_pool, 7, 1)
-    get(@ACL_West_league_sorted_pool, 6, 1)
-    get(@ACL_West_league_sorted_pool, 5, 1)
-    get(@ACL_East_league_sorted_pool, 8, 1)
-    get(@ACL_East_league_sorted_pool, 7, 1)
-    get(@ACL_East_league_sorted_pool, 6, 1)
-    get(@ACL_East_league_sorted_pool, 5, 1)
-    get(@ACL_West_league_sorted_pool, 1, 1)
-    get(@ACL_West_league_sorted_pool, 2, 1)
-    get(@ACL_West_league_sorted_pool, 3, 1)
-    get(@ACL_West_league_sorted_pool, 4, 1)
-    get(@ACL_East_league_sorted_pool, 1, 1)
-    get(@ACL_East_league_sorted_pool, 2, 1)
-    get(@ACL_East_league_sorted_pool, 3, 1)
-    get(@ACL_East_league_sorted_pool, 4, 1)
+round @ACL_last16 "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 two_legs matchdays M_ACL_L subs SUBS bonus [191000,0,0,0] {
+    get([@ACL_league_sorted_pool_W,@ACL_league_sorted_pool_E], 8, 1)
+    get([@ACL_league_sorted_pool_W,@ACL_league_sorted_pool_E], 7, 1)
+    get([@ACL_league_sorted_pool_W,@ACL_league_sorted_pool_E], 6, 1)
+    get([@ACL_league_sorted_pool_W,@ACL_league_sorted_pool_E], 5, 1)
+    get([@ACL_league_sorted_pool_W,@ACL_league_sorted_pool_E], 1, 1)
+    get([@ACL_league_sorted_pool_W,@ACL_league_sorted_pool_E], 2, 1)
+    get([@ACL_league_sorted_pool_W,@ACL_league_sorted_pool_E], 3, 1)
+    get([@ACL_league_sorted_pool_W,@ACL_league_sorted_pool_E], 4, 1)
     
-    round type Quarterfinal teams 8 matchdays M_ACL_Q subs SUBS bonus [150000,0,0,60000] {
+    round type Quarterfinal teams 8 two_legs matchdays M_ACL_Q subs SUBS bonus [383000,0,0,0] {
         get(@prev)
-        shuffleTeams()
         
-        round type Semifinal teams 4 matchdays M_ACL_S subs SUBS bonus [250000,0,0,60000] {
+        round type Semifinal teams 4 two_legs matchdays M_ACL_S subs SUBS bonus [575000,0,0,0] {
             get(@prev)
             
-            round @ACL_final index 22 type Final teams 2 matchdays M_ACL_F subs SUBS bonus [2000000,2000000,0,120000] {
+            round @ACL_final type Final teams 2 matchdays M_ACL_F subs SUBS bonus [3830000,5750000,0,0] {
                 get(@prev)
+                shuffleTeams()
             }
         }
     }
@@ -209,162 +132,76 @@ round @ACL_last16 "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 two_legs matc
 
 comp Asia.UefaCup {
     
-pool @ACLTwo_participants teams 32 constraints @ACL_participants {
-    // West - 16 teams
+pool @ACLTwo_participants teams 34 constraints @ACL_participants {
+    // West - 16 teams + 1 empty slot
     reserveAssessmentTeams([1-10], 1) // 10 teams
     fillAssessmentReserves()
     reserveAssessmentTeams([7-12], 1) // 6 teams
     getEuropeanAssessmentCupwinner([7-12])
     fillAssessmentReserves()
-    // East - 16 teams
+    // East - 16 teams + 1 empty slot
     reserveAssessmentTeams([101-110], 1) // 10 teams
     fillAssessmentReserves()
     reserveAssessmentTeams([107-112], 1) // 6 teams
     getEuropeanAssessmentCupwinner([107-112])
     fillAssessmentReserves()
+    // add winner of AFC Challenge League (if not already added) at position 1. or 18.
+    getCCSpare()
     
-    // fix empty slot for I-League if team was not added
-    getCCSpare()
-}
-
-// Round 1 - South, East
+    pool @ACLTwo_W teams 20 <- @ACL_PO_W {
+        get(@ACLTwo_participants, 1, 17) // 16 or 17 teams
+        getLoser(@ACL_PO_W) // 3 teams
+    }
     
-round @ACup_pre1_S "$ID_PRELIMINARY_ROUND_1_SOUTH" type Quali teams 6 subs SUBS matchdays M_ACUP_P1 bonus [0,0,0,30000] <- @ACup_participants {
-    get(@ACup_participants, 47, 6)
-    getCCSpare()
+    pool @ACLTwo_E teams 20 <- @ACL_PO_E {
+        get(@ACLTwo_participants, 18, 17) // 16 or 17 teams
+        getLoser(@ACL_PO_E) // 3 teams
+    }
 }
 
-round @ACup_pre1_E "$ID_PRELIMINARY_ROUND_1_EAST" type Quali teams 4 subs SUBS matchdays M_ACUP_P1 bonus [0,0,0,30000] <- @ACup_participants {
-    get(@ACup_participants, 53, 4)
-    getCCSpare()  
+round @ACLTwo_PO_W "$ID_PLAYOFF_ROUND_WEST" type PreRound1 teams 8 matchdays M_A2_PO subs SUBS bonus [0,0,0,0] <- @ACLTwo_W {
+    get(@ACLTwo_W, 13, 8)
 }
 
-// Round 2 - ASEAN, South, East
-
-round @ACup_pre_A "$ID_PRELIMINARY_ROUND_ASEAN" type Quali teams 2 subs SUBS matchdays M_ACUP_P2 bonus [0,0,0,30000] <- @ACup_participants {
-    get(@ACup_participants, 42, 2)
-    getCCSpare()
+round @ACLTwo_PO_E "$ID_PLAYOFF_ROUND_EAST" type PreRound1 teams 8 matchdays M_A2_PO subs SUBS bonus [0,0,0,0] <- @ACLTwo_E {
+    get(@ACLTwo_E, 13, 8)
 }
 
-round @ACup_pre2_S "$ID_PRELIMINARY_ROUND_2_SOUTH" type Quali teams 4 subs SUBS matchdays M_ACUP_P2 bonus [0,0,0,30000] <- @ACup_pre1_S {
-    get(@ACup_participants, 44, 1)
-    get(@prev)
-    getCCSpare()
-}
-
-round @ACup_pre2_E "$ID_PRELIMINARY_ROUND_2_EAST" type Quali teams 4 subs SUBS matchdays M_ACUP_P2 bonus [0,0,0,30000] <- @ACup_pre1_E {
-    get(@ACup_participants, 45, 2)
-    get(@prev)
-    getCCSpare()
-}
-
-// Play-Off - West, ASEAN, South, East
-
-round @ACup_playOff_W "$ID_PLAYOFF_ROUND_WEST" type Quali teams 4 subs SUBS matchdays M_ACUP_P3 bonus [0,0,0,30000] <- @ACup_participants {
-    get(@ACup_participants, 35, 4)
-    getCCSpare()
-}
-
-round @ACup_playOff_A "$ID_PLAYOFF_ROUND_ASEAN" type Quali teams 4 subs SUBS matchdays M_ACUP_P3 bonus [0,0,0,30000] <- @ACup_pre_A {
-    get(@ACup_participants, 39, 3)
-    get(@prev)
-    getCCSpare()
-}
-
-round @ACup_playOff_S "$ID_PLAYOFF_ROUND_SOUTH" type Quali teams 2 subs SUBS matchdays M_ACUP_P3 bonus [0,0,0,30000] <- @ACup_pre2_S {
-    get(@prev)
-}
-
-round @ACup_playOff_E "$ID_PLAYOFF_ROUND_EAST" type Quali teams 2 subs SUBS matchdays M_ACUP_P3 bonus [0,0,0,30000] <- @ACup_pre2_E {
-    get(@prev)
-}
-
-// Groups drawing
-
-pool @ACup_groups_W teams 12 sorting ChampionsCupGroup <- @ACup_playOff_W {
-    get(@ACup_participants, 1, 10)
-    get(@prev)
+pool @ACLTwo_groups_W teams 16 sorting ChampionsCupGroup <- @ACLTwo_PO_W -> [@ACLTwo_a,@ACLTwo_b,@ACLTwo_c,@ACLTwo_d,@ACLTwo_e,@ACLTwo_f,@ACLTwo_g,@ACLTwo_h] {
+    get(@ACLTwo_W, 1, 12) // 12 teams
+    getWinner(@ACLTwo_PO_W) // 4 teams
 }
     
-pool @ACup_groups_A teams 12 sorting ChampionsCupGroup <- @ACup_playOff_A {
-    get(@ACup_participants, 11, 10)
-    get(@prev)
+pool @ACLTwo_groups_E teams 16 sorting ChampionsCupGroup <- @ACLTwo_PO_E -> [@ACLTwo_a,@ACLTwo_b,@ACLTwo_c,@ACLTwo_d,@ACLTwo_e,@ACLTwo_f,@ACLTwo_g,@ACLTwo_h] {
+    get(@ACLTwo_E, 1, 12) // 12 teams
+    getWinner(@ACLTwo_PO_E) // 4 teams
 }
 
-pool @ACup_groups_C teams 8 sorting ChampionsCupGroup <- @ACup_participants {
-    get(@ACup_participants, 27, 8)
-}
+group @ACLTwo_a "A" teams 4 rounds 2 sorting DM matchdays M_A2_G bonus [288000,0,0,0] subs SUBS -> @ACLTwo_last16 { get(@ACLTwo_groups_W, 1, 4) }
+group @ACLTwo_b "B" teams 4 rounds 2 sorting DM matchdays M_A2_G bonus [288000,0,0,0] subs SUBS -> @ACLTwo_last16 { get(@ACLTwo_groups_W, 5, 4) }
+group @ACLTwo_c "C" teams 4 rounds 2 sorting DM matchdays M_A2_G bonus [288000,0,0,0] subs SUBS -> @ACLTwo_last16 { get(@ACLTwo_groups_W, 9, 4) }
+group @ACLTwo_d "D" teams 4 rounds 2 sorting DM matchdays M_A2_G bonus [288000,0,0,0] subs SUBS -> @ACLTwo_last16 { get(@ACLTwo_groups_W, 13, 4) }
+group @ACLTwo_e "E" teams 4 rounds 2 sorting DM matchdays M_A2_G bonus [288000,0,0,0] subs SUBS -> @ACLTwo_last16 { get(@ACLTwo_groups_E, 1, 4) }
+group @ACLTwo_f "F" teams 4 rounds 2 sorting DM matchdays M_A2_G bonus [288000,0,0,0] subs SUBS -> @ACLTwo_last16 { get(@ACLTwo_groups_E, 5, 4) }
+group @ACLTwo_g "G" teams 4 rounds 2 sorting DM matchdays M_A2_G bonus [288000,0,0,0] subs SUBS -> @ACLTwo_last16 { get(@ACLTwo_groups_E, 9, 4) }
+group @ACLTwo_h "H" teams 4 rounds 2 sorting DM matchdays M_A2_G bonus [288000,0,0,0] subs SUBS -> @ACLTwo_last16 { get(@ACLTwo_groups_E, 13, 4) }
 
-// Group stage
-
-group @ACup_a "A" teams 4 rounds 2 sorting DM matchdays M_ACUP_G bonus [30000,0,0,0] subs SUBS <- @ACup_groups_W { get(@ACup_groups_W, 1, 4) }
-group @ACup_b "B" teams 4 rounds 2 sorting DM matchdays M_ACUP_G bonus [30000,0,0,0] subs SUBS <- @ACup_groups_W { get(@ACup_groups_W, 5, 4) }
-group @ACup_c "C" teams 4 rounds 2 sorting DM matchdays M_ACUP_G bonus [30000,0,0,0] subs SUBS <- @ACup_groups_W { get(@ACup_groups_W, 9, 4) }
-group @ACup_d "D" teams 4 rounds 2 sorting DM matchdays M_ACUP_G bonus [30000,0,0,0] subs SUBS <- @ACup_playOff_S { get(@ACup_participants, 21, 3); get(@ACup_playOff_S); shuffleTeams() }
-group @ACup_e "E" teams 4 rounds 2 sorting DM matchdays M_ACUP_G bonus [30000,0,0,0] subs SUBS <- @ACup_groups_C { get(@ACup_groups_C, 1, 4) }
-group @ACup_f "F" teams 4 rounds 2 sorting DM matchdays M_ACUP_G bonus [30000,0,0,0] subs SUBS <- @ACup_groups_C { get(@ACup_groups_C, 5, 4) }
-group @ACup_g "G" teams 4 rounds 2 sorting DM matchdays M_ACUP_G bonus [30000,0,0,0] subs SUBS <- @ACup_groups_A { get(@ACup_groups_A, 1, 4) }
-group @ACup_h "H" teams 4 rounds 2 sorting DM matchdays M_ACUP_G bonus [30000,0,0,0] subs SUBS <- @ACup_groups_A { get(@ACup_groups_A, 5, 4) }
-group @ACup_i "I" teams 4 rounds 2 sorting DM matchdays M_ACUP_G bonus [30000,0,0,0] subs SUBS <- @ACup_groups_A { get(@ACup_groups_A, 9, 4) }
-group @ACup_j "J" teams 4 rounds 2 sorting DM matchdays M_ACUP_G bonus [30000,0,0,0] subs SUBS <- @ACup_playOff_E { get(@ACup_participants, 24, 3); get(@ACup_playOff_E); shuffleTeams() }
-
-// best 2nd teams - West, Asean
-
-pool @ACup_best2nd_W teams 3 sorting PrevPointsDiff <- [@ACup_a,@ACup_b,@ACup_c] {
-    get(@prev, 2)
-}
-
-pool @ACup_best2nd_A teams 3 sorting PrevPointsDiff <- [@ACup_g,@ACup_h,@ACup_i] {
-    get(@prev, 2)
-}
-
-// Zonal semi-finals
-
-round @ACup_West_semi "$ID_WEST_ASIA_ZONAL_SEMIFINALS" type Round3 teams 4 two_legs matchdays M_ACUP_R3 subs SUBS bonus [0,0,0,40000] <- @ACup_best2nd_W {
-    get([@ACup_a,@ACup_b,@ACup_c], 1)
-    get(@prev, 1)
-    shuffleTeams()
-}
-
-round @ACup_ASEAN_semi "$ID_ASEAN_ZONAL_SEMIFINALS" type Round1 teams 4 two_legs matchdays M_ACUP_R1 subs SUBS bonus [0,0,0,40000] <- @ACup_best2nd_A {
-    get([@ACup_g,@ACup_h,@ACup_i], 1)
-    get(@prev, 1)
-    shuffleTeams()
-}
-
-// Zonal finals
-
-round @ACup_West_final "$ID_WEST_ASIA_ZONAL_FINAL" type Round4 teams 2 two_legs matchdays M_ACUP_R4 subs SUBS bonus [0,100000,0,40000] <- @ACup_West_semi {
-    get(@prev)
-}
-
-round @ACup_Central_final "$ID_CENTRAL_ASIA_ZONAL_FINAL" type Round2 teams 2 two_legs matchdays M_ACUP_R2 subs SUBS bonus [0,100000,0,40000] <- [@ACup_e,@ACup_f] {
-    get(@prev, 1)
-}
-
-round @ACup_ASEAN_final "$ID_ASEAN_ZONAL_FINAL" type Round2 teams 2 two_legs matchdays M_ACUP_R2 subs SUBS bonus [0,100000,0,40000] <- @ACup_ASEAN_semi {
-    get(@prev)
-}
-
-// Interzone semi-finals
-
-round @ACup_Inter_semi "$ID_INTERZONE_PLAYOFF_SEMIFINALS" type Round3 teams 4 two_legs matchdays M_ACUP_R3 subs SUBS bonus [0,0,0,40000] <- [@ACup_d,@ACup_j,@ACup_Central_final,@ACup_ASEAN_final] {
-    get([@ACup_d,@ACup_j], 1)
-    get(@ACup_Central_final)
-    get(@ACup_ASEAN_final)
-    shuffleTeams()
-}
-
-// Interzone final
-
-round @ACup_Inter_final "$ID_INTERZONE_PLAYOFF_FINAL" type Round4 teams 2 two_legs matchdays M_ACUP_R4 subs SUBS bonus [0,100000,0,40000] <- @ACup_Inter_semi {
-    get(@prev)
-}
-
-// Final
-
-round @ACup_final type Final teams 2 matchdays M_ACUP_F subs SUBS bonus [750000,750000,0,40000] <- [@ACup_West_final,@ACup_Inter_final] {
-    get(@prev)
+round @ACLTwo_last16 "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 two_legs matchdays M_A2_L subs SUBS bonus [77000,0,0,0] {
+    get([@ACLTwo_a,@ACLTwo_e,@ACLTwo_c,@ACLTwo_g,@ACLTwo_b,@ACLTwo_f,@ACLTwo_d,@ACLTwo_h], 1, 1)
+    get([@ACLTwo_b,@ACLTwo_f,@ACLTwo_d,@ACLTwo_h,@ACLTwo_a,@ACLTwo_e,@ACLTwo_c,@ACLTwo_g], 2, 1)
+    
+    round type Quarterfinal teams 8 two_legs matchdays M_A2_Q subs SUBS bonus [153000,0,0,0] {
+        get(@prev)
+        
+        round type Semifinal teams 4 two_legs matchdays M_A2_S subs SUBS bonus [230000,0,0,0] {
+            get(@prev)
+            
+            round @ACLTwo_final type Final teams 2 matchdays M_A2_F subs SUBS bonus [960000,1450000,0,0] {
+                get(@prev)
+                shuffleTeams()
+            }
+        }
+    }
 }
 
 }
@@ -379,27 +216,61 @@ pool @AChallenge_participants teams 25 constraints [@ACL_participants,@ACLTwo_pa
     reserveAssessmentTeams([111-120], 1) // 10 teams
     fillAssessmentReserves()
     
-    round @AChallenge_prelim_West type PreRound1 teams 6 matchdays M_ACH_PRELIM subs SUBS {
+    round @AChallenge_prelim_W "$ID_PRELIM_ROUND_WEST" type PreRound1 teams 6 matchdays M_ACH_PRE subs SUBS {
         get(@AChallenge_participants, 10, 6)
         getCCSpare()
     }
     
-    round @AChallenge_prelim_East type PreRound1 teams 4 matchdays M_ACH_PRELIM subs SUBS {
+    round @AChallenge_prelim_E "$ID_PRELIM_ROUND_EAST" type PreRound1 teams 4 matchdays M_ACH_PRE subs SUBS {
         get(@AChallenge_participants, 22, 4)
         getCCSpare()
     }
 }
 
 // West - 12 teams, 3 groups
-pool @AChallenge_groups_pool_West teams 12 sorting ChampionsCupGroup <- @AChallenge_prelim_West {
+pool @AChallenge_groups_W teams 12 sorting ChampionsCupGroup <- @AChallenge_prelim_W {
     get(@AChallenge_participants, 1, 9)
-    get(@AChallenge_prelim_West)
+    get(@AChallenge_prelim_W)
 }
 
 // East - 8 teams, 2 groups
-pool @AChallenge_groups_pool_East teams 8 sorting ChampionsCupGroup <- @AChallenge_prelim_East {
+pool @AChallenge_groups_E teams 8 sorting ChampionsCupGroup <- @AChallenge_prelim_E {
     get(@AChallenge_participants, 16, 6)
-    get(@AChallenge_prelim_West)
+    get(@AChallenge_prelim_E)
+}
+
+group @AChallenge_a "A" teams 4 sorting DM matchdays M_ACH_G bonus [96000,0,0,0] subs SUBS <- [@AChallenge_groups_W,@AChallenge_groups_E] { get(@AChallenge_groups_W, 1, 4) }
+group @AChallenge_b "B" teams 4 sorting DM matchdays M_ACH_G bonus [96000,0,0,0] subs SUBS <- [@AChallenge_groups_W,@AChallenge_groups_E] { get(@AChallenge_groups_W, 5, 4) }
+group @AChallenge_c "C" teams 4 sorting DM matchdays M_ACH_G bonus [96000,0,0,0] subs SUBS <- [@AChallenge_groups_W,@AChallenge_groups_E] { get(@AChallenge_groups_W, 9, 4) }
+group @AChallenge_d "D" teams 4 sorting DM matchdays M_ACH_G bonus [96000,0,0,0] subs SUBS <- [@AChallenge_groups_W,@AChallenge_groups_E] { get(@AChallenge_groups_E, 1, 4) }
+group @AChallenge_e "E" teams 4 sorting DM matchdays M_ACH_G bonus [96000,0,0,0] subs SUBS <- [@AChallenge_groups_W,@AChallenge_groups_E] { get(@AChallenge_groups_E, 5, 4) }
+
+pool @AChallenge_runnerUps_W teams 3 sorting PRevPointsDiff <- [@AChallenge_a,@AChallenge_b,@AChallenge_c,@AChallenge_d,@AChallenge_e] {
+    get([@AChallenge_a,@AChallenge_b,@AChallenge_c], 2, 1)
+    
+    pool @AChallenge_KO_W teams 4 sorting Random {
+        get([@AChallenge_a,@AChallenge_b,@AChallenge_c], 1, 1)
+        get(@AChallenge_runnerUps_W, 1, 1)
+    }
+    
+    pool @AChallenge_KO_E teams 4 sorting Random {
+        get([@AChallenge_d,@AChallenge_e], 1, 2)
+    }
+}
+
+round type Quarterfinal teams 8 two_legs matchdays M_ACH_Q subs SUBS bonus [77000,0,0,0] <- [@AChallenge_KO_W,@AChallenge_KO_E] {
+    get([@AChallenge_KO_W,@AChallenge_KO_E], 1, 1)
+    get([@AChallenge_KO_W,@AChallenge_KO_E], 2, 1)
+    get([@AChallenge_KO_W,@AChallenge_KO_E], 3, 1)
+    get([@AChallenge_KO_W,@AChallenge_KO_E], 4, 1)
+    
+    round type Semifinal teams 4 two_legs matchdays M_ACH_S subs SUBS bonus [115000,0,0,0] {
+        get(@prev)
+        
+        round @AChallenge_final type Final teams 2 matchdays M_ACH_F subs SUBS bonus [480000,480000,0,0] {
+            get(@prev)
+        }
+    }
 }
 
 }
