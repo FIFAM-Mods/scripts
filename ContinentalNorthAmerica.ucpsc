@@ -1,0 +1,282 @@
+#name "CONCACAF Champions Cup, CONCACAF Central American Cup, CONCACAF Caribbean Cup, CONCACAF Caribbean Shield, Leagues Cup, Campeones Cup"
+#author "FM 2024 Team"
+#version "24.0"
+
+#define CC_1 [227,234]
+#define CC_16 [241,248]
+#define CC_Q [276,283]
+#define CC_S [297,304]
+#define CC_F 328
+#define CAC_G [24,31,38,45,52]
+#define CAC_Q [73,87]
+#define CAC_S [108,122]
+#define CAC_F [143,157]
+#define CARC_G [38,45,52,73,87]
+#define CARC_S [108,122]
+#define CARC_F [143,157]
+#define CARS_G [3,5,9,11,17]
+#define CARS_S 24
+#define CARS_F 31
+#define LC_G [3,7,11]
+#define LC_32 17
+#define LC_16 24
+#define LC_Q 31
+#define LC_S 38
+#define LC_F 45
+#define CAM_F 87
+#define NUM_SUBS 5
+
+/*
+    CONCACAF Champions Cup (launched after CaribbeanCup_final and CentralAmericanCup_final)
+*/
+
+comp NorthAmerica.ChampionsLeague {
+
+pool @ChampionsCup_pool teams 15 {
+    getInternationalTeams(Mexico, 6)
+    getChamp(@@UnitedStates_LeagueCup_0) // MLS Cup winner (will add one team from regular league if there's no winner)
+    getChamp(@@UnitedStates_FaCup_0) // US Open Cup (will add one team from regular league if there's no winner)
+    getInternationalTeams(UnitedStates, 4) // MLS Supporter's Shield best teams (will add teams from regular league)
+    getChamp(@@Canada_FaCup_0) // Canadian Championship (will add one team from regular league if there's no winner)
+    getChamp(@@Canada_LeagueCup_0) // Canadian PL champion (will add one team from regular league if there's no winner)
+    getInternationalTeams(Canada, 1) // Canadian PL best teams (will add teams from regular league)
+    
+    pool @ChampionsCup_AllTeams teams 27 <- [@CaribbeanCup_final,@CentralAmericanCup_final] {
+        // round of 16 - 5 teams
+        getWinner(@CaribbeanCup_final)
+        getWinner(@CentralAmericanCup_final)
+        getWinner(@LeaguesCup_final)
+        getInternationalTeams(Mexico, 1)
+        getChamp(@@UnitedStates_LeagueCup_0) // MLS Cup winner (will add one team from regular league if there's no winner)
+        // round 1 - 22 teams
+        getLoser(@LeaguesCup_final)
+        getWinner(@LeaguesCup_third)
+        getLoser(@CaribbeanCup_final)
+        getWinner(@CaribbeanCup_third)
+        getLoser(@CentralAmericanCup_final)
+        getLoser(@CentralAmericanCup_semi)
+        getWinner(@CentralAmericanCup_play_in)
+        getChamp(@@UnitedStates_FaCup_0) // US Open Cup (will add one team from regular league if there's no winner)
+        getChamp(@@Canada_FaCup_0) // Canadian Championship (will add one team from regular league if there's no winner)
+        getChamp(@@Canada_LeagueCup_0) // Canadian PL champion (will add one team from regular league if there's no winner)
+        getInternationalTeams(Canada, 1) // Canadian PL best teams (will add teams from regular league)
+        getInternationalTeams(Mexico, 5)
+        getInternationalTeams(UnitedStates, 4) // MLS Supporter's Shield best teams (will add teams from regular league)
+        
+        round type Round1 teams 22 subs NUM_SUBS two_legs matchdays CC_1 bonus [50000,0,0,0] {
+            get(@ChampionsCup_AllTeams, 6, 22)
+            getCCSpare()
+            
+            round "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 subs NUM_SUBS two_legs matchdays CC_16 bonus [100000,0,0,0] {
+                get(@ChampionsCup_AllTeams, 1, 5)
+                get(@prev)
+                getCCSpare()
+                
+                round type Quarterfinal teams 8 subs NUM_SUBS two_legs matchdays CC_Q bonus [200000,0,0,0] {
+                    get(@prev)
+                    
+                    round type Semifinal teams 4 subs NUM_SUBS two_legs matchdays CC_S bonus [500000,0,0,0] {
+                        get(@prev)
+                        
+                        round index 22 type Final teams 2 subs NUM_SUBS matchdays CC_F bonus [2000000,2000000,0,0] {
+                            get(@prev)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+}
+
+/*
+    CONCACAF Central American Cup
+*/
+
+comp NorthAmerica.UefaCup {
+
+pool teams 20 sorting ChampionsCupGroup {
+    getInternationalTeams(CostaRica, 4)
+    getInternationalTeams(Honduras, 4)
+    getInternationalTeams(Panama, 3)
+    getInternationalTeams(ElSalvador, 3)
+    getInternationalTeams(Guatemala, 3)
+    getInternationalTeams(Nicaragua, 2)
+    getInternationalTeams(Belize, 1)
+    
+    group "A" teams 5 matchdays CAC_G bonus [5000,0,0,0] sorting DM subs NUM_SUBS -> @CentralAmericanCup_Quarterfinal { get(@prev, 1, 5) }
+    group "B" teams 5 matchdays CAC_G bonus [5000,0,0,0] sorting DM subs NUM_SUBS -> @CentralAmericanCup_Quarterfinal { get(@prev, 6, 5) }
+    group "C" teams 5 matchdays CAC_G bonus [5000,0,0,0] sorting DM subs NUM_SUBS -> @CentralAmericanCup_Quarterfinal { get(@prev, 11, 5) }
+    group "D" teams 5 matchdays CAC_G bonus [5000,0,0,0] sorting DM subs NUM_SUBS -> @CentralAmericanCup_Quarterfinal { get(@prev, 16, 5) }
+}
+
+pool @CentralAmericanCup_Quarterfinal teams 8 sorting PrevPointsDiff {
+    get(@prev, 1, 2)
+    
+    round type Quarterfinal teams 8 subs NUM_SUBS two_legs matchdays CAC_Q bonus [20000,0,0,0] {
+        get(@prev, 8); get(@prev, 7); get(@prev, 5); get(@prev, 6)
+        get(@prev, 1); get(@prev, 2); get(@prev, 4); get(@prev, 3)
+        
+        round "$ID_TOURNAMENT_PLAY_IN" @CentralAmericanCup_play_in type Round1 teams 4 subs NUM_SUBS two_legs matchdays CAC_S { getLoser(@prev) }
+        
+        round @CentralAmericanCup_semi type Semifinal teams 4 subs NUM_SUBS two_legs matchdays CAC_S bonus [50000,0,0,0] {
+            get(@prev)
+            
+            round @CentralAmericanCup_final index 22 type Final teams 2 subs NUM_SUBS two_legs without_away_goal matchdays CAC_F bonus [50000,50000,0,0] {
+                get(@prev)
+            }
+        }
+    }
+}
+
+}
+
+/*
+    CONCACAF Caribbean Cup (launched after CaribbeanShield_final)
+*/
+
+comp NorthAmerica.ConferenceLeague {
+
+pool @CaribbeanCup_pool teams 8 sorting ChampionsCupGroup {
+    getInternationalTeams(DominicanRepublic, 2)
+    getInternationalTeams(Haiti, 2)
+    getInternationalTeams(Jamaica, 2)
+    getInternationalTeams(TrinidadTobago, 2)
+    
+    pool @CaribbeanCup_CaribbeanShield_teams teams 2 sorting Random <- @CaribbeanShield_final {
+        getWinner(@CaribbeanShield_final)
+        getLoser(@CaribbeanShield_final)
+        
+        group @CaribbeanCup_A "A" teams 5 subs NUM_SUBS matchdays CARC_G bonus [7000,8000,3000,0] {
+            get(@CaribbeanCup_pool, 1, 4)
+            get(@CaribbeanCup_CaribbeanShield_teams, 1, 1)
+        }
+        
+        group @CaribbeanCup_B "B" teams 5 subs NUM_SUBS matchdays CARC_G bonus [7000,8000,3000,0] {
+            get(@CaribbeanCup_pool, 5, 4)
+            get(@CaribbeanCup_CaribbeanShield_teams, 2, 1)
+        }
+    }
+}
+
+round @CaribbeanCup_semi type Semifinal teams 4 subs NUM_SUBS two_legs matchdays CARC_S <- [@CaribbeanCup_A,@CaribbeanCup_B] {
+    get([@CaribbeanCup_A,@CaribbeanCup_B], 1)
+    get([@CaribbeanCup_B,@CaribbeanCup_A], 2)
+    
+    round @CaribbeanCup_third type Final3rdPlace teams 2 subs NUM_SUBS two_legs matchdays CARC_F { getLoser(@prev) }
+    round @CaribbeanCup_final type Final teams 2 subs NUM_SUBS two_legs matchdays CARC_F { getWinner(@prev) }
+}
+
+}
+
+/*
+    CONCACAF Caribbean Shield
+*/
+
+comp NorthAmerica.Continental1 {
+
+pool @CaribbeanShield_pool teams 20 sorting Random {
+    getInternationalTeams(AntiguaAndBarbuda, 1)
+    getInternationalTeams(Aruba, 1)
+    getInternationalTeams(Bahamas, 1)
+    getInternationalTeams(Barbados, 1)
+    getInternationalTeams(Bermuda, 1)
+    getInternationalTeams(BritishVirginIs, 1)
+    getInternationalTeams(CaymanIslands, 1)
+    getInternationalTeams(Cuba, 1)
+    getInternationalTeams(Curacao, 1)
+    getInternationalTeams(Dominica, 1)
+    getInternationalTeams(Grenada, 1)
+    getInternationalTeams(Guyana, 1)
+    getInternationalTeams(Montserrat, 1)
+    getInternationalTeams(PuertoRico, 1)
+    getInternationalTeams(StKittsNevis, 1)
+    getInternationalTeams(StLucia, 1)
+    getInternationalTeams(StVincentGren, 1)
+    getInternationalTeams(Surinam, 1)
+    getInternationalTeams(TurksAndCaicos, 1)
+    getInternationalTeams(USVirginIslands, 1)
+    
+    group "A" teams 5 matchdays CARS_G bonus [2000,0,0,0] sorting DM subs NUM_SUBS -> @CaribbeanShield_semi { get(@prev, 1, 5) }
+    group "B" teams 5 matchdays CARS_G bonus [2000,0,0,0] sorting DM subs NUM_SUBS -> @CaribbeanShield_semi { get(@prev, 6, 5) }
+    group "C" teams 5 matchdays CARS_G bonus [2000,0,0,0] sorting DM subs NUM_SUBS -> @CaribbeanShield_semi { get(@prev, 11, 5) }
+    group "D" teams 5 matchdays CARS_G bonus [2000,0,0,0] sorting DM subs NUM_SUBS -> @CaribbeanShield_semi { get(@prev, 16, 5) }
+}
+
+round @CaribbeanShield_semi type Semifinal teams 4 subs NUM_SUBS matchdays CARS_S bonus [10000,0,0,0] {
+    get(@prev, 1)
+    shuffleTeams()
+    
+    round type Final3rdPlace teams 2 subs NUM_SUBS matchdays CARS_F { getLoser(@prev) }
+    round @CaribbeanShield_final type Final teams 2 subs NUM_SUBS matchdays CARS_F { getWinner(@prev) }
+}
+
+}
+
+/*
+    Leagues Cup
+*/
+
+comp NorthAmerica.Continental2 {
+
+pool @LeaguesCup_pool teams 42 { // plugin: if Mexico or US is not playable, change successor { 251, CONTINENTAL_2, 1 } to ROUND_LAST_16
+    getInternationalTeams(Mexico, 18)
+    getChamp(@@UnitedStates_LeagueCup_0) // MLS Cup winner (will add one team from regular league if there's no winner)
+    getInternationalTeams(UnitedStates, 24)
+    
+    pool teams 30 sorting ChampionsCupGroup {
+        get(@LeaguesCup_pool, 7, 12)
+        get(@LeaguesCup_pool, 25, 18)
+        
+        group "A" teams 3 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last32 { get(@prev, 1, 3) }
+        group "B" teams 3 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last32 { get(@prev, 4, 3) }
+        group "C" teams 3 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last32 { get(@prev, 7, 3) }
+        group "D" teams 3 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last32 { get(@prev, 10, 3) }
+        group "E" teams 3 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last32 { get(@prev, 13, 3) }
+        group "F" teams 3 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last32 { get(@prev, 16, 3) }
+        group "G" teams 3 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last32 { get(@prev, 19, 3) }
+        group "H" teams 3 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last32 { get(@prev, 22, 3) }
+        group "I" teams 3 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last32 { get(@prev, 25, 3) }
+        group "J" teams 3 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last32 { get(@prev, 28, 3) }
+    }
+}
+
+round @LeaguesCup_last32 "$ID_TOURNAMENT_LAST32" type Round1 teams 32 subs NUM_SUBS matchdays LC_32 bonus [100000,50000,0,0] {
+    get(@LeaguesCup_pool, 1, 6)
+    get(@LeaguesCup_pool, 19, 6)
+    get(@prev, 1, 2)
+    getCCSpare()
+    
+    round "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 subs NUM_SUBS matchdays LC_16 bonus [100000,50000,0,0] {
+        get(@prev)
+        getCCSpare() // plugin: if Mexico or US is not playable, add 8/8 teams from Mexico/US and sort/randomize
+        
+        round type Quarterfinal teams 8 subs NUM_SUBS matchdays LC_Q bonus [100000,50000,0,0] {
+            get(@prev)
+            
+            round type Semifinal teams 4 subs NUM_SUBS matchdays LC_S bonus [100000,50000,0,0] {
+                get(@prev)
+                
+                round @LeaguesCup_third type Final3rdPlace teams 2 subs NUM_SUBS matchdays LC_F { getLoser(@prev) }
+                round @LeaguesCup_final type Final teams 2 subs NUM_SUBS matchdays LC_F bonus [100000,2000000,0,0] { getWinner(@prev) }
+            }
+        }
+    }
+}
+
+}
+
+/*
+    Campeones Cup
+*/
+
+comp NorthAmerica.EuroSuperCup {
+
+round @CampeonesCup type Final teams 2 subs NUM_SUBS matchdays CAM_F bonus [500000,500000,0,0] {
+    getChamp(@@UnitedStates_LeagueCup_0) // MLS Cup winner (will add one team from regular league if there's no winner)
+    getInternationalTeams(Mexico, 1)
+    shuffleTeams()
+}
+
+}

@@ -1,0 +1,62 @@
+#name "OFC Cup"
+#author "FM 2025 Team"
+#version "25.0"
+
+#define M_OFC_1 [61,96,131]
+#define M_OFC_G [333,335,337]
+#define M_OFC_S 340
+#define M_OFC_3 343
+#define M_OFC_F 344
+
+#define NUM_SUBS 5
+
+// OFC Cup - each 4 years, next 2024 (May-June), start in 2023/2024.
+
+comp OfcCup {
+
+pool @p teams 8 <- @OFC_r1 {
+    get(@q_participants, 1, 7)
+    get(@OFC_r1, 1);
+    
+    pool @OFC_pot_1 teams 4 sorting Random -> [@OFC_a,@OFC_b] { get(@prev, 1, 2) }
+    pool @OFC_pot_2 teams 4 sorting Random -> [@OFC_a,@OFC_b] { get(@prev, 3, 4) }
+    pool @OFC_pot_3 teams 4 sorting Random -> [@OFC_a,@OFC_b] { get(@prev, 7, 2) }
+}
+
+group @OFC_a "A" teams 4 subs NUM_SUBS matchdays M_OFC_G {
+    get(@OFC_pot_1, 1, 1);
+    get(@OFC_pot_2, 1, 2);
+    get(@OFC_pot_3, 1, 1);
+    shuffleTeams()
+}
+
+group @OFC_b "B" teams 4 subs NUM_SUBS matchdays M_OFC_G {
+    get(@OFC_pot_1, 2, 1);
+    get(@OFC_pot_2, 3, 2);
+    get(@OFC_pot_3, 2, 1);
+    shuffleTeams()
+}
+
+round type Semifinal teams 4 subs NUM_SUBS matchdays M_OFC_S <- [@OFC_a,@OFC_b] {
+    get(@OFC_a, 1)
+    get(@OFC_b, 1)
+    get(@OFC_b, 2)
+    get(@OFC_a, 2)
+    
+    round @OFC_third type Final3rdPlace teams 2 subs NUM_SUBS matchdays M_OFC_3 { getLoser(@prev) }
+    round @OFC_final type Final teams 2 subs NUM_SUBS matchdays M_OFC_F { getWinner(@prev) }
+}
+
+}
+
+comp "Q_OFC_CUP" {
+
+pool @q_participants teams 11 sorting CountryStrength {
+    getNationalTeam(Oceania)
+    
+    league @OFC_r1 type Round1 "ID_ROUND1" teams 4 subs NUM_SUBS matchdays M_OFC_Q {
+        get(@prev, 8, 4)
+    }
+}
+
+}

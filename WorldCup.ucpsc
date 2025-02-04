@@ -1,0 +1,450 @@
+#name "World Cup + World Cup Qualification"
+#author "FM 2024 Team"
+#version "24.1"
+
+#define WC_GROUP_MATCHES [335,338,341]
+#define WC_LAST32_MATCH 344
+#define WC_LAST16_MATCH 347
+#define WC_QUARTERFINAL_MATCH 350
+#define WC_SEMIFINAL_MATCH 353
+#define WC_3RDPLACE_MATCH 356
+#define WC_FINAL_MATCH 357
+
+#define E_GROUP_MATCHES [215,218,264,267,426,429,461,464,496,499]
+#define E_GROUP_MATCHES2 [218,264,426,429,461,499]
+#define E_PLAYOFF_MATCHES_SEMI 580
+#define E_PLAYOFF_MATCHES_FINAL 583
+#define E_GROUPS [@E_a,@E_b,@E_c,@E_d,@E_e,@E_f,@E_g,@E_h,@E_i,@E_j,@E_k,@E_l]
+#define E_POTS_2_TO_4 [@E_pot_2,@E_pot_3,@E_pot_4]
+#define E_NL_OVERALL @@EuroNLQ_30
+
+#define SA_GROUP_MATCHES [61,64,96,99,131,134,215,218,264,267,426,429,461,464,496,499,580,583]
+
+#define CAF_GROUP_MATCHES [215,264,426,461,464]
+#define CAF_SEMI_MATCHES 496
+#define CAF_FINAL_MATCHES 499
+#define CAF_GROUPS [@CAF_a,@CAF_b,@CAF_c,@CAF_d,@CAF_e,@CAF_f,@CAF_g,@CAF_h,@CAF_i]
+
+#define N_R1_MATCHES [61,64]
+#define N_R2_MATCHES [96,99,131,215,264]
+#define N_GROUPS [@N_a,@N_b,@N_c,@N_d,@N_e,@N_f]
+
+#define AFC_R1_MATCHES [61,64]
+#define AFC_GROUP1_MATCHES [96,99,131,134,215,218]
+#define AFC_GROUP2_MATCHES [264,267,426,429,461]
+#define AFC_GROUP3_MATCHES [464,496,499]
+#define AFC_R5_MATCHES [580,583]
+#define AFC_GROUPS1 [@AFC_1a,@AFC_1b,@AFC_1c,@AFC_1d,@AFC_1e,@AFC_1f,@AFC_1g,@AFC_1h,@AFC_1i]
+#define AFC_GROUPS2 [@AFC_2a,@AFC_2b,@AFC_2c]
+#define AFC_GROUPS3 [@AFC_3a,@AFC_3b]
+
+#define OFC_GROUP_MATCHES [131,134,215,218,264]
+#define OFC_SEMI_MATCHES [426,429]
+#define OFC_FINAL_MATCHES [461,464]
+
+#define INTER_PLAYOFF_SEMI 629
+#define INTER_PLAYOFF_FINAL 632
+
+#define NUM_SUBS 5
+
+/////////////////////
+// Main tournament
+/////////////////////
+
+comp WorldCup {
+
+pool @WC_pool teams 48 sorting DrawWorldCup {
+    getHost() // 1 (+1 team)
+    get(E_GROUPS, 1) // 13 (+12 teams)
+    get(@E_playoff_final) // 17 (+4 teams)
+    get(@SA_a, 1, 6) // 23 (+6 teams)
+    get(N_GROUPS, 1) // 28 (+5 teams)
+    get(CAF_GROUPS, 1) // 37 (+9 teams)
+    get(AFC_GROUPS2, 1, 2) // 43 (+6 teams)
+    get(AFC_GROUPS3, 1) // 45 (+2 teams)
+    get(@OFC_final) // 46 (+1 team)
+    get(@inter_playoff_final) // 48 (+2 teams)
+    // backup
+    get(@q)
+    
+    group @a "A" teams 4 subs NUM_SUBS matchdays WC_GROUP_MATCHES -> @3rd { get(@prev, 1); get(@prev, 13); get(@prev, 25); get(@prev, 37)  }
+    group @b "B" teams 4 subs NUM_SUBS matchdays WC_GROUP_MATCHES -> @3rd { get(@prev, 2); get(@prev, 14); get(@prev, 26); get(@prev, 38)  }
+    group @c "C" teams 4 subs NUM_SUBS matchdays WC_GROUP_MATCHES -> @3rd { get(@prev, 3); get(@prev, 15); get(@prev, 27); get(@prev, 39)  }
+    group @d "D" teams 4 subs NUM_SUBS matchdays WC_GROUP_MATCHES -> @3rd { get(@prev, 4); get(@prev, 16); get(@prev, 28); get(@prev, 40)  }
+    group @e "E" teams 4 subs NUM_SUBS matchdays WC_GROUP_MATCHES -> @3rd { get(@prev, 5); get(@prev, 17); get(@prev, 29); get(@prev, 41)  }
+    group @f "F" teams 4 subs NUM_SUBS matchdays WC_GROUP_MATCHES -> @3rd { get(@prev, 6); get(@prev, 18); get(@prev, 30); get(@prev, 42)  }
+    group @g "G" teams 4 subs NUM_SUBS matchdays WC_GROUP_MATCHES -> @3rd { get(@prev, 7); get(@prev, 19); get(@prev, 31) ; get(@prev, 43) }
+    group @h "H" teams 4 subs NUM_SUBS matchdays WC_GROUP_MATCHES -> @3rd { get(@prev, 8); get(@prev, 20); get(@prev, 32); get(@prev, 44)  }
+    group @i "I" teams 4 subs NUM_SUBS matchdays WC_GROUP_MATCHES -> @3rd { get(@prev, 9); get(@prev, 21); get(@prev, 33) ; get(@prev, 45) }
+    group @j "J" teams 4 subs NUM_SUBS matchdays WC_GROUP_MATCHES -> @3rd { get(@prev, 10); get(@prev, 22); get(@prev, 34); get(@prev, 46)  }
+    group @k "K" teams 4 subs NUM_SUBS matchdays WC_GROUP_MATCHES -> @3rd { get(@prev, 11); get(@prev, 23); get(@prev, 35); get(@prev, 47)  }
+    group @l "L" teams 4 subs NUM_SUBS matchdays WC_GROUP_MATCHES -> @3rd { get(@prev, 12); get(@prev, 24); get(@prev, 36) ; get(@prev, 48) }
+}
+
+pool @3rd teams 12 sorting PrevPointsDiff {
+    get([@a,@b,@c,@d,@e,@f,@g,@h,@i,@j,@k,@l], 3);
+    
+    round "$ID_TOURNAMENT_LAST32" type Round3 teams 32 subs NUM_SUBS matchdays WC_LAST32_MATCH {
+        get(@a, 1);
+        get(@i, 1);
+        get(@e, 1);
+        get(@a, 2);
+        get(@c, 1);
+        get(@k, 1);
+        get(@g, 1);
+        get(@c, 2);
+        get(@b, 1);
+        get(@j, 1);
+        get(@f, 1);
+        get(@b, 2);
+        get(@d, 1);
+        get(@l, 1);
+        get(@h, 1);
+        get(@d, 2);
+        
+        get(@3rd,1);
+        get(@e, 2);
+        get(@3rd,5);
+        get(@i, 2);
+        get(@3rd,3);
+        get(@g, 2);
+        get(@3rd,7);
+        get(@k, 2);
+        get(@3rd,2);
+        get(@f, 2);
+        get(@3rd,6);
+        get(@j, 2);
+        get(@3rd,4);
+        get(@h, 2);
+        get(@3rd,8);
+        get(@l, 2);
+        
+        round "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 subs NUM_SUBS matchdays WC_LAST16_MATCH {
+            get(@prev)
+            
+            round type Quarterfinal teams 8 subs NUM_SUBS matchdays WC_QUARTERFINAL_MATCH {
+                get(@prev)
+                
+                round type Semifinal teams 4 subs NUM_SUBS matchdays WC_SEMIFINAL_MATCH {
+                    get(@prev)
+                    
+                    round type Final3rdPlace teams 2 subs NUM_SUBS matchdays WC_3RDPLACE_MATCH { getLoser(@prev) }
+                    round type Final teams 2 subs NUM_SUBS matchdays WC_FINAL_MATCH { getWinner(@prev) }
+                }
+            }
+        }
+    }
+}
+
+}
+
+comp QualiWC {
+
+/////////////////////
+// Qualification
+/////////////////////
+
+pool @q teams 206 sorting CountryStrength {
+    getNationalTeamWithoutHost([1-39,41-207])
+}
+
+pool @E_q teams 54 sorting CountryStrength <- @q {
+    getNationalTeamWithoutHost(France)
+    getNationalTeamWithoutHost(Belgium)
+    getNationalTeamWithoutHost(Italy)
+    getNationalTeamWithoutHost(Spain)
+    getNationalTeamWithoutHost(Portugal)
+    getNationalTeamWithoutHost(Netherlands)
+    getNationalTeamWithoutHost(Denmark)
+    getNationalTeamWithoutHost(Germany)
+    getNationalTeamWithoutHost(England)
+    getNationalTeamWithoutHost(Poland)
+    getNationalTeamWithoutHost(Switzerland)
+    getNationalTeamWithoutHost(Croatia)
+    getNationalTeamWithoutHost(Wales)
+    getNationalTeamWithoutHost(Austria)
+    getNationalTeamWithoutHost(CzechRepublic)
+    getNationalTeamWithoutHost(Hungary)
+    getNationalTeamWithoutHost(Ukraine)
+    getNationalTeamWithoutHost(Sweden)
+    getNationalTeamWithoutHost(BosniaHerzegovina)
+    getNationalTeamWithoutHost(Iceland)
+    getNationalTeamWithoutHost(Finland)
+    getNationalTeamWithoutHost(Norway)
+    getNationalTeamWithoutHost(Scotland)
+    getNationalTeamWithoutHost(Israel)
+    getNationalTeamWithoutHost(Romania)
+    getNationalTeamWithoutHost(Serbia)
+    getNationalTeamWithoutHost(Ireland)
+    getNationalTeamWithoutHost(Slovenia)
+    getNationalTeamWithoutHost(Montenegro)
+    getNationalTeamWithoutHost(Albania)
+    getNationalTeamWithoutHost(Armenia)
+    getNationalTeamWithoutHost(Turkey)
+    getNationalTeamWithoutHost(Slovakia)
+    getNationalTeamWithoutHost(Bulgaria)
+    getNationalTeamWithoutHost(NorthernIreland)
+    getNationalTeamWithoutHost(Greece)
+    getNationalTeamWithoutHost(Belarus)
+    getNationalTeamWithoutHost(Luxembourg)
+    getNationalTeamWithoutHost(NorthMacedonia)
+    getNationalTeamWithoutHost(Lithuania)
+    getNationalTeamWithoutHost(Georgia)
+    getNationalTeamWithoutHost(Azerbaijan)
+    getNationalTeamWithoutHost(Kosovo)
+    getNationalTeamWithoutHost(Kazakhstan)
+    getNationalTeamWithoutHost(Cyprus)
+    getNationalTeamWithoutHost(Gibraltar)
+    getNationalTeamWithoutHost(FaroeIslands)
+    getNationalTeamWithoutHost(Estonia)
+    getNationalTeamWithoutHost(Moldova)
+    getNationalTeamWithoutHost(Liechtenstein)
+    getNationalTeamWithoutHost(Malta)
+    getNationalTeamWithoutHost(Latvia)
+    getNationalTeamWithoutHost(SanMarino)
+    getNationalTeamWithoutHost(Andorra)
+}
+
+pool @SA_q teams 10 sorting CountryStrength <- @q {
+    getNationalTeamWithoutHost(SouthAmerica)
+}
+
+pool @N_q teams 34 sorting CountryStrength <- @q {
+    getNationalTeamWithoutHost(NorthAmerica)
+}
+
+pool @CAF_q teams 52 sorting CountryStrength <- @q {
+    getNationalTeamWithoutHost(Africa)
+}
+
+pool @AFC_q teams 45 sorting CountryStrength <- @q {
+    getNationalTeam(Asia) // host is excluded later
+}
+
+pool @OFC_q teams 11 sorting CountryStrength <- @q {
+    getNationalTeamWithoutHost(Oceania)
+}
+
+// UEFA (connected with UEFA NL)
+
+pool @E_WC_host teams 2 <- @E_q {
+    getHost()
+    // TODO: test how weak link works when starting in 2021/2022 season (NL is not launched)
+    pool @E_nl_top_4 teams 4 sorting Random constraints @E_WC_host {
+        getPool(E_NL_OVERALL, 1, 54) // 4 best teams from Nations League overall table (teams for first season - if NL is played after WC in the game)
+        // teams for first season
+        //getNationalTeam(France)
+        //getNationalTeam(Belgium)
+        //getNationalTeam(Italy)
+        //getNationalTeam(Spain)
+        
+        pool @E_other teams 50 constraints @prev {
+            get(@E_q) // other teams from Europe
+            
+            pool @E_pot_1 teams 8 sorting Random -> E_GROUPS { get(@prev, 1, 8) }
+            pool @E_pot_2 teams 12 sorting Random -> E_GROUPS { get(@prev, 9, 12) }
+            pool @E_pot_3 teams 12 sorting Random -> E_GROUPS { get(@prev, 21, 12) }
+            pool @E_pot_4 teams 12 sorting Random -> E_GROUPS { get(@prev, 33, 12) }
+            pool @E_pot_5 teams 6 sorting Random -> E_GROUPS { get(@prev, 45, 6) }
+        }
+    }
+}
+
+group @E_a "$ID_WCQ_EURO_A" teams 5 subs NUM_SUBS rounds 2 matchdays E_GROUP_MATCHES { get(@E_nl_top_4, 1); get(E_POTS_2_TO_4, 1); get(@E_pot_5, 1); shuffleTeams() }
+group @E_b "$ID_WCQ_EURO_B" teams 5 subs NUM_SUBS rounds 2 matchdays E_GROUP_MATCHES { get(@E_nl_top_4, 2); get(E_POTS_2_TO_4, 2); get(@E_pot_5, 2); shuffleTeams() }
+group @E_c "$ID_WCQ_EURO_C" teams 5 subs NUM_SUBS rounds 2 matchdays E_GROUP_MATCHES { get(@E_nl_top_4, 3); get(E_POTS_2_TO_4, 3); get(@E_pot_5, 3); shuffleTeams() }
+group @E_d "$ID_WCQ_EURO_D" teams 5 subs NUM_SUBS rounds 2 matchdays E_GROUP_MATCHES { get(@E_nl_top_4, 4); get(E_POTS_2_TO_4, 4); get(@E_pot_5, 4); shuffleTeams() }
+group @E_e "$ID_WCQ_EURO_E" teams 5 subs NUM_SUBS rounds 2 matchdays E_GROUP_MATCHES { get(@E_pot_1, 1); get(E_POTS_2_TO_4, 5); get(@E_pot_5, 5); shuffleTeams() }
+group @E_f "$ID_WCQ_EURO_F" teams 5 subs NUM_SUBS rounds 2 matchdays E_GROUP_MATCHES { get(@E_pot_1, 2); get(E_POTS_2_TO_4, 6); get(@E_pot_5, 6); shuffleTeams() }
+group @E_g "$ID_WCQ_EURO_G" teams 4 subs NUM_SUBS rounds 2 matchdays E_GROUP_MATCHES2 { get(@E_pot_1, 3); get(E_POTS_2_TO_4, 7); shuffleTeams() }
+group @E_h "$ID_WCQ_EURO_H" teams 4 subs NUM_SUBS rounds 2 matchdays E_GROUP_MATCHES2 { get(@E_pot_1, 4); get(E_POTS_2_TO_4, 8); shuffleTeams() }
+group @E_i "$ID_WCQ_EURO_I" teams 4 subs NUM_SUBS rounds 2 matchdays E_GROUP_MATCHES2 { get(@E_pot_1, 5); get(E_POTS_2_TO_4, 9); shuffleTeams() }
+group @E_j "$ID_WCQ_EURO_J" teams 4 subs NUM_SUBS rounds 2 matchdays E_GROUP_MATCHES2 { get(@E_pot_1, 6); get(E_POTS_2_TO_4, 10); shuffleTeams() }
+group @E_k "$ID_WCQ_EURO_K" teams 4 subs NUM_SUBS rounds 2 matchdays E_GROUP_MATCHES2 { get(@E_pot_1, 7); get(E_POTS_2_TO_4, 11); shuffleTeams() }
+group @E_l "$ID_WCQ_EURO_L" teams 4 subs NUM_SUBS rounds 2 matchdays E_GROUP_MATCHES2 { get(@E_pot_1, 8); get(E_POTS_2_TO_4, 12); shuffleTeams() }
+
+pool @E_qualified teams 26 <- E_GROUPS {
+    getHost()
+    get(E_GROUPS, 1, 2)
+    
+    pool @E_nl_participants teams 4 constraints @prev {
+        getPool(E_NL_OVERALL , 1, 54) // 4 best teams from Nations League overall table (teams for first season - if EC is played after WC in the game)
+        //teams for first season
+        //...
+        
+        round @E_playoff_semi type Quali "$ID_WCQ_EURO_SEMI" teams 16 subs NUM_SUBS matchdays E_PLAYOFF_MATCHES_SEMI {
+            get(E_GROUPS, 2) // 12 groups runner-ups
+            get(@prev) // 4 best teams from Nations League overall table
+            getCCSpare() // sort by ranking and randomize
+            
+            round @E_playoff_final type Quali2 "$ID_WCQ_EURO_FINAL" teams 8 subs NUM_SUBS matchdays E_PLAYOFF_MATCHES_FINAL -> @WC_pool {
+                get(@prev)
+            }
+        }
+    }
+}
+
+// CONMEBOL
+
+league @SA_a "$ID_WCQ_SOUTHAM" type Quarterfinal teams 10 subs NUM_SUBS rounds 2 matchdays SA_GROUP_MATCHES <- @SA_q {
+    get(@prev); shuffleTeams()
+}
+
+// CAF
+
+pool @CAF_pot_1 teams 9 sorting Random -> CAF_GROUPS <- @CAF_q { get(@prev, 1, 9) }
+pool @CAF_pot_2 teams 9 sorting Random -> CAF_GROUPS <- @CAF_q { get(@prev, 10, 9) }
+pool @CAF_pot_3 teams 9 sorting Random -> CAF_GROUPS <- @CAF_q { get(@prev, 19, 9) }
+pool @CAF_pot_4 teams 9 sorting Random -> CAF_GROUPS <- @CAF_q { get(@prev, 28, 9) }
+pool @CAF_pot_5 teams 9 sorting Random -> CAF_GROUPS <- @CAF_q { get(@prev, 37, 9) }
+pool @CAF_pot_6 teams 7 sorting Random -> CAF_GROUPS <- @CAF_q { get(@prev, 46, 7) }
+
+group @CAF_a "$ID_WCQ_CAF_A" teams 6 subs NUM_SUBS rounds 1 matchdays CAF_GROUP_MATCHES { get(@prev, 1); shuffleTeams() }
+group @CAF_b "$ID_WCQ_CAF_B" teams 6 subs NUM_SUBS rounds 1 matchdays CAF_GROUP_MATCHES { get(@prev, 2); shuffleTeams() }
+group @CAF_c "$ID_WCQ_CAF_C" teams 6 subs NUM_SUBS rounds 1 matchdays CAF_GROUP_MATCHES { get(@prev, 3); shuffleTeams() }
+group @CAF_d "$ID_WCQ_CAF_D" teams 6 subs NUM_SUBS rounds 1 matchdays CAF_GROUP_MATCHES { get(@prev, 4); shuffleTeams() }
+group @CAF_e "$ID_WCQ_CAF_E" teams 6 subs NUM_SUBS rounds 1 matchdays CAF_GROUP_MATCHES { get(@prev, 5); shuffleTeams() }
+group @CAF_f "$ID_WCQ_CAF_F" teams 6 subs NUM_SUBS rounds 1 matchdays CAF_GROUP_MATCHES { get(@prev, 6); shuffleTeams() }
+group @CAF_g "$ID_WCQ_CAF_G" teams 6 subs NUM_SUBS rounds 1 matchdays CAF_GROUP_MATCHES { get(@prev, 7); shuffleTeams() }
+group @CAF_h "$ID_WCQ_CAF_H" teams 5 subs NUM_SUBS rounds 1 matchdays CAF_GROUP_MATCHES { get([@CAF_pot_1,@CAF_pot_2,@CAF_pot_3,@CAF_pot_4,@CAF_pot_5], 8); shuffleTeams() }
+group @CAF_i "$ID_WCQ_CAF_I" teams 5 subs NUM_SUBS rounds 1 matchdays CAF_GROUP_MATCHES { get([@CAF_pot_1,@CAF_pot_2,@CAF_pot_3,@CAF_pot_4,@CAF_pot_5], 9); shuffleTeams() }
+
+pool @CAF_2nd teams 9 sorting PrevPointsDiff <- CAF_GROUPS {
+    get(@prev, 2)
+    
+    round @CAF_semi type Quali "$ID_WCQ_CAF_SEMI" teams 4 subs NUM_SUBS matchdays CAF_SEMI_MATCHES {
+        get(@prev, 1, 4)
+        shuffleTeams()
+        
+        round @CAF_final type Quali2 "$ID_WCQ_CAF_FINAL" teams 2 subs NUM_SUBS matchdays CAF_FINAL_MATCHES {
+            get(@prev)
+        }
+    }
+}
+
+// CONCACAF
+
+round @N_r1 "$ID_WCQ_NAM_R1" type Round1 teams 8 subs NUM_SUBS two_legs matchdays N_R1_MATCHES <- @N_q {
+    get(@prev, 27, 8)
+    
+    pool @N_pot_1 teams 6 sorting Random -> N_GROUPS { get(@N_q, 1, 6) }
+    pool @N_pot_2 teams 6 sorting Random -> N_GROUPS { get(@N_q, 7, 6) }
+    pool @N_pot_3 teams 6 sorting Random -> N_GROUPS { get(@N_q, 13, 6) }
+    pool @N_pot_4 teams 6 sorting Random -> N_GROUPS { get(@N_q, 19, 6) }
+    pool @N_pot_5 teams 6 sorting Random -> N_GROUPS { get(@N_q, 25, 2); get(@prev) }
+}
+
+group @N_a "$ID_WCQ_NAM_R2_A" teams 5 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 1); shuffleTeams() }
+group @N_b "$ID_WCQ_NAM_R2_B" teams 5 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 2); shuffleTeams() }
+group @N_c "$ID_WCQ_NAM_R2_C" teams 5 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 3); shuffleTeams() }
+group @N_d "$ID_WCQ_NAM_R2_D" teams 5 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 4); shuffleTeams() }
+group @N_e "$ID_WCQ_NAM_R2_E" teams 5 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 5); shuffleTeams() }
+group @N_f "$ID_WCQ_NAM_R2_F" teams 5 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 6); shuffleTeams() }
+
+pool @N_2nd teams 5 sorting PrevPointsDiff <- N_GROUPS {
+    get(@prev, 2)
+}
+
+// AFC (connected with AFC Cup)
+
+round @AFC_1 "$ID_WCQ_AFC_R1" type Round1 teams 18 subs NUM_SUBS two_legs matchdays AFC_R1_MATCHES <- @AFC_q {
+    get(@prev, 28, 18)
+    
+    pool @AFC_pot_1 teams 9 sorting Random -> AFC_GROUPS1 { get(@AFC_q, 1, 9) }
+    pool @AFC_pot_2 teams 9 sorting Random -> AFC_GROUPS1 { get(@AFC_q, 10, 9) }
+    pool @AFC_pot_3 teams 9 sorting Random -> AFC_GROUPS1 { get(@AFC_q, 19, 9) }
+    pool @AFC_pot_4 teams 9 sorting Random -> AFC_GROUPS1 { get(@prev) }
+}
+
+group @AFC_1a "$ID_WCQ_AFC_R2_A" type Round2 rounds 2 teams 4 subs NUM_SUBS matchdays AFC_GROUP1_MATCHES { get(@prev, 1); shuffleTeams() }
+group @AFC_1b "$ID_WCQ_AFC_R2_B" type Round2 rounds 2 teams 4 subs NUM_SUBS matchdays AFC_GROUP1_MATCHES { get(@prev, 2); shuffleTeams() }
+group @AFC_1c "$ID_WCQ_AFC_R2_C" type Round2 rounds 2 teams 4 subs NUM_SUBS matchdays AFC_GROUP1_MATCHES { get(@prev, 3); shuffleTeams() }
+group @AFC_1d "$ID_WCQ_AFC_R2_D" type Round2 rounds 2 teams 4 subs NUM_SUBS matchdays AFC_GROUP1_MATCHES { get(@prev, 4); shuffleTeams() }
+group @AFC_1e "$ID_WCQ_AFC_R2_E" type Round2 rounds 2 teams 4 subs NUM_SUBS matchdays AFC_GROUP1_MATCHES { get(@prev, 5); shuffleTeams() }
+group @AFC_1f "$ID_WCQ_AFC_R2_F" type Round2 rounds 2 teams 4 subs NUM_SUBS matchdays AFC_GROUP1_MATCHES { get(@prev, 6); shuffleTeams() }
+group @AFC_1g "$ID_WCQ_AFC_R2_G" type Round2 rounds 2 teams 4 subs NUM_SUBS matchdays AFC_GROUP1_MATCHES { get(@prev, 7); shuffleTeams() }
+group @AFC_1h "$ID_WCQ_AFC_R2_H" type Round2 rounds 2 teams 4 subs NUM_SUBS matchdays AFC_GROUP1_MATCHES { get(@prev, 8); shuffleTeams() }
+group @AFC_1i "$ID_WCQ_AFC_R2_I" type Round2 rounds 2 teams 4 subs NUM_SUBS matchdays AFC_GROUP1_MATCHES { get(@prev, 9); shuffleTeams() }
+
+pool @AFC_groups_pool teams 45 <- AFC_GROUPS1 { // used for AFC Cup later
+    get(AFC_GROUPS1, 1)
+    get(AFC_GROUPS1, 2)
+    get(AFC_GROUPS1, 3)
+    get(AFC_GROUPS1, 4)
+    getLoser(@AFC_1)
+    
+    pool @AFC_host teams 2 {
+        getHost()
+        
+        pool @AFC_groups_pool_no_host teams 18 sorting CountryStrength constraints @AFC_host { // exclude host
+            get(@AFC_groups_pool)
+            
+            pool @AFC_2_pot_1 teams 3 sorting Random -> AFC_GROUPS2 { get(@prev, 1, 3) }
+            pool @AFC_2_pot_2 teams 3 sorting Random -> AFC_GROUPS2 { get(@prev, 4, 3) }
+            pool @AFC_2_pot_3 teams 3 sorting Random -> AFC_GROUPS2 { get(@prev, 7, 3) }
+            pool @AFC_2_pot_4 teams 3 sorting Random -> AFC_GROUPS2 { get(@prev, 10, 3) }
+            pool @AFC_2_pot_5 teams 3 sorting Random -> AFC_GROUPS2 { get(@prev, 13, 3) }
+            pool @AFC_2_pot_6 teams 3 sorting Random -> AFC_GROUPS2 { get(@prev, 16, 3) }
+        }
+    }
+}
+
+group @AFC_2a "$ID_WCQ_AFC_R3_A" type Round3 teams 6 subs NUM_SUBS rounds 1 matchdays AFC_GROUP2_MATCHES { get(@prev, 1); shuffleTeams() }
+group @AFC_2b "$ID_WCQ_AFC_R3_B" type Round3 teams 6 subs NUM_SUBS rounds 1 matchdays AFC_GROUP2_MATCHES { get(@prev, 2); shuffleTeams() }
+group @AFC_2c "$ID_WCQ_AFC_R3_C" type Round3 teams 6 subs NUM_SUBS rounds 1 matchdays AFC_GROUP2_MATCHES { get(@prev, 3); shuffleTeams() }
+
+pool @AFC_pool_4th_round teams 6 sorting Random <- AFC_GROUPS2 {
+    get(@prev, 3, 2)
+    
+    group @AFC_3a "$ID_WCQ_AFC_R4_A" type Round4 teams 3 subs NUM_SUBS rounds 1 matchdays AFC_GROUP3_MATCHES { get(@prev, 1, 3); shuffleTeams() }
+    group @AFC_3b "$ID_WCQ_AFC_R4_B" type Round4 teams 3 subs NUM_SUBS rounds 1 matchdays AFC_GROUP3_MATCHES { get(@prev, 4, 3); shuffleTeams() }    
+}
+
+round @AFC_5th_round "$ID_WCQ_AFC_R5" type Round5 teams 2 subs NUM_SUBS two_legs matchdays AFC_R5_MATCHES <- AFC_GROUPS3 {
+    get(@prev, 2)
+}
+
+// OFC
+// 11 teams are split into 2 groups: 5 and 6 teams
+// 2 teams of each group enter semi-final round
+
+pool @OFC_pot_1 teams 2 sorting Random <- @OFC_q -> [@OFC_a,@OFC_b] { get(@prev, 1, 2) }
+pool @OFC_pot_2 teams 2 sorting Random <- @OFC_q -> [@OFC_a,@OFC_b] { get(@prev, 3, 2) }
+pool @OFC_pot_3 teams 2 sorting Random <- @OFC_q -> [@OFC_a,@OFC_b] { get(@prev, 5, 2) }
+pool @OFC_pot_4 teams 2 sorting Random <- @OFC_q -> [@OFC_a,@OFC_b] { get(@prev, 7, 2) }
+pool @OFC_pot_5 teams 2 sorting Random <- @OFC_q -> [@OFC_a,@OFC_b] { get(@prev, 9, 2) }
+
+group @OFC_a type Round1 "$ID_WCQ_OFC_A" teams 5 subs NUM_SUBS rounds 1 matchdays OFC_GROUP_MATCHES { get(@prev, 1); shuffleTeams() }
+group @OFC_b type Round1 "$ID_WCQ_OFC_B" teams 6 subs NUM_SUBS rounds 1 matchdays OFC_GROUP_MATCHES { get(@prev, 2); get(@OFC_q, 11, 1); shuffleTeams() }
+
+round type Round2 @OFC_semi "$ID_WCQ_OFC_SEMI" teams 4 subs NUM_SUBS two_legs matchdays OFC_SEMI_MATCHES <- [@OFC_a,@OFC_b] {
+    get(@OFC_a, 1); get(@OFC_b, 1)
+    get(@OFC_b, 2); get(@OFC_a, 2)
+    
+    round type Round3 @OFC_final "$ID_WCQ_OFC_FINAL" teams 2 subs NUM_SUBS two_legs matchdays OFC_FINAL_MATCHES {
+        get(@prev)
+    }
+}
+
+// inter playoff
+
+pool @inter_playoff teams 5 sorting CountryStrength <- [@N_2nd,@AFC_5th_round,@OFC_final,@SA_a,@CAF_final] {
+    get(@N_2nd, 1)
+    get(@AFC_5th_round)
+    getLoser(@OFC_final)
+    get(@SA_a, 7)
+    get(@CAF_final)
+    
+    round @inter_playoff_semi type Quali "$ID_WCQ_PLAYOFF_SEMI" teams 2 subs NUM_SUBS matchdays INTER_PLAYOFF_SEMI {
+        get(@prev, 4, 2)
+        shuffleTeams()
+        
+        round @inter_playoff_final type Quali2 "$ID_WCQ_PLAYOFF_FINAL" teams 4 subs NUM_SUBS matchdays INTER_PLAYOFF_FINAL -> @WC_pool {
+            get(@inter_playoff, 1, 3)
+            get(@prev)
+            shuffleTeams()
+        }
+    }
+}
+
+}

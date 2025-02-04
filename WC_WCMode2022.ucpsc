@@ -1,0 +1,45 @@
+#name "World Cup 2022"
+#author "FM 2024 Team"
+#version "24.0"
+
+#define WC_GROUP_MATCHES [333,337,341]
+#define WC_LAST16_MATCH 345
+#define WC_QUARTERFINAL_MATCH 349
+#define WC_SEMIFINAL_MATCH 354
+#define WC_3RDPLACE_MATCH 358
+#define WC_FINAL_MATCH 359
+#define WC_FIXTURES [1,2,4,3,1,4,3,2,2,4,3,1]
+#define NUM_SUBS 5
+
+comp WorldCup {
+
+pool @WC_pool teams 32 sorting DrawWorldCup {
+    getHost()
+    
+    group @a "A" teams 4 matchdays WC_GROUP_MATCHES fixtures WC_FIXTURES subs NUM_SUBS { get(@prev, 1); get(@prev, 9); get(@prev, 17); get(@prev, 25) }
+    group @b "B" teams 4 matchdays WC_GROUP_MATCHES fixtures WC_FIXTURES subs NUM_SUBS { get(@prev, 2); get(@prev, 10); get(@prev, 18); get(@prev, 26) }
+    group @c "C" teams 4 matchdays WC_GROUP_MATCHES fixtures WC_FIXTURES subs NUM_SUBS { get(@prev, 3); get(@prev, 11); get(@prev, 19); get(@prev, 27) }
+    group @d "D" teams 4 matchdays WC_GROUP_MATCHES fixtures WC_FIXTURES subs NUM_SUBS { get(@prev, 4); get(@prev, 12); get(@prev, 20); get(@prev, 28) }
+    group @e "E" teams 4 matchdays WC_GROUP_MATCHES fixtures WC_FIXTURES subs NUM_SUBS { get(@prev, 5); get(@prev, 13); get(@prev, 21); get(@prev, 29) }
+    group @f "F" teams 4 matchdays WC_GROUP_MATCHES fixtures WC_FIXTURES subs NUM_SUBS { get(@prev, 6); get(@prev, 14); get(@prev, 22); get(@prev, 30) }
+    group @g "G" teams 4 matchdays WC_GROUP_MATCHES fixtures WC_FIXTURES subs NUM_SUBS { get(@prev, 7); get(@prev, 15); get(@prev, 23); get(@prev, 31) }
+    group @h "H" teams 4 matchdays WC_GROUP_MATCHES fixtures WC_FIXTURES subs NUM_SUBS { get(@prev, 8); get(@prev, 16); get(@prev, 24); get(@prev, 32) }
+}
+
+round "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 matchdays WC_LAST16_MATCH subs NUM_SUBS <- [@a,@b,@c,@d,@e,@f,@g,@h]  {
+    get(@a, 1); get(@b, 1); get(@e, 1); get(@f, 1); get(@c, 1); get(@d, 1); get(@g, 1); get(@h, 1)
+    get(@b, 2); get(@a, 2); get(@f, 2); get(@e, 2); get(@d, 2); get(@c, 2); get(@h, 2); get(@g, 2)
+    
+    round type Quarterfinal teams 8 matchdays WC_QUARTERFINAL_MATCH subs NUM_SUBS {
+        get(@prev)
+        
+        round type Semifinal teams 4 matchdays WC_SEMIFINAL_MATCH subs NUM_SUBS {
+            get(@prev)
+            
+            round type Final3rdPlace teams 2 matchdays WC_3RDPLACE_MATCH subs NUM_SUBS { getLoser(@prev) }
+            round type Final teams 2 matchdays WC_FINAL_MATCH subs NUM_SUBS { getWinner(@prev) }
+        }
+    }
+}
+
+}

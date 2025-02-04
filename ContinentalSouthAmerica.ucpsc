@@ -1,0 +1,256 @@
+#name "CONMEBOL Copa Libertadores, Copa Sudamericana, Recopa Sudamericana, U-20 Copa Libertadores"
+#author "FM 2025 Team"
+#version "25.0"
+
+#define COL_1 [17,24]
+#define COL_2 [31,38]
+#define COL_3 [45,52]
+#define COL_G [73,87,108,122,143,157]
+#define COL_L [234,248]
+#define COL_Q [276,283]
+#define COL_S [297,304]
+#define COL_F 328
+#define CS_1 53
+#define CS_G [74,88,109,123,144,158]
+#define CS_P [228,235]
+#define CS_L [242,249]
+#define CS_Q [277,284]
+#define CS_S [298,305]
+#define CS_F 325
+#define SC_F [45,52]
+#define Y_G [31,38,45]
+#define Y_S 52
+#define Y_T 73
+#define Y_F 73
+#define G_FIXTURES [3,1,4,2,1,4,2,3,2,1,4,3,4,1,3,2,1,2,3,4,1,3,2,4]
+#define YL_FIXTURES [1,3,2,4,3,2,4,1,1,2,3,4]
+#define NUM_SUBS 5
+
+comp SouthAmerica.ChampionsLeague {
+
+// this pool might contain 46 teams in case if: Brazil is not selected as playable AND Brazilian teams won CoL and CS
+pool @CoL_participants teams 47 {
+    getChamp(@CoL_final)
+    getChamp(@CS_final)
+    getInternationalTeams(Brazil, 4)
+    getChamp(@@Brazil_FaCup_0)
+    getInternationalTeams(Argentina, 4)
+    getChamp(@@Argentina_FaCup_0)
+    getInternationalTeams(Colombia, 2)
+    getInternationalTeams(Chile, 2)
+    getInternationalTeams(Uruguay, 2)
+    getInternationalTeams(Bolivia, 2)
+    getInternationalTeams(Ecuador, 2)
+    getInternationalTeams(Paraguay, 2)
+    getInternationalTeams(Peru, 2)
+    getInternationalTeams(Venezuela, 2)
+    //
+    getChamp(@@Colombia_FaCup_0)
+    getChamp(@@Chile_FaCup_0)
+    getInternationalTeams(Brazil, 1)
+    getInternationalTeams(Argentina, 1)
+    getInternationalTeams(Colombia, 1)
+    getInternationalTeams(Chile, 1)
+    getInternationalTeams(Uruguay, 1)
+    getInternationalTeams(Bolivia, 1)
+    getInternationalTeams(Ecuador, 1)
+    getInternationalTeams(Paraguay, 1)
+    getInternationalTeams(Peru, 1)
+    getInternationalTeams(Venezuela, 1)
+    getInternationalTeams(Brazil, 1) // 9 teams from Brazil is possible
+    //
+    getInternationalTeams(Uruguay, 1)
+    getInternationalTeams(Bolivia, 1)
+    getInternationalTeams(Ecuador, 1)
+    getInternationalTeams(Paraguay, 1)
+    getInternationalTeams(Peru, 1)
+    getInternationalTeams(Venezuela, 1)
+    
+    round @CoL_first_stage "$ID_FIRST_STAGE" type Quali teams 6 subs NUM_SUBS  without_away_goal two_legs matchdays COL_1 bonus [0,0,380000,0] {
+        get(@CoL_participants, 42, 6)
+        getCCSpare()
+        
+        round @CoL_second_stage "$ID_SECOND_STAGE" type Quali teams 16 subs NUM_SUBS  without_away_goal two_legs matchdays COL_2 bonus [0,0,475000,0] {
+            get(@prev)
+            get(@CoL_participants, 29, 13)
+            getCCSpare()
+            
+            round @CoL_third_stage "$ID_THIRD_STAGE" type Quali teams 8 subs NUM_SUBS  without_away_goal two_legs matchdays COL_3 bonus [0,0,570000,0] {
+                get(@prev)
+                getCCSpare()
+                
+                pool @CoL_third_stage_losers teams 4 { // finishes on 52.
+                    getLoser(@prev)
+                    
+                    pool @CoL_group_stage teams 32 sorting ChampionsCupGroup {
+                        get(@CoL_participants, 1, 28)
+                        get(@CoL_third_stage)
+                        
+                        group "A" @CoL_a teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays COL_G bonus [0,315000,0,2850000] fixtures G_FIXTURES { get(@prev, 1, 4) }
+                        group "B" @CoL_b teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays COL_G bonus [0,315000,0,2850000] fixtures G_FIXTURES { get(@prev, 5, 4) }
+                        group "C" @CoL_c teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays COL_G bonus [0,315000,0,2850000] fixtures G_FIXTURES { get(@prev, 9, 4) }
+                        group "D" @CoL_d teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays COL_G bonus [0,315000,0,2850000] fixtures G_FIXTURES { get(@prev, 13, 4) }
+                        group "E" @CoL_e teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays COL_G bonus [0,315000,0,2850000] fixtures G_FIXTURES { get(@prev, 17, 4) }
+                        group "F" @CoL_f teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays COL_G bonus [0,315000,0,2850000] fixtures G_FIXTURES { get(@prev, 21, 4) }
+                        group "G" @CoL_g teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays COL_G bonus [0,315000,0,2850000] fixtures G_FIXTURES { get(@prev, 25, 4) }
+                        group "H" @CoL_h teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays COL_G bonus [0,315000,0,2850000] fixtures G_FIXTURES { get(@prev, 29, 4) }
+                    }
+                }
+            }
+        }
+    }
+}
+
+pool @CoL_third_places teams 8 sorting PrevPointsDiff <- [@CoL_a,@CoL_b,@CoL_c,@CoL_d,@CoL_e,@CoL_f,@CoL_g,@CoL_h] { // finishes on 157.
+    get(@prev, 3)
+    
+    round "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 subs NUM_SUBS  two_legs matchdays COL_L bonus [0,0,0,1200000] {
+        get([@CoL_a,@CoL_b,@CoL_c,@CoL_d,@CoL_e,@CoL_f,@CoL_g,@CoL_h], 2)
+        get([@CoL_a,@CoL_b,@CoL_c,@CoL_d,@CoL_e,@CoL_f,@CoL_g,@CoL_h], 1)
+        getCCSpare()
+        
+        round type Quarterfinal teams 8 subs NUM_SUBS  without_away_goal two_legs matchdays COL_Q bonus [0,0,0,1600000] {
+            get(@prev)
+            
+            round type Semifinal teams 4 subs NUM_SUBS  without_away_goal two_legs matchdays COL_S bonus [0,0,0,2200000] {
+                get(@prev)
+                
+                round @CoL_final index 22 type Final teams 2 subs NUM_SUBS  matchdays COL_F bonus [0,15500000,0,6500000] {
+                    get(@prev)
+                }
+            }
+        }
+    }
+}
+
+}
+
+comp SouthAmerica.UefaCup {
+
+// minimum number of teams in the pool: 33
+pool @CS_participants teams 44 constraints @CoL_participants {
+    getInternationalTeams(Brazil, 6)
+    getInternationalTeams(Argentina, 6)
+    getInternationalTeams(Colombia, 4)
+    getInternationalTeams(Chile, 4)
+    getInternationalTeams(Ecuador, 4)
+    getInternationalTeams(Bolivia, 4)
+    getInternationalTeams(Peru, 4)
+    getInternationalTeams(Paraguay, 4)
+    getInternationalTeams(Uruguay, 4)
+    getInternationalTeams(Venezuela, 4)
+    
+    round @CS_r1 "$ID_FIRST_STAGE" type Quali teams 32 subs NUM_SUBS  without_away_goal matchdays CS_1 bonus [0,0,0,240000] { // launches on 1.
+        get(@CS_participants, 13, 32)
+        getCCSpare() // plugin custom sorting: 8 blocks for each country, 4 teams in each block
+                     // in case if not all teams are present in the pool, just simple sorting is applied
+        
+        pool @CS_group_stage teams 32 sorting ChampionsCupGroup { // launches on 53.
+            get(@CS_participants, 1, 12) // 12 teams
+            get(@CS_r1) // 16 teams
+            get(@CoL_third_stage_losers) // 4 teams
+            
+            group "A" @CS_a teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays CS_G bonus [110000,0,0,850000] fixtures G_FIXTURES -> @CS_2nd_place { get(@prev, 1, 4) }
+            group "B" @CS_b teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays CS_G bonus [110000,0,0,850000] fixtures G_FIXTURES -> @CS_2nd_place { get(@prev, 5, 4) }
+            group "C" @CS_c teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays CS_G bonus [110000,0,0,850000] fixtures G_FIXTURES -> @CS_2nd_place { get(@prev, 9, 4) }
+            group "D" @CS_d teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays CS_G bonus [110000,0,0,850000] fixtures G_FIXTURES -> @CS_2nd_place { get(@prev, 13, 4) }
+            group "E" @CS_e teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays CS_G bonus [110000,0,0,850000] fixtures G_FIXTURES -> @CS_2nd_place { get(@prev, 17, 4) }
+            group "F" @CS_f teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays CS_G bonus [110000,0,0,850000] fixtures G_FIXTURES -> @CS_2nd_place { get(@prev, 21, 4) }
+            group "G" @CS_g teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays CS_G bonus [110000,0,0,850000] fixtures G_FIXTURES -> @CS_2nd_place { get(@prev, 25, 4) }
+            group "H" @CS_h teams 4 rounds 2 subs NUM_SUBS  sorting DM matchdays CS_G bonus [110000,0,0,850000] fixtures G_FIXTURES -> @CS_2nd_place { get(@prev, 29, 4) }
+        }
+    }
+}
+
+pool @CS_2nd_place teams 8 sorting PrevPointsDiff {
+    get(@prev, 2, 1)
+    
+    round type Round5 "$ID_PRELIMINARY_KO" teams 16 subs NUM_SUBS without_away_goal two_legs matchdays CS_P bonus [0,0,0,475000] { // launches on 158.
+        get(@CoL_third_places)
+        get(@CS_2nd_place, 8)
+        get(@CS_2nd_place, 7)
+        get(@CS_2nd_place, 6)
+        get(@CS_2nd_place, 5)
+        get(@CS_2nd_place, 4)
+        get(@CS_2nd_place, 3)
+        get(@CS_2nd_place, 2)
+        get(@CS_2nd_place, 1)
+        
+        round @CS_last16 "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 subs NUM_SUBS  without_away_goal two_legs matchdays CS_L bonus [0,0,0,570000] {
+            get(@prev)
+            get([@CS_a,@CS_b,@CS_c,@CS_d,@CS_e,@CS_f,@CS_g,@CS_h], 1)
+            getCCSpare() // plugin custom sorting: randomize pairs
+    
+            round type Quarterfinal teams 8 subs NUM_SUBS  without_away_goal two_legs matchdays CS_Q bonus [0,0,0,665000] {
+                get(@prev)
+                
+                round type Semifinal teams 4 subs NUM_SUBS  without_away_goal two_legs matchdays CS_S bonus [0,0,0,760000] {
+                    get(@prev)
+                    
+                    round @CS_final index 22 type Final teams 2 subs NUM_SUBS  matchdays CS_F bonus [0,3800000,0,1900000] {
+                        get(@prev)
+                    }
+                }
+            }
+        }
+    }
+}
+
+}
+
+comp SouthAmerica.EuroSuperCup {
+
+round type Final teams 2 subs NUM_SUBS  without_away_goal two_legs without_away_goal matchdays SC_F bonus [855000,855000,0,0] {
+    getChamp(@CoL_final)
+    getChamp(@CS_final)
+}
+
+}
+
+comp SouthAmerica.YouthChampionsLeague {
+
+pool @Y_CoL_participants teams 12 sorting CountryStrength {
+    getChamp(@Y_final)
+    changeTeamTypes(First)
+    getInternationalTeams(Brazil, 1)
+    getInternationalTeams(Argentina, 1)
+    getInternationalTeams(Colombia, 1)
+    getInternationalTeams(Chile, 1)
+    getInternationalTeams(Ecuador, 1)
+    getInternationalTeams(Bolivia, 1)
+    getInternationalTeams(Peru, 1)
+    getInternationalTeams(Paraguay, 1)
+    getInternationalTeams(Uruguay, 1)
+    getInternationalTeams(Venezuela, 1)
+    getInternationalTeams(Brazil, 1)
+    getInternationalTeams(Argentina, 1)
+    changeTeamTypes(YouthA)
+    
+    pool @Y_pot1 teams 3 sorting Random -> [@Y_a,@Y_b,@Y_c] { get(@prev, 1, 3) }
+    pool @Y_pot2 teams 3 sorting Random -> [@Y_a,@Y_b,@Y_c] { get(@prev, 4, 3) }
+    pool @Y_pot3 teams 3 sorting Random -> [@Y_a,@Y_b,@Y_c] { get(@prev, 7, 3) }
+    pool @Y_pot4 teams 3 sorting Random -> [@Y_a,@Y_b,@Y_c] { get(@prev, 10, 3) }
+}
+
+group @Y_a "A" teams 4 subs NUM_SUBS  sorting DM matchdays Y_G fixtures YL_FIXTURES { get(@prev, 1) }
+group @Y_b "B" teams 4 subs NUM_SUBS  sorting DM matchdays Y_G fixtures YL_FIXTURES { get(@prev, 2) }
+group @Y_c "C" teams 4 subs NUM_SUBS  sorting DM matchdays Y_G fixtures YL_FIXTURES { get(@prev, 3) }
+
+pool @Y_second_places teams 3 sorting PrevPointsDiff <- [@Y_a,@Y_b,@Y_c] {
+    get(@prev, 2)
+    
+    round type Semifinal teams 4 subs NUM_SUBS  matchdays Y_S {
+        get(@Y_a, 1); get(@Y_b, 1)
+        get(@Y_second_places, 1); get(@Y_c, 1)
+        
+        round type Final3rdPlace teams 2 subs NUM_SUBS  matchdays Y_T {
+            getLoser(@prev)
+        }
+        
+        round @Y_final type Final teams 2 subs NUM_SUBS  matchdays Y_F {
+            get(@prev)
+        }
+    }
+}
+
+}

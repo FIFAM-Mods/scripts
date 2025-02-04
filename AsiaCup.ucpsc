@@ -1,0 +1,92 @@
+#name "AFC Asian Cup, with Qualification"
+#author "FM 2024 Team"
+#version "24.0"
+
+#define M_AC_G [337,340,343]
+#define M_AC_L 346
+#define M_AC_Q 349
+#define M_AC_S 353
+#define M_AC_F 357
+
+#define M_Q_AC_R1 [61,64]
+#define M_Q_AC_G [131,134,215,218,264,267]
+
+#define AC_GROUPS [@a,@b,@c,@d,@e,@f]
+#define Q_AC_GROUPS [@q_a,@q_b,@q_c,@q_d,@q_e,@q_f]
+#define QWC_AFC_groups_pool @@QualiWC_77
+
+#define NUM_SUBS 5
+
+// Asian Cup - each 4 years, next 2027 (2022/2023, 2026/2027)
+
+comp AsiaCup {
+
+pool @participants teams 24 sorting CountryStrength <- Q_AC_GROUPS {
+    get(@q_participants, 1, 12)
+    get(Q_AC_GROUPS, 1, 2)
+    
+    pool @pot_1 teams 6 sorting Random -> AC_GROUPS { get(@prev, 1, 6) }
+    pool @pot_2 teams 6 sorting Random -> AC_GROUPS { get(@prev, 7, 6) }
+    pool @pot_3 teams 6 sorting Random -> AC_GROUPS { get(@prev, 13, 6) }
+    pool @pot_4 teams 6 sorting Random -> AC_GROUPS { get(@prev, 19, 6) }
+}
+
+group @a "A" teams 4 matchdays M_AC_G subs NUM_SUBS { get(@prev, 1); shuffleTeams() }
+group @b "B" teams 4 matchdays M_AC_G subs NUM_SUBS { get(@prev, 2); shuffleTeams() }
+group @c "C" teams 4 matchdays M_AC_G subs NUM_SUBS { get(@prev, 3); shuffleTeams() }
+group @d "D" teams 4 matchdays M_AC_G subs NUM_SUBS { get(@prev, 4); shuffleTeams() }
+group @e "E" teams 4 matchdays M_AC_G subs NUM_SUBS { get(@prev, 5); shuffleTeams() }
+group @f "F" teams 4 matchdays M_AC_G subs NUM_SUBS { get(@prev, 6); shuffleTeams() }
+
+pool @3p teams 6 sorting PrevPointsDiff <- AC_GROUPS {
+    get(@prev, 3)
+    
+    round "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 matchdays M_AC_L subs NUM_SUBS {
+        get(@a, 2); get(@c, 1); get(@b, 1); get(@a, 1);  get(@d, 1); get(@e, 1); get(@f, 1); get(@b, 2);
+        get(@c, 2); get(@3p,3); get(@3p,2); get(@3p, 4); get(@3p,1); get(@d, 2); get(@e, 2); get(@f, 2);
+        
+        round type Quarterfinal teams 8 matchdays M_AC_Q subs NUM_SUBS {
+            get(@prev)
+            
+            round type Semifinal teams 4 matchdays M_AC_S subs NUM_SUBS {
+                get(@prev)
+                
+                round type Final teams 2 matchdays M_AC_F subs NUM_SUBS {
+                    get(@prev)
+                }
+            }
+        }
+    }
+}
+
+}
+
+comp AsiaCupQ {
+
+pool @q_participants teams 40 {
+    getPool(QWC_AFC_groups_pool, 1, 40) // teaminit for first season (2026/2027) (if WC was just played)
+    
+    round type Round1 teams 8 two_legs matchdays M_Q_AC_R1 subs NUM_SUBS {
+        get(@q_participants, 33, 8)
+        shuffleTeams()
+        
+        pool @q_groups teams 24 sorting CountryStrength {
+            get(@q_participants, 13, 20)
+            get(@prev)
+        
+            pool @q_pot_1 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 1, 6) }
+            pool @q_pot_2 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 7, 6) }
+            pool @q_pot_3 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 13, 6) }
+            pool @q_pot_4 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 19, 6) }
+        }
+    }
+}
+
+group @q_a "A" teams 4 rounds 2 matchdays M_Q_AC_G subs NUM_SUBS { get(@prev, 1); shuffleTeams() }
+group @q_b "B" teams 4 rounds 2 matchdays M_Q_AC_G subs NUM_SUBS { get(@prev, 2); shuffleTeams() }
+group @q_c "C" teams 4 rounds 2 matchdays M_Q_AC_G subs NUM_SUBS { get(@prev, 3); shuffleTeams() }
+group @q_d "D" teams 4 rounds 2 matchdays M_Q_AC_G subs NUM_SUBS { get(@prev, 4); shuffleTeams() }
+group @q_e "E" teams 4 rounds 2 matchdays M_Q_AC_G subs NUM_SUBS { get(@prev, 5); shuffleTeams() }
+group @q_f "F" teams 4 rounds 2 matchdays M_Q_AC_G subs NUM_SUBS { get(@prev, 6); shuffleTeams() }
+
+}

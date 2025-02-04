@@ -1,0 +1,139 @@
+#name "CONCACAF Gold Cup, CONCACAF Nations League"
+#author "FM 2024 Team"
+#version "24.0"
+
+#define M_GC_G [337,341,345]
+#define M_GC_Q 349
+#define M_GC_S 353
+#define M_GC_F 357
+
+#define M_NL_G [61,64,96,99,134]
+#define M_NL_G_2 [61,64,96,99,131,134]
+#define M_NL_Q [215,218]
+#define M_NL_S 263
+#define M_NL_T 266
+#define M_NL_F 267
+
+#define GC_GROUPS [@a,@b,@c,@d]
+#define NL_GROUPS_A [@A_a,@A_b]
+#define NL_GROUPS_B [@B_a,@B_b,@B_c,@B_d]
+#define NL_GROUPS_C [@C_a,@C_b]
+
+#define NUM_SUBS 5
+
+// Gold Cup - each 2 years, next 2025 (2022/2023, 2024/2025), June-July
+
+comp NamCup {
+
+pool @participants teams 16 sorting CountryStrength { // teaminit for first season, if the game starts after Nations League
+    get (@nl_participants) // 8
+    get(NL_GROUPS_B, 1) // 4
+    get(NL_GROUPS_A, 3) // 2
+    get(NL_GROUPS_A, 4) // 2
+
+    pool @pot_1 teams 4 sorting Random -> GC_GROUPS { get(@prev, 1, 4) }
+    pool @pot_2 teams 4 sorting Random -> GC_GROUPS { get(@prev, 5, 4) }
+    pool @pot_3 teams 4 sorting Random -> GC_GROUPS { get(@prev, 9, 4) }
+    pool @pot_4 teams 4 sorting Random -> GC_GROUPS { get(@prev, 13, 4) }
+}
+
+group @a "A" teams 4 subs NUM_SUBS  matchdays M_GC_G { get(@prev, 1); shuffleTeams() }
+group @b "B" teams 4 subs NUM_SUBS  matchdays M_GC_G { get(@prev, 2); shuffleTeams() }
+group @c "C" teams 4 subs NUM_SUBS  matchdays M_GC_G { get(@prev, 3); shuffleTeams() }
+group @d "D" teams 4 subs NUM_SUBS  matchdays M_GC_G { get(@prev, 4); shuffleTeams() }
+
+round type Quarterfinal teams 8 subs NUM_SUBS  matchdays M_GC_Q <- GC_GROUPS {
+    get(@b, 1); get(@c, 1); get(@a, 1); get(@d, 1);
+    get(@a, 2); get(@d, 2); get(@b, 2); get(@c, 2);
+    
+    round type Semifinal teams 4 subs NUM_SUBS  matchdays M_GC_S {
+        get(@prev)
+         
+        round type Final teams 2 subs NUM_SUBS  matchdays M_GC_F {
+            get(@prev)
+        }
+    }
+}
+
+}
+
+// Nations League - each 2 years, next 2024 (2023/2024, 2025/2026)
+
+comp NamNLQ {
+
+pool @nl_q_participants teams 34 { // teaminit for first season (always)
+    get(@nl_ovr) // get teams from Overall Table pool
+
+    // Note: teams will be sorted with special sorter.
+    // When sorting is not needed, remove teams from script body and move them to TeamInit (this is possible only for first in-game season!)
+
+    // getNationalTeam(Mexico)
+
+    group @A_a "$ID_LEAGUE_A_GROUP_1" teams 5 subs NUM_SUBS rounds 1 matchdays M_NL_G -> [@nl_q_first_places] { get(@prev, 5); get(@prev, 7); get(@prev, 9); get(@prev, 11); get(@prev, 13); shuffleTeams() }
+    group @A_b "$ID_LEAGUE_A_GROUP_2" teams 5 subs NUM_SUBS rounds 1 matchdays M_NL_G { get(@prev, 6); get(@prev, 8); get(@prev, 10); get(@prev, 12); get(@prev, 14); shuffleTeams() }
+    group @B_a "$ID_LEAGUE_B_GROUP_1" teams 3 subs NUM_SUBS rounds 2 matchdays M_NL_G_2 { get(@prev, 15); get(@prev, 19); get(@prev, 23); shuffleTeams() }
+    group @B_b "$ID_LEAGUE_B_GROUP_2" teams 3 subs NUM_SUBS rounds 2 matchdays M_NL_G_2 { get(@prev, 16); get(@prev, 20); get(@prev, 24); shuffleTeams() }
+    group @B_c "$ID_LEAGUE_B_GROUP_3" teams 3 subs NUM_SUBS rounds 2 matchdays M_NL_G_2 { get(@prev, 17); get(@prev, 21); get(@prev, 25); shuffleTeams() }
+    group @B_d "$ID_LEAGUE_B_GROUP_4" teams 3 subs NUM_SUBS rounds 2 matchdays M_NL_G_2 { get(@prev, 18); get(@prev, 22); get(@prev, 26); shuffleTeams() }
+    group @C_a "$ID_LEAGUE_C_GROUP_1" teams 4 subs NUM_SUBS rounds 2 matchdays M_NL_G_2 { get(@prev, 27); get(@prev, 29); get(@prev, 31); get(@prev, 33); shuffleTeams() }
+    group @C_b "$ID_LEAGUE_C_GROUP_2" teams 4 subs NUM_SUBS rounds 2 matchdays M_NL_G_2 { get(@prev, 28); get(@prev, 30); get(@prev, 32); get(@prev, 34); shuffleTeams() }
+}
+
+pool @nl_q_first_places teams 2 sorting PrevPointsDiff -> @nl_q_second_places {
+    get(NL_GROUPS_A, 1) // 2 teams
+}
+
+pool @nl_q_second_places teams 2 sorting PrevPointsDiff -> @nl_ovr {
+    get(NL_GROUPS_A, 2) // 2 teams
+}
+
+pool @nl_ovr teams 34 -> @nl_participants { // CONCACAF Nations League Overall Table
+    // Direct Quarterfinal - 4 teams
+    getNationalTeam(Mexico)
+    getNationalTeam(UnitedStates)
+    getNationalTeam(CostaRica)
+    getNationalTeam(Canada)
+    // League A - 10 teams
+    get(NL_GROUPS_A, 1) // 5.
+    get(NL_GROUPS_A, 2) // 7.
+    get(NL_GROUPS_A, 3) // 9.
+    get(NL_GROUPS_B, 1) // 11.
+    // League B - 12 teams
+    get(NL_GROUPS_A, 4) // 15.
+    get(NL_GROUPS_A, 5) // 17.
+    get(NL_GROUPS_B, 2) // 19.
+    get(NL_GROUPS_C, 1) // 23.
+    get(NL_GROUPS_C, 2) // 25.
+    // League C - 8 teams
+    get(NL_GROUPS_B, 3) // 27.
+    get(NL_GROUPS_C, 3) // 31.
+    get(NL_GROUPS_C, 4) // 33.
+}
+
+}
+
+comp NamNL {
+
+pool @nl_participants teams 8 {
+    get(@nl_q_first_places) // 2 teams
+    get(@nl_q_second_places) // 2 teams
+    get(@nl_ovr, 1, 4) // 4 teams
+
+    round @nl_qfinal type Quarterfinal teams 8 two_legs subs NUM_SUBS matchdays M_NL_Q {
+        get(@prev)
+
+        pool @pool_copaamerica teams 8 -> @@CopaAmerica_0 { // launch Copa America
+            getWinner(@prev) // 4 teams
+            getLoser(@prev) // 4 teams
+        }
+    
+        round type Semifinal teams 4 subs NUM_SUBS matchdays M_NL_S {
+            get(@nl_qfinal)
+            
+            round type Final3rdPlace teams 2 subs NUM_SUBS matchdays M_NL_T { getLoser(@prev) }
+            round type Final teams 2 subs NUM_SUBS matchdays M_NL_F { getWinner(@prev) }
+        }
+    }
+}
+
+}

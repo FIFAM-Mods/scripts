@@ -1,0 +1,622 @@
+#name "UEFA Champions League, UEFA Europe League, UEFA Conference League, UEFA SuperCup, UEFA Youth League, FIFA Club World Cup, FIFA Intercontinental Cup"
+#author "FM 2025 Team"
+#version "25.0"
+
+#define CL_Q1 [7,9]
+#define CL_Q2 [17,24]
+#define CL_Q3 [31,38]
+#define CL_PO [45,52]
+#define CL_LG1 73
+#define CL_LG2 87
+#define CL_LG3 108
+#define CL_LG4 122
+#define CL_LG5 143
+#define CL_LG6 157
+#define CL_LG7 198
+#define CL_LG8 205
+#define CL_PRELIM_KO [227,234]
+#define CL_LAST16 [241,248]
+#define CL_QUARTER [276,283]
+#define CL_SEMI [297,304]
+#define CL_FINAL 328
+#define EL_PRE [3,5]
+#define EL_Q1 [7,9]
+#define EL_Q2 [18,25]
+#define EL_Q3 [32,39]
+#define EL_PO [46,53]
+#define EL_LG1 74
+#define EL_LG2 88
+#define EL_LG3 109
+#define EL_LG4 123
+#define EL_LG5 144
+#define EL_LG6 158
+#define EL_LG7 199
+#define EL_LG8 206
+#define EL_PRELIM_KO [228,235]
+#define EL_LAST16 [242,249]
+#define EL_QUARTER [277,284]
+#define EL_SEMI [298,305]
+#define EL_FINAL 325
+#define CONF_FINAL 327
+#define SC_F 38
+#define IC_1 166
+#define IC_2 168
+#define IC_S 170
+#define IC_F 172
+#define WC_GROUP_MATCHES [337,341,344]
+#define WC_LAST16_MATCH 347
+#define WC_QUARTERFINAL_MATCH 350
+#define WC_SEMIFINAL_MATCH 353
+#define WC_FINAL_MATCH 357
+#define YM_LG1 72
+#define YM_LG2 86
+#define YM_LG3 107
+#define YM_LG4 121
+#define YM_LG5 142
+#define YM_LG6 156
+#define YM_FIRST_R [72,86]
+#define YM_SECOND_R [107,121]
+#define YM_THIRD_R [142,156]
+#define YM_LAST32 233
+#define YM_LAST16 247
+#define YM_QUARTER 275
+#define YM_SEMI 296
+#define YM_FINAL 303
+#define SUBS 5
+
+// In total, we can use 53 (1-53) positions in European Assessment table
+// Russia and Liechtenstein are skipped while working with European Assessment table
+// The one club from Liechtenstein in Conference League is added in plugin
+
+comp Europe.ChampionsLeague {
+
+pool @CL_participants teams 83 {
+    // 1. League Phase - 29 teams (4 team slots reserved)
+    getEuropeanAssessmentTeams([1-10], 1, 1) // 10 champions from associations 1–10
+    getEuropeanAssessmentTeams([1-6], 2, 1) // 6 runners-up from associations 1–6
+    getEuropeanAssessmentTeams([1-5], 3, 1) // 5 third-placed teams from associations 1–5
+    getEuropeanAssessmentTeams([1-4], 4, 1) // 4 fourth-placed teams from associations 1–4
+    // 30. Champions Path quali - 43 teams
+    getEuropeanAssessmentTeams([11-53], 1, 1) // 43
+    // 73. League Path quali - 11 teams
+    getEuropeanAssessmentTeams(5, 4, 1) // 1 fourth-placed team from association 5
+    getEuropeanAssessmentTeams(6, 3, 1) // 1 third-placed team from association 6
+    getEuropeanAssessmentTeams([7-15], 2, 1) // 9 runners-up from associations 7–15
+    // Add Champions League title holder to League Phase
+    // if not added: move best team from Champions Path quali to League Phase
+    // Add Europa League title holder to League Phase
+    // if not added: move best team from quali to League Phase (except for the teams of associations which teams play in Champions Path quali)
+    // Add 2 teams from associations with the highest 1-year association coefficient
+    getCCSpare()
+    
+    round type Quali "$ID_FIRST_QUALI" @CL_quali1 teams 32 subs SUBS two_legs without_away_goal matchdays CL_Q1 bonus [175000,0,0,0] {
+        get(@CL_participants, 42, 31)
+        getCCSpare()
+    }
+    
+    round type Quali @CL_quali2_league "$ID_LEAGUE_PATH_2ND" teams 6 subs SUBS two_legs without_away_goal matchdays CL_Q2 bonus [175000,0,0,0] {
+        get(@CL_participants, 78, 6)
+        getCCSpare()
+    }
+}
+
+round type Quali @CL_quali2_champ "$ID_CHAMP_PATH_2ND" teams 24 subs SUBS two_legs without_away_goal matchdays CL_Q2  <- @CL_quali1 {
+    get(@CL_participants, 34, 8)
+    getWinner(@CL_quali1)
+    getCCSpare()
+}
+
+round type Quali @CL_quali3_league "$ID_LEAGUE_PATH_3RD" teams 8 subs SUBS two_legs without_away_goal matchdays CL_Q3 bonus [175000,0,0,0] <- @CL_quali2_league {
+    get(@CL_participants, 73, 5)
+    getWinner(@CL_quali2_league)
+    getCCSpare()
+}
+
+round type Quali @CL_quali3_champ "$ID_CHAMP_PATH_3RD" teams 12 subs SUBS two_legs without_away_goal matchdays CL_Q3 <- @CL_quali2_champ {
+    getWinner(@CL_quali2_champ)
+    getCCSpare()
+}
+
+round type Quali @CL_po_league "$ID_LEAGUE_PATH_PO" teams 4 subs SUBS two_legs without_away_goal matchdays CL_PO bonus [175000,0,4290000,0] <- @CL_quali3_league {
+    getWinner(@CL_quali3_league)
+    getCCSpare()
+}
+
+round type Quali @CL_po_champ "$ID_CHAMP_PATH_PO" teams 10 subs SUBS two_legs without_away_goal matchdays CL_PO bonus [175000,0,4290000,0] <- @CL_quali3_champ {
+    get(@CL_participants, 30, 4)
+    getWinner(@CL_quali3_champ)
+    getCCSpare()
+}
+
+pool @CL_league_pool teams 36 <- [@CL_po_champ,@CL_po_league] {
+    get(@CL_participants, 1, 29)
+    getWinner(@CL_po_champ)
+    getWinner(@CL_po_league)
+    getCCSpare()
+    
+    pool @CL_league_matches teams 288 {
+        getCCSpare() // generate 8 matchdays
+        
+        round @CL_lg1 "$ID_LEAGUE_PHASE_MATCH_1" type Round1 teams 36 no_flags matchdays CL_LG1 bonus [18620000,2100000,700000,0] subs SUBS { get(@prev, 1, 36); }
+        round @CL_lg2 "$ID_LEAGUE_PHASE_MATCH_2" type Round1 teams 36 no_flags matchdays CL_LG2 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 37, 36); }
+        round @CL_lg3 "$ID_LEAGUE_PHASE_MATCH_3" type Round1 teams 36 no_flags matchdays CL_LG3 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 73, 36); }
+        round @CL_lg4 "$ID_LEAGUE_PHASE_MATCH_4" type Round1 teams 36 no_flags matchdays CL_LG4 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 109, 36); }
+        round @CL_lg5 "$ID_LEAGUE_PHASE_MATCH_5" type Round1 teams 36 no_flags matchdays CL_LG5 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 145, 36); }
+        round @CL_lg6 "$ID_LEAGUE_PHASE_MATCH_6" type Round1 teams 36 no_flags matchdays CL_LG6 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 181, 36); }
+        round @CL_lg7 "$ID_LEAGUE_PHASE_MATCH_7" type Round1 teams 36 no_flags matchdays CL_LG7 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 217, 36); }
+        round @CL_lg8 "$ID_LEAGUE_PHASE_MATCH_8" type Round1 teams 36 no_flags matchdays CL_LG8 bonus [0,2100000,700000,0] subs SUBS { get(@prev, 253, 36); }
+    }
+}
+
+pool @CL_league_sorted_pool teams 36 <- [@CL_lg1,@CL_lg2,@CL_lg3,@CL_lg4,@CL_lg5,@CL_lg6,@CL_lg7,@CL_lg8] {
+    get(@CL_league_pool)
+    getCCSpare() // sort League table
+    
+    round @CL_KO_prelim "$ID_PRELIMINARY_KO" type Round2 teams 16 two_legs without_away_goal matchdays CL_PRELIM_KO bonus [1000000,0,0,0] subs SUBS {
+        get(@CL_league_sorted_pool, 24, 1)
+        get(@CL_league_sorted_pool, 23, 1)
+        get(@CL_league_sorted_pool, 22, 1)
+        get(@CL_league_sorted_pool, 21, 1)
+        get(@CL_league_sorted_pool, 20, 1)
+        get(@CL_league_sorted_pool, 19, 1)
+        get(@CL_league_sorted_pool, 18, 1)
+        get(@CL_league_sorted_pool, 17, 1)
+        get(@CL_league_sorted_pool, 9, 8)
+        getCCSpare() // randomize every next 2 teams
+        
+        round "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 two_legs without_away_goal matchdays CL_LAST16 bonus [11000000,0,0,0] subs SUBS {
+            get(@prev)
+            // 23-24 - 9-10
+            // 23-24 - 9-10
+            // 21-22 - 11-12
+            // 21-22 - 11-12
+            // 19-20 - 13-14
+            // 19-20 - 13-14
+            // 17-18 - 15-16
+            // 17-18 - 15-16
+            get(@CL_league_sorted_pool, 1, 8)
+            getCCSpare() // randomize every next 2 teams (starting from team 9.)
+            
+            round type Quarterfinal teams 8 two_legs without_away_goal matchdays CL_QUARTER bonus [12500000,0,0,0] subs SUBS {
+                get(@prev)
+                
+                round type Semifinal teams 4 two_legs without_away_goal matchdays CL_SEMI bonus [15000000,0,0,0] subs SUBS {
+                    get(@prev)
+                    
+                    round type Final @CL_final teams 2 matchdays CL_FINAL bonus [18500000,6500000,0,0] subs SUBS {
+                        get(@prev)
+                    }
+                }
+            }
+        }
+    }
+}
+
+}
+
+comp Europe.UefaCup {
+
+pool @EL_participants teams 46 constraints @CL_participants {
+    // 1. league phase - 13 teams (1 team slot reserved)
+    reserveAssessmentTeams([1-5], 2) // 10
+    reserveAssessmentTeams([6-7], 1) // 2
+    getEuropeanAssessmentCupwinner([1-7])
+    fillAssessmentReserves()
+    // 14. play-off round - 5 teams
+    reserveAssessmentTeams([8-12], 1) // 5
+    getEuropeanAssessmentCupwinner([8-12])
+    fillAssessmentReserves()
+    // 19. 3rd quali round - 3 teams
+    reserveAssessmentTeams([13-15], 1) // 3
+    getEuropeanAssessmentCupwinner([13-15])
+    fillAssessmentReserves()
+    // 22. 2nd quali round - 7 teams
+    reserveAssessmentTeams([6-12], 1) // 7
+    fillAssessmentReserves()
+    // 29. 1st quali round - 18 teams
+    reserveAssessmentTeams([16-33], 1) // 18
+    getEuropeanAssessmentCupwinner([16-33])
+    fillAssessmentReserves()
+    // Add ConferenceLeague title holder at position 1
+    // If ConferenceLeague title holder was already added, or if it's already present in @CL_participants,
+    // the slot 21. will remain empty (and thus, the pool will contain 45 teams)
+    getCCSpare()
+    
+    round type Quali @EL_quali1 "$ID_FIRST_QUALI" teams 18 subs SUBS two_legs without_away_goal bonus [175000,0,0,0] matchdays EL_Q1 {
+        get(@EL_participants, 29, 18) // 18 teams
+        getCCSpare()
+        
+        round type Quali @EL_quali2 "$ID_SECOND_QUALI" teams 16 subs SUBS two_legs without_away_goal bonus [175000,0,0,0] matchdays EL_Q2 {
+            get(@EL_participants, 22, 7) // 7 teams
+            get(@prev) // 9 teams
+            getCCSpare()
+        }
+    }
+}
+
+// Qualifying round - launches on 24.
+round type Quali @EL_quali3_champ "$ID_THIRD_QUALI_CHAMP" teams 12 subs SUBS two_legs without_away_goal bonus [175000,0,0,0] matchdays EL_Q3 <- @EL_quali2 {
+    getLoser(@CL_quali2_champ) // 12 teams
+    getCCSpare()
+}
+
+round type Quali @EL_quali3_league "$ID_THIRD_QUALI_league" teams 14 subs SUBS two_legs without_away_goal bonus [175000,0,0,0] matchdays EL_Q3 <- @EL_quali2 {
+    get(@EL_participants, 19, 3) // 3 teams
+    getWinner(@EL_quali2) // 8 teams
+    getLoser(@CL_quali2_league) // 3 teams
+    getCCSpare()
+}
+
+// Play-off round - launches on 39.
+round type Quali "_ID_PLAY_OFF" @EL_po teams 24 subs SUBS two_legs without_away_goal bonus [175000,0,0,0] matchdays EL_PO <- [@EL_quali3_champ,@EL_quali3_league] {
+    get(@EL_participants, 14, 5) // 5 teams
+    getWinner(@EL_quali3_champ) // 6 teams
+    getWinner(@EL_quali3_league) // 7 teams
+    getLoser(@CL_quali3_champ) // 6 teams
+    getCCSpare()
+}
+
+pool @EL_league_pool teams 36 <- @EL_po { // launches on  53.
+    get(@EL_participants, 1, 13) // 13 teams
+    getWinner(@EL_po) // 12 teams
+    getLoser(@CL_po_champ) // 5 teams
+    getLoser(@CL_po_league) // 2 teams
+    getLoser(@CL_quali3_league) // 4 teams
+    getCCSpare()
+    
+    pool @EL_league_matches teams 288 {
+        getCCSpare() // generate 8 matchdays
+        
+        round @EL_lg1 "$ID_LEAGUE_PHASE_MATCH_1" type Round1 teams 36 no_flags matchdays EL_LG1 bonus [4310000,450000,150000,0] subs SUBS { get(@prev, 1, 36); }
+        round @EL_lg2 "$ID_LEAGUE_PHASE_MATCH_2" type Round1 teams 36 no_flags matchdays EL_LG2 bonus [0,450000,150000,0] subs SUBS { get(@prev, 37, 36); }
+        round @EL_lg3 "$ID_LEAGUE_PHASE_MATCH_3" type Round1 teams 36 no_flags matchdays EL_LG3 bonus [0,450000,150000,0] subs SUBS { get(@prev, 73, 36); }
+        round @EL_lg4 "$ID_LEAGUE_PHASE_MATCH_4" type Round1 teams 36 no_flags matchdays EL_LG4 bonus [0,450000,150000,0] subs SUBS { get(@prev, 109, 36); }
+        round @EL_lg5 "$ID_LEAGUE_PHASE_MATCH_5" type Round1 teams 36 no_flags matchdays EL_LG5 bonus [0,450000,150000,0] subs SUBS { get(@prev, 145, 36); }
+        round @EL_lg6 "$ID_LEAGUE_PHASE_MATCH_6" type Round1 teams 36 no_flags matchdays EL_LG6 bonus [0,450000,150000,0] subs SUBS { get(@prev, 181, 36); }
+        round @EL_lg7 "$ID_LEAGUE_PHASE_MATCH_7" type Round1 teams 36 no_flags matchdays EL_LG7 bonus [0,450000,150000,0] subs SUBS { get(@prev, 217, 36); }
+        round @EL_lg8 "$ID_LEAGUE_PHASE_MATCH_8" type Round1 teams 36 no_flags matchdays EL_LG8 bonus [0,450000,150000,0] subs SUBS { get(@prev, 253, 36); }
+    }
+}
+
+pool @EL_league_sorted_pool teams 36 <- [@EL_lg1,@EL_lg2,@EL_lg3,@EL_lg4,@EL_lg5,@EL_lg6,@EL_lg7,@EL_lg8] {
+    get(@EL_league_pool)
+    getCCSpare() // sort League table
+    
+    round @EL_KO_prelim "$ID_PRELIMINARY_KO" type Round2 teams 16 two_legs without_away_goal matchdays EL_PRELIM_KO bonus [300000,0,0,0] subs SUBS {
+        get(@EL_league_sorted_pool, 24, 1)
+        get(@EL_league_sorted_pool, 23, 1)
+        get(@EL_league_sorted_pool, 22, 1)
+        get(@EL_league_sorted_pool, 21, 1)
+        get(@EL_league_sorted_pool, 20, 1)
+        get(@EL_league_sorted_pool, 19, 1)
+        get(@EL_league_sorted_pool, 18, 1)
+        get(@EL_league_sorted_pool, 17, 1)
+        get(@EL_league_sorted_pool, 9, 8)
+        getCCSpare() // randomize every next 2 teams
+        
+        round "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 two_legs without_away_goal matchdays EL_LAST16 bonus [1750000,0,0,0] subs SUBS {
+            get(@prev)
+            get(@EL_league_sorted_pool, 1, 8)
+            getCCSpare() // randomize every next 2 teams (starting from team 9.)
+            
+            round type Quarterfinal teams 8 two_legs without_away_goal matchdays EL_QUARTER bonus  [2500000,0,0,0] subs SUBS {
+                get(@prev)
+                
+                round type Semifinal teams 4 two_legs without_away_goal matchdays EL_SEMI bonus [4200000,0,0,0] subs SUBS {
+                    get(@prev)
+                    
+                    round type Final @EL_final teams 2 matchdays EL_FINAL bonus [7000000,6000000,0,0] subs SUBS {
+                        get(@prev)
+                    }
+                }
+            }
+        }
+    }
+}
+
+}
+
+comp Europe.ConferenceLeague {
+
+pool @Conf_participants teams 112 constraints [@CL_participants,@EL_participants] {
+    // 1. play-off round - 5 teams
+    reserveAssessmentTeams([1-5], 1) // 5 teams
+    fillAssessmentReserves()
+    // 6. second quali round - 50 teams
+    reserveAssessmentTeams([6-12], 1) // 7 teams
+    reserveAssessmentTeams([13-29], 2) // 34 teams
+    reserveAssessmentTeams([30-38], 1) // 9 teams
+    getEuropeanAssessmentCupwinner([34-38])
+    fillAssessmentReserves()
+    // 56. Liechtenstein Cup winner (see comment below)
+    // 57. first quali round - 56 teams
+    reserveAssessmentTeams([30-33], 1) // 4 teams
+    reserveAssessmentTeams([34-38], 2) // 10 teams
+    reserveAssessmentTeams([39-50], 3) // 36 teams
+    reserveAssessmentTeams([51-53], 2) // 6 teams
+    getEuropeanAssessmentCupwinner([39-53])
+    fillAssessmentReserves()
+    // insert Liechtenstein Cup winner, at index which is determined by Liechtenstein position in Assessment table
+    // AT position 1-5   => pool position 5. (index 4)
+    // AT position 6-38 => pool position 56. (index 55) - this is used in 2022/2023 season
+    // AT position >=39  => pool position 112. (index 111)
+    // in case if there's no Liechtenstein Cup loaded in the game (i.e. Switzerland is not playable) - random team from Liechtenstein is added
+    // in case if Liechtenstein Cup winner (or random team from Liechtenstein) is present in CL_participants or EL_participants - the slot
+    // will remain empty (and thus, 111 teams will be in the pool)
+    getCCSpare()
+}
+
+// first quali - launches on 1.
+round type Quali "$ID_FIRST_QUALI" @Conf_quali1 teams 58 subs SUBS two_legs without_away_goal matchdays EL_Q1 bonus [175000,0,150000,0] <- @Conf_participants {
+    get(@Conf_participants, 57, 56) // 56 teams (2 teams auto-qualify to next round)
+    getCCSpare()
+}
+
+round type Quali @Conf_quali2_champ "$ID_CHAMP_PATH_R1" teams 16 subs SUBS two_legs without_away_goal matchdays EL_Q2 bonus [175000,0,150000,0] <- @Conf_quali1 {
+    getLoser(@CL_quali1) // 16 teams
+    getCCSpare()
+}
+
+// second quali
+pool @Conf_quali2_league_pool teams 88 <- @Conf_quali1 {
+    get(@Conf_participants, 6, 50) // 50 teams
+    getWinner(@Conf_quali1) // 29 teams
+    getLoser(@EL_quali1) // 9 teams
+    getCCSpare()
+}
+
+round type Quali @Conf_quali2_league_a "$ID_LEAGUE_PATH_R1_A" teams 44 subs SUBS two_legs without_away_goal matchdays EL_Q2 bonus [175000,0,350000,0] <- @Conf_quali2_league_pool {
+    get(@Conf_quali2_league_pool, 1, 22) // 22 teams
+    get(@Conf_quali2_league_pool, 45, 22) // 22 teams
+}
+
+round type Quali @Conf_quali2_league_b "$ID_LEAGUE_PATH_R1_B" teams 44 subs SUBS two_legs without_away_goal matchdays EL_Q2 bonus [175000,0,350000,0] <- @Conf_quali2_league_pool {
+    get(@Conf_quali2_league_pool, 23, 22) // 22 teams
+    get(@Conf_quali2_league_pool, 67, 22) // 22 teams
+}
+
+// third quali
+round type Quali @Conf_quali3_champ "$ID_CHAMP_PATH_R2" teams 8 subs SUBS two_legs without_away_goal matchdays EL_Q3 bonus [175000,0,550000,0] <- @Conf_quali2_champ {
+    getWinner(@Conf_quali2_champ) // 8 teams
+    getCCSpare()
+}
+
+round type Quali @Conf_quali3_league "$ID_LEAGUE_PATH_R2" teams 52 subs SUBS two_legs without_away_goal matchdays EL_Q3 bonus [175000,0,550000,0] <- [@Conf_quali2_league_a,@Conf_quali2_league_b] {
+    getWinner(@Conf_quali2_league_a) // 22 teams
+    getWinner(@Conf_quali2_league_b) // 22 teams
+    getLoser(@EL_quali2) // 8 teams
+    getCCSpare()
+}
+
+// play-off - launches on 39.
+round type Quali @Conf_po_champ "$ID_CHAMP_PATH_R3" teams 10 subs SUBS two_legs without_away_goal matchdays EL_PO bonus [175000,0,750000,0] <- @Conf_quali3_champ {
+    getWinner(@Conf_quali3_champ) // 4 teams
+    getLoser(@EL_quali3_champ) // 6 teams
+    getCCSpare()
+}
+
+round type Quali @Conf_po_league "$ID_LEAGUE_PATH_R3" teams 38 subs SUBS two_legs without_away_goal matchdays EL_PO bonus [175000,0,750000,0] <- @Conf_quali3_league {
+    get(@Conf_participants, 1, 5) // 5 teams
+    getWinner(@Conf_quali3_league) // 26 teams
+    getLoser(@EL_quali3_league) // 7 teams
+    getCCSpare()
+}
+
+pool @Conf_league_pool teams 36 <- [@Conf_po_champ,@Conf_po_league] {
+    getWinner(@Conf_po_champ) // 5 teams
+    getWinner(@Conf_po_league) // 19 teams
+    getLoser(@EL_po) // 12 teams
+    getCCSpare()
+    
+    pool @Conf_league_matches teams 216 {
+        getCCSpare() // generate 6 matchdays
+        
+        round @Conf_lg1 "$ID_LEAGUE_PHASE_MATCH_1" type Round1 teams 36 no_flags matchdays EL_LG1 bonus [3169998,400000,133000,0] subs SUBS { get(@prev, 1, 36); }
+        round @Conf_lg2 "$ID_LEAGUE_PHASE_MATCH_2" type Round1 teams 36 no_flags matchdays EL_LG2 bonus [0,400000,133000,0] subs SUBS { get(@prev, 37, 36); }
+        round @Conf_lg3 "$ID_LEAGUE_PHASE_MATCH_3" type Round1 teams 36 no_flags matchdays EL_LG3 bonus [0,400000,133000,0] subs SUBS { get(@prev, 73, 36); }
+        round @Conf_lg4 "$ID_LEAGUE_PHASE_MATCH_4" type Round1 teams 36 no_flags matchdays EL_LG4 bonus [0,400000,133000,0] subs SUBS { get(@prev, 109, 36); }
+        round @Conf_lg5 "$ID_LEAGUE_PHASE_MATCH_5" type Round1 teams 36 no_flags matchdays EL_LG5 bonus [0,400000,133000,0] subs SUBS { get(@prev, 145, 36); }
+        round @Conf_lg6 "$ID_LEAGUE_PHASE_MATCH_6" type Round1 teams 36 no_flags matchdays EL_LG6 bonus [0,400000,133000,0] subs SUBS { get(@prev, 181, 36); }
+    }
+}
+
+pool @Conf_league_sorted_pool teams 36 <- [@Conf_lg1,@Conf_lg2,@Conf_lg3,@Conf_lg4,@Conf_lg5,@Conf_lg6] {
+    get(@Conf_league_pool)
+    getCCSpare() // sort League table
+    
+    round @Conf_KO_prelim "$ID_PRELIMINARY_KO" type Round2 teams 16 two_legs without_away_goal matchdays EL_PRELIM_KO bonus [200000,0,0,0] subs SUBS {
+        get(@Conf_league_sorted_pool, 24, 1)
+        get(@Conf_league_sorted_pool, 23, 1)
+        get(@Conf_league_sorted_pool, 22, 1)
+        get(@Conf_league_sorted_pool, 21, 1)
+        get(@Conf_league_sorted_pool, 20, 1)
+        get(@Conf_league_sorted_pool, 19, 1)
+        get(@Conf_league_sorted_pool, 18, 1)
+        get(@Conf_league_sorted_pool, 17, 1)
+        get(@Conf_league_sorted_pool, 9, 8)
+        getCCSpare() // randomize every next 2 teams
+        
+        round "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 two_legs without_away_goal matchdays EL_LAST16 bonus [800000,0,0,0] subs SUBS {
+            get(@prev)
+            get(@Conf_league_sorted_pool, 1, 8)
+            getCCSpare() // randomize every next 2 teams (starting from team 9.)
+            
+            round type Quarterfinal teams 8 two_legs without_away_goal matchdays EL_QUARTER bonus [1300000,0,0,0] subs SUBS {
+                get(@prev)
+                
+                round type Semifinal teams 4 two_legs without_away_goal matchdays EL_SEMI bonus [2500000,0,0,0] subs SUBS {
+                    get(@prev)
+                    
+                    round type Final @Conf_final teams 2 matchdays CONF_FINAL bonus [4000000,3000000,0,0] subs SUBS {
+                        get(@prev)
+                    }
+                }
+            }
+        }
+    }
+}
+
+}
+
+
+comp Europe.EuroSuperCup {
+
+round type Final teams 2 matchdays SC_F bonus [4000000,1000000,0,0] subs SUBS {
+    getChamp(@CL_final)
+    getChamp(@EL_final)
+}
+
+}
+
+comp Europe.WorldClubChamp { // TODO: TeamInit for 2024/2025 season
+
+pool @WCC_host teams 1 { // F90D0000
+    getCCSpare() // select hosting team
+    
+    pool @WCC_host_stadiums teams 16 { // F90D0001
+        getCCSpare() // add hosting stadiums
+        
+        pool @WCC_participants teams 32 sorting ChampionsCupGroup { // F90D0002
+            get(@WCC_host)
+            getCCSpare() // add teams
+            
+            group @WCC_a "A" teams 4 sorting DM matchdays WC_GROUP_MATCHES bonus [3300000,3000000,1000000,0] subs SUBS { get(@prev, 1, 4) } // stadiums 1-2
+            group @WCC_b "B" teams 4 sorting DM matchdays WC_GROUP_MATCHES bonus [3300000,3000000,1000000,0] subs SUBS { get(@prev, 5, 4) } // stadiums 3-4
+            group @WCC_c "C" teams 4 sorting DM matchdays WC_GROUP_MATCHES bonus [3300000,3000000,1000000,0] subs SUBS { get(@prev, 9, 4) } // stadiums 5-6
+            group @WCC_d "D" teams 4 sorting DM matchdays WC_GROUP_MATCHES bonus [3300000,3000000,1000000,0] subs SUBS { get(@prev, 13, 4) } // stadiums 7-8
+            group @WCC_e "E" teams 4 sorting DM matchdays WC_GROUP_MATCHES bonus [3300000,3000000,1000000,0] subs SUBS { get(@prev, 17, 4) } // stadiums 9-10
+            group @WCC_f "F" teams 4 sorting DM matchdays WC_GROUP_MATCHES bonus [3300000,3000000,1000000,0] subs SUBS { get(@prev, 21, 4) } // stadiums 11-12
+            group @WCC_g "G" teams 4 sorting DM matchdays WC_GROUP_MATCHES bonus [3300000,3000000,1000000,0] subs SUBS { get(@prev, 25, 4) } // stadiums 13-14
+            group @WCC_h "H" teams 4 sorting DM matchdays WC_GROUP_MATCHES bonus [3300000,3000000,1000000,0] subs SUBS { get(@prev, 29, 4) } // stadiums 15-16
+        }
+    }
+}
+
+// stadiums 1-8
+round "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 matchdays WC_LAST16_MATCH bonus [5000000,0,0,0] subs SUBS <- [@WCC_a,@WCC_b,@WCC_c,@WCC_d,@WCC_e,@WCC_f,@WCC_g,@WCC_h]  {
+    get(@WCC_a, 1); get(@WCC_b, 1); get(@WCC_e, 1); get(@WCC_f, 1); get(@WCC_c, 1); get(@WCC_d, 1); get(@WCC_g, 1); get(@WCC_h, 1)
+    get(@WCC_b, 2); get(@WCC_a, 2); get(@WCC_f, 2); get(@WCC_e, 2); get(@WCC_d, 2); get(@WCC_c, 2); get(@WCC_h, 2); get(@WCC_g, 2)
+    
+    round type Quarterfinal teams 8 matchdays WC_QUARTERFINAL_MATCH bonus [6000000,0,0,0] subs SUBS { // stadiums 1-4
+        get(@prev)
+        
+        round type Semifinal teams 4 matchdays WC_SEMIFINAL_MATCH bonus [7000000,0,0,0] subs SUBS { // stadium 1
+            get(@prev)
+            
+            round type Final teams 2 matchdays WC_FINAL_MATCH bonus [8000000,5000000,0,0] subs SUBS { getWinner(@prev) } // staium 1
+        }
+    }
+}
+
+}
+
+comp Europe.Toyota {
+
+pool @IC_participants teams 6 {
+    getChamp(@CL_final)
+    getChamp(@@SouthAmerica_ChampionsLeague_22)
+    getChamp(@@NorthAmerica_ChampionsLeague_22)
+    getChamp(@@Africa_ChampionsLeague_22)
+    getChamp(@@Asia_ChampionsLeague_22)
+    getChamp(@@Oceania_ChampionsLeague_22)
+    getCCSpare() // swap teams
+    
+    round @IC_phaseA_1 type Round1 teams 2 subs SUBS matchdays IC_1 bonus [500000,0,0,0] {
+        get(@IC_participants, 5, 2)
+        
+        round @IC_phaseA_2 type Round2 teams 2 subs SUBS matchdays IC_2 bonus [500000,0,0,0] {
+            get(@IC_participants, 4, 1)
+            getWinner(@IC_phaseA_1)
+            shuffleTeams()
+        }
+    }
+    
+    round @IC_phaseB type Round3 teams 2 subs SUBS matchdays IC_2 bonus [500000,0,0,0] {
+        get(@IC_participants, 2, 2)
+    }
+}
+
+
+round @IC_FinalPart type Round4 teams 2  subs SUBS matchdays IC_S bonus [2000000,0,0,0]  <- [@IC_phaseA_2,@IC_phaseB] {
+    getWinner(@IC_phaseA_2)
+    getWinner(@IC_phaseB)
+    shuffleTeams()
+    
+    round @IC_Final type Final teams 2  subs SUBS matchdays IC_F bonus [2000000,6000000,0,0] {
+        get(@IC_participants, 1, 1)
+        getWinner(@prev)
+        shuffleTeams()
+    }
+}
+
+}
+
+comp Europe.YouthChampionsLeague {
+
+pool @Y_path_NL "National Leagues Path" teams 52 constraints @CL_league_pool <- @CL_league_matches {
+    getCCSpare() // add teams
+    changeTeamTypes(YouthA)
+    
+    round @Y_round_path_NL type Round1 teams 24 subs SUBS two_legs without_away_goal matchdays YM_FIRST_R {
+        get(@Y_path_NL, 29, 24); 
+        getCCSpare()
+        
+        round @Y_round_2_path_NL type Round2 teams 40 subs SUBS two_legs without_away_goal matchdays YM_SECOND_R {
+            get(@Y_path_NL, 1, 28);
+            get(@prev)
+            getCCSpare()
+            
+            round @Y_round_3_path_NL type Round3 teams 20 subs SUBS two_legs without_away_goal matchdays YM_THIRD_R {
+                get(@prev)
+                getCCSpare()
+            }
+        }
+    }
+    
+    pool @Y_league_pool "Champions League Path" teams 36 {
+        get(@CL_league_pool)
+        changeTeamTypes(YouthA)
+        
+        pool @Y_league_matches teams 216 {
+            getCCSpare() // copy 216 entries from @CL_league_matches
+            changeTeamTypes(YouthA)
+            
+            round @Y_lg1 "$ID_LEAGUE_PHASE_MATCH_1" type Round1 teams 36 no_flags matchdays YM_LG1 subs SUBS { get(@prev, 1, 36); }
+            round @Y_lg2 "$ID_LEAGUE_PHASE_MATCH_2" type Round1 teams 36 no_flags matchdays YM_LG2 subs SUBS { get(@prev, 37, 36); }
+            round @Y_lg3 "$ID_LEAGUE_PHASE_MATCH_3" type Round1 teams 36 no_flags matchdays YM_LG3 subs SUBS { get(@prev, 73, 36); }
+            round @Y_lg4 "$ID_LEAGUE_PHASE_MATCH_4" type Round1 teams 36 no_flags matchdays YM_LG4 subs SUBS { get(@prev, 109, 36); }
+            round @Y_lg5 "$ID_LEAGUE_PHASE_MATCH_5" type Round1 teams 36 no_flags matchdays YM_LG5 subs SUBS { get(@prev, 145, 36); }
+            round @Y_lg6 "$ID_LEAGUE_PHASE_MATCH_6" type Round1 teams 36 no_flags matchdays YM_LG6 subs SUBS { get(@prev, 181, 36); }
+        }
+    }
+}
+
+pool @Y_league_sorted_pool teams 36 <- [@Y_lg1,@Y_lg2,@Y_lg3,@Y_lg4,@Y_lg5,@Y_lg6,@Y_round_2_path_NL] {
+    get(@Y_league_pool)
+    getCCSpare() // sort League table
+    
+    round @Y_last32 type Round4 "$ID_TOURNAMENT_LAST32" teams 32 subs SUBS matchdays YM_LAST32 {
+        get(@Y_league_sorted_pool, 1, 22)
+        get(@Y_round_3_path_NL)
+        getCCSpare() // randomize teams 1-6, 7-16, 17-22, 23-32
+        
+        round @Y_last16 "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 matchdays YM_LAST16 subs SUBS <- @Y_last32 {
+            get(@prev)
+            getCCSpare()
+            
+            round @Y_quarterfinal type Quarterfinal teams 8 matchdays YM_QUARTER subs SUBS {
+                get(@prev)
+                
+                round @Y_semifinal type Semifinal teams 4 matchdays YM_SEMI subs SUBS {
+                    get(@prev)
+                    
+                    round @Y_final type Final teams 2 matchdays YM_FINAL subs SUBS {
+                        get(@prev)
+                    }
+                }
+            }
+        }
+    }
+}
+
+}

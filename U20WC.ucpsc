@@ -1,0 +1,406 @@
+#name "U-20 World Cup and Qualification"
+#author "FM 2024 Team"
+#version "24.0"
+
+#define MAIN_G [311,314,317]
+#define MAIN_L 320
+#define MAIN_Q 323
+#define MAIN_S 326
+#define MAIN_T 329
+#define MAIN_F 330
+#define M_Q_EURO_1 [59,62,65]
+#define M_Q_EURO_2 [130,133,136]
+#define M_Q_EURO_3 [213,216,219]
+#define M_Q_SA_1 [59,62,65,95,98]
+#define M_Q_SA_2 [130,133,136,213,216]
+#define M_Q_NAM_1 [59,62,65,95,98]
+#define M_Q_NAM_2 [213,216,219]
+#define M_Q_AFRICA_1 [59,62]
+#define M_Q_AFRICA_2 [95,98]
+#define M_Q_AFRICA_3 [130,133]
+#define M_Q_AFRICA_4 [213,216,219]
+#define M_Q_ASIA_1 [59,62,65,95,98]
+#define M_Q_ASIA_2 [130,133,136]
+#define M_Q_ASIA_3 213
+#define M_Q_OFC_1 [59,62,65]
+#define M_Q_OFC_2 [130,133,136]
+#define M_Q_OFC_3 219
+
+#define Q_GROUPS [@q_a,@q_b,@q_c,@q_d,@q_e,@q_f,@q_g,@q_h,@q_i,@q_j,@q_k,@q_l,@q_m]
+#define E_GROUPS [@e_a,@e_b,@e_c,@e_d,@e_e,@e_f,@e_g,@e_h]
+
+// every 2 years, starting in 2024/2025
+// only quali is launched at startup
+
+comp U20WorldCup {
+
+pool @main teams 24 sorting CountryStrength <- [@f_a,@f_b,@NAM_q_a,@NAM_q_b,@Africa_a,@Africa_b,@OFC_playoff] {
+    get([@f_a,@f_b], 1, 3) // Europe - first 3 teams from final quali groups A and B (6 teams)
+    get(@SA_final, 1, 4) // South America - first 4 teams in final group (4 teams)
+    get([@NAM_q_a,@NAM_q_b], 1, 2) // North America - first 2 teams from final groups A and B (4 teams)
+    get([@Africa_a,@Africa_b], 1, 2) // Africa - first 2 teams from final groups A and B (4 teams)
+    get(@Asia_playoff) // Asia - play-off winners (4 teams)
+    get(@OFC_playoff) // Oceania - play-off winners (2 teams)
+    
+    pool @pot_1 teams 6 sorting Random -> [@a,@b,@c,@d,@e,@f] { get(@prev, 1, 6) }
+    pool @pot_2 teams 6 sorting Random -> [@a,@b,@c,@d,@e,@f] { get(@prev, 7, 6) }
+    pool @pot_3 teams 6 sorting Random -> [@a,@b,@c,@d,@e,@f] { get(@prev, 13, 6) }
+    pool @pot_4 teams 6 sorting Random -> [@a,@b,@c,@d,@e,@f] { get(@prev, 19, 6) }
+}
+
+group @a "A" teams 4 matchdays MAIN_G { get(@prev, 1); shuffleTeams() }
+group @b "B" teams 4 matchdays MAIN_G { get(@prev, 2); shuffleTeams() }
+group @c "C" teams 4 matchdays MAIN_G { get(@prev, 3); shuffleTeams() }
+group @d "D" teams 4 matchdays MAIN_G { get(@prev, 4); shuffleTeams() }
+group @e "E" teams 4 matchdays MAIN_G { get(@prev, 5); shuffleTeams() }
+group @f "F" teams 4 matchdays MAIN_G { get(@prev, 6); shuffleTeams() }
+
+pool @t teams 6 sorting PrevPointsDiff <- [@a,@b,@c,@d,@e,@f] {
+    get(@prev, 3)
+    
+    round "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 matchdays MAIN_L  {
+        get(@a, 2); get(@e, 1); get(@b, 1); get(@b, 2); get(@d, 1); get(@c, 1); get(@f, 1); get(@a, 1)
+        get(@c, 2); get(@d, 2); get(@t, 1); get(@f, 2); get(@t, 2); get(@t, 3); get(@e, 2); get(@t, 4)
+        
+        round type Quarterfinal teams 8 matchdays MAIN_Q {
+            get(@prev)
+            
+            round type Semifinal teams 4 matchdays MAIN_S {
+                get(@prev)
+                
+                round type Final3rdPlace teams 2 matchdays MAIN_T { getLoser(@prev) }
+                round type Final teams 2 matchdays MAIN_F { getWinner(@prev) }
+            }
+        }
+    }
+}
+
+}
+
+comp U20WCQ {
+
+pool @q_main teams 207 {
+    getNationalTeam(International)
+    changeTeamTypes(YouthA)
+}
+
+// Europe
+
+pool @q teams 54 sorting CountryStrength <- @q_main {
+    getNationalTeam(France)
+    getNationalTeam(Belgium)
+    getNationalTeam(Italy)
+    getNationalTeam(Spain)
+    getNationalTeam(Portugal)
+    getNationalTeam(Netherlands)
+    getNationalTeam(Denmark)
+    getNationalTeam(Germany)
+    getNationalTeam(England)
+    getNationalTeam(Poland)
+    getNationalTeam(Switzerland)
+    getNationalTeam(Croatia)
+    getNationalTeam(Wales)
+    getNationalTeam(Austria)
+    getNationalTeam(CzechRepublic)
+    getNationalTeam(Hungary)
+    getNationalTeam(Ukraine)
+    getNationalTeam(Sweden)
+    getNationalTeam(BosniaHerzegovina)
+    getNationalTeam(Iceland)
+    getNationalTeam(Finland)
+    getNationalTeam(Norway)
+    getNationalTeam(Scotland)
+    getNationalTeam(Israel)
+    getNationalTeam(Romania)
+    getNationalTeam(Serbia)
+    getNationalTeam(Ireland)
+    getNationalTeam(Slovenia)
+    getNationalTeam(Montenegro)
+    getNationalTeam(Albania)
+    getNationalTeam(Armenia)
+    getNationalTeam(Turkey)
+    getNationalTeam(Slovakia)
+    getNationalTeam(Bulgaria)
+    getNationalTeam(NorthernIreland)
+    getNationalTeam(Greece)
+    getNationalTeam(Belarus)
+    getNationalTeam(Luxembourg)
+    getNationalTeam(NorthMacedonia)
+    getNationalTeam(Lithuania)
+    getNationalTeam(Georgia)
+    getNationalTeam(Azerbaijan)
+    getNationalTeam(Kosovo)
+    getNationalTeam(Kazakhstan)
+    getNationalTeam(Cyprus)
+    getNationalTeam(Gibraltar)
+    getNationalTeam(FaroeIslands)
+    getNationalTeam(Estonia)
+    getNationalTeam(Moldova)
+    getNationalTeam(Liechtenstein)
+    getNationalTeam(Malta)
+    getNationalTeam(Latvia)
+    getNationalTeam(SanMarino)
+    getNationalTeam(Andorra)
+    changeTeamTypes(YouthA)
+    
+    pool @q_pot_1 teams 13 sorting Random -> Q_GROUPS { get(@prev, 3, 13) }
+    pool @q_pot_2 teams 13 sorting Random -> Q_GROUPS { get(@prev, 16, 13) }
+    pool @q_pot_3 teams 13 sorting Random -> Q_GROUPS { get(@prev, 29, 13) }
+    pool @q_pot_4 teams 13 sorting Random -> Q_GROUPS { get(@prev, 42, 13) }
+}
+
+group @q_a "$ID_U20WC_EURO_GROUP_A" type Round1 teams 4 matchdays M_Q_EURO_1 { get(@prev, 1); shuffleTeams() }
+group @q_b "$ID_U20WC_EURO_GROUP_B" type Round1 teams 4 matchdays M_Q_EURO_1 { get(@prev, 2); shuffleTeams() }
+group @q_c "$ID_U20WC_EURO_GROUP_C" type Round1 teams 4 matchdays M_Q_EURO_1 { get(@prev, 3); shuffleTeams() }
+group @q_d "$ID_U20WC_EURO_GROUP_D" type Round1 teams 4 matchdays M_Q_EURO_1 { get(@prev, 4); shuffleTeams() }
+group @q_e "$ID_U20WC_EURO_GROUP_E" type Round1 teams 4 matchdays M_Q_EURO_1 { get(@prev, 5); shuffleTeams() }
+group @q_f "$ID_U20WC_EURO_GROUP_F" type Round1 teams 4 matchdays M_Q_EURO_1 { get(@prev, 6); shuffleTeams() }
+group @q_g "$ID_U20WC_EURO_GROUP_G" type Round1 teams 4 matchdays M_Q_EURO_1 { get(@prev, 7); shuffleTeams() }
+group @q_h "$ID_U20WC_EURO_GROUP_H" type Round1 teams 4 matchdays M_Q_EURO_1 { get(@prev, 8); shuffleTeams() }
+group @q_i "$ID_U20WC_EURO_GROUP_I" type Round1 teams 4 matchdays M_Q_EURO_1 { get(@prev, 9); shuffleTeams() }
+group @q_j "$ID_U20WC_EURO_GROUP_J" type Round1 teams 4 matchdays M_Q_EURO_1 { get(@prev, 10); shuffleTeams() }
+group @q_k "$ID_U20WC_EURO_GROUP_K" type Round1 teams 4 matchdays M_Q_EURO_1 { get(@prev, 11); shuffleTeams() }
+group @q_l "$ID_U20WC_EURO_GROUP_L" type Round1 teams 4 matchdays M_Q_EURO_1 { get(@prev, 12); shuffleTeams() }
+group @q_m "$ID_U20WC_EURO_GROUP_M" type Round1 teams 4 matchdays M_Q_EURO_1 { get(@prev, 13); shuffleTeams() }
+
+pool @q_first teams 13 sorting PrevPointsDiff <- Q_GROUPS {
+    get(@prev, 1)
+}
+
+pool @q_second teams 13 sorting PrevPointsDiff <- Q_GROUPS {
+    get(@prev, 2)
+}
+
+pool @q_third teams 13 sorting PrevPointsDiff <- Q_GROUPS {
+    get(@prev, 3)
+}
+
+pool @elite teams 32 <- [@q_first,@q_second,@q_third] {
+    get(@q, 1, 2)
+    get([@q_first,@q_second,@q_third])
+    
+    pool @e_pot_1 teams 8 sorting Random -> E_GROUPS { get(@prev, 1, 8) }
+    pool @e_pot_2 teams 8 sorting Random -> E_GROUPS { get(@prev, 9, 8) }
+    pool @e_pot_3 teams 8 sorting Random -> E_GROUPS { get(@prev, 17, 8) }
+    pool @e_pot_4 teams 8 sorting Random -> E_GROUPS { get(@prev, 25, 8) }
+}
+
+group @e_a "$ID_U20WC_EURO_ELITE_A" type Group1 teams 4 matchdays M_Q_EURO_2 { get(@prev, 1); shuffleTeams() }
+group @e_b "$ID_U20WC_EURO_ELITE_B" type Group1 teams 4 matchdays M_Q_EURO_2 { get(@prev, 2); shuffleTeams() }
+group @e_c "$ID_U20WC_EURO_ELITE_C" type Group1 teams 4 matchdays M_Q_EURO_2 { get(@prev, 3); shuffleTeams() }
+group @e_d "$ID_U20WC_EURO_ELITE_D" type Group1 teams 4 matchdays M_Q_EURO_2 { get(@prev, 4); shuffleTeams() }
+group @e_e "$ID_U20WC_EURO_ELITE_E" type Group1 teams 4 matchdays M_Q_EURO_2 { get(@prev, 5); shuffleTeams() }
+group @e_f "$ID_U20WC_EURO_ELITE_F" type Group1 teams 4 matchdays M_Q_EURO_2 { get(@prev, 6); shuffleTeams() }
+group @e_g "$ID_U20WC_EURO_ELITE_G" type Group1 teams 4 matchdays M_Q_EURO_2 { get(@prev, 7); shuffleTeams() }
+group @e_h "$ID_U20WC_EURO_ELITE_H" type Group1 teams 4 matchdays M_Q_EURO_2 { get(@prev, 8); shuffleTeams() }
+
+pool @final teams 8 sorting Random <- E_GROUPS {
+    get(E_GROUPS, 1)
+    
+    group @f_a "$ID_U20WC_EURO_FINAL_A" type Group2 teams 4 matchdays M_Q_EURO_3 { get(@prev, 1, 4); shuffleTeams() }
+    group @f_b "$ID_U20WC_EURO_FINAL_B" type Group2 teams 4 matchdays M_Q_EURO_3 { get(@prev, 5, 4); shuffleTeams() }
+}
+
+// South America
+
+pool @SA_q teams 10 sorting CountryStrength <- @q_main {
+    getNationalTeam(SouthAmerica)
+    changeTeamTypes(YouthA)
+    
+    pool @SA_pot_1 teams 2 sorting Random -> [@SA_a,@SA_b] { get(@SA_q, 1, 2) }
+    pool @SA_pot_2 teams 2 sorting Random -> [@SA_a,@SA_b] { get(@SA_q, 3, 2) }
+    pool @SA_pot_3 teams 2 sorting Random -> [@SA_a,@SA_b] { get(@SA_q, 5, 2) }
+    pool @SA_pot_4 teams 2 sorting Random -> [@SA_a,@SA_b] { get(@SA_q, 7, 2) }
+    pool @SA_pot_5 teams 2 sorting Random -> [@SA_a,@SA_b] { get(@SA_q, 9, 2) }
+}
+
+group @SA_a "$ID_U20WC_SOUTHAM_A" type Group1 teams 5 matchdays M_Q_SA_1 -> @SA_final { get(@prev, 1); shuffleTeams() }
+group @SA_b "$ID_U20WC_SOUTHAM_B" type Group1 teams 5 matchdays M_Q_SA_1 -> @SA_final { get(@prev, 2); shuffleTeams() }
+
+group @SA_final "$ID_U20WC_SOUTHAM_FINAL" type Group2 teams 6 matchdays M_Q_SA_2 { get(@prev, 1, 3); shuffleTeams() }
+
+// North America
+
+pool @NAM_q teams 34 sorting CountryStrength <- @q_main {
+    getNationalTeam(NorthAmerica)
+    changeTeamTypes(YouthA)
+    
+    pool @NAM_pot_1 teams 6 sorting Random -> [@NAM_a,@NAM_b,@NAM_c,@NAM_d,@NAM_e,@NAM_f] { get(@NAM_q, 1, 6) }
+    pool @NAM_pot_2 teams 6 sorting Random -> [@NAM_a,@NAM_b,@NAM_c,@NAM_d,@NAM_e,@NAM_f] { get(@NAM_q, 7, 6) }
+    pool @NAM_pot_3 teams 6 sorting Random -> [@NAM_a,@NAM_b,@NAM_c,@NAM_d,@NAM_e,@NAM_f] { get(@NAM_q, 13, 6) }
+    pool @NAM_pot_4 teams 6 sorting Random -> [@NAM_a,@NAM_b,@NAM_c,@NAM_d,@NAM_e,@NAM_f] { get(@NAM_q, 19, 6) }
+    pool @NAM_pot_5 teams 6 sorting Random -> [@NAM_a,@NAM_b,@NAM_c,@NAM_d,@NAM_e,@NAM_f] { get(@NAM_q, 25, 6) }
+    pool @NAM_pot_6 teams 4 sorting Random -> [@NAM_a,@NAM_b,@NAM_c,@NAM_d,@NAM_e,@NAM_f] { get(@NAM_q, 31, 4) }
+}
+
+group @NAM_a "$ID_U20WC_NAM_A" type Group1 teams 6 matchdays M_Q_NAM_1 -> @NAM_q_groups { get(@prev, 1); shuffleTeams() }
+group @NAM_b "$ID_U20WC_NAM_B" type Group1 teams 6 matchdays M_Q_NAM_1 -> @NAM_q_groups { get(@prev, 2); shuffleTeams() }
+group @NAM_c "$ID_U20WC_NAM_C" type Group1 teams 6 matchdays M_Q_NAM_1 -> @NAM_q_groups { get(@prev, 3); shuffleTeams() }
+group @NAM_d "$ID_U20WC_NAM_D" type Group1 teams 6 matchdays M_Q_NAM_1 -> @NAM_q_groups { get(@prev, 4); shuffleTeams() }
+group @NAM_e "$ID_U20WC_NAM_E" type Group1 teams 5 matchdays M_Q_NAM_1 -> @NAM_q_groups { get([@NAM_pot_1,@NAM_pot_2,@NAM_pot_3,@NAM_pot_4,@NAM_pot_5], 5); shuffleTeams() }
+group @NAM_f "$ID_U20WC_NAM_F" type Group1 teams 5 matchdays M_Q_NAM_1 -> @NAM_q_groups { get([@NAM_pot_1,@NAM_pot_2,@NAM_pot_3,@NAM_pot_4,@NAM_pot_5], 6); shuffleTeams() }
+
+pool @NAM_q_groups teams 6 sorting Random {
+    get(@prev, 1)
+    
+    group @NAM_q_a "$ID_U20WC_NAM_Q_A" type Group2 teams 3 matchdays M_Q_NAM_2 { get(@prev, 1, 3); shuffleTeams() }
+    group @NAM_q_b "$ID_U20WC_NAM_Q_B" type Group2 teams 3 matchdays M_Q_NAM_2 { get(@prev, 4, 3); shuffleTeams() }
+}
+
+// Africa
+
+pool @Africa_q teams 52 sorting CountryStrength <- @q_main {
+    getNationalTeam(Africa)
+    changeTeamTypes(YouthA)
+    
+    round "$ID_U20WC_AFRICA_R1" type Round1 teams 40 two_legs matchdays M_Q_AFRICA_1 {
+        get(@prev, 13, 40)
+        getCCSpare() // random sort only
+        
+        round "$ID_U20WC_AFRICA_R2" type Round2 teams 32 two_legs matchdays M_Q_AFRICA_2 {
+            get(@Africa_q, 1, 12)
+            get(@prev)
+            getCCSpare() // random sort only
+            
+            round "$ID_U20WC_AFRICA_R3" type Round3 teams 16 two_legs matchdays M_Q_AFRICA_3 {
+                get(@prev)
+                
+                pool teams 8 sorting CountryStrength {
+                    get(@prev)
+                    
+                    pool teams 4 sorting Random -> [@Africa_a,@Africa_b] { get(@prev, 1, 4) }
+                    pool teams 4 sorting Random -> [@Africa_a,@Africa_b] { get(@prev, 5, 4) }
+                }
+            }
+        }
+    }
+}
+
+group @Africa_a "$ID_U20WC_AFRICA_A" type Group1 teams 4 matchdays M_Q_AFRICA_4 { get(@prev, 1, 2); shuffleTeams() }
+group @Africa_b "$ID_U20WC_AFRICA_B" type Group1 teams 4 matchdays M_Q_AFRICA_4 { get(@prev, 3, 2); shuffleTeams() }
+
+// Asia
+
+pool @Asia_WestZone teams 25 sorting CountryStrength <- @q_main {
+    getNationalTeam(Afghanistan)
+    getNationalTeam(Bahrain)
+    getNationalTeam(Bangladesh)
+    getNationalTeam(Bhutan)
+    getNationalTeam(India)
+    getNationalTeam(Iran)
+    getNationalTeam(Iraq)
+    getNationalTeam(Jordan)
+    getNationalTeam(Kuwait)
+    getNationalTeam(Kyrgyzstan)
+    getNationalTeam(Lebanon)
+    getNationalTeam(Maldives)
+    getNationalTeam(Nepal)
+    getNationalTeam(Oman)
+    getNationalTeam(Pakistan)
+    getNationalTeam(PalestinianAuthority)
+    getNationalTeam(Qatar)
+    getNationalTeam(SaudiArabia)
+    getNationalTeam(SriLanka)
+    getNationalTeam(Syria)
+    getNationalTeam(Tajikistan)
+    getNationalTeam(Turkmenistan)
+    getNationalTeam(UnitedArabEmirates)
+    getNationalTeam(Uzbekistan)
+    getNationalTeam(Yemen)
+    changeTeamTypes(YouthA)
+    
+    pool @Asia_EastZone teams 20 sorting CountryStrength {
+        getNationalTeam(BruneiDarussalam)
+        getNationalTeam(Cambodia)
+        getNationalTeam(China)
+        getNationalTeam(Taiwan)
+        getNationalTeam(Guam)
+        getNationalTeam(HongKong)
+        getNationalTeam(Indonesia)
+        getNationalTeam(Japan)
+        getNationalTeam(KoreaDPR)
+        getNationalTeam(KoreaRepublic)
+        getNationalTeam(Laos)
+        getNationalTeam(Macao)
+        getNationalTeam(Malaysia)
+        getNationalTeam(Mongolia)
+        getNationalTeam(Myanmar)
+        getNationalTeam(Philippines)
+        getNationalTeam(Singapore)
+        getNationalTeam(Thailand)
+        getNationalTeam(Vietnam)
+        getNationalTeam(Australia)
+        changeTeamTypes(YouthA)
+        
+        pool @Asia_W_pot_1 teams 5 sorting Random -> [@Asia_a,@Asia_b,@Asia_c,@Asia_d,@Asia_e] { get(@Asia_WestZone, 1, 5) }
+        pool @Asia_W_pot_2 teams 5 sorting Random -> [@Asia_a,@Asia_b,@Asia_c,@Asia_d,@Asia_e] { get(@Asia_WestZone, 6, 5) }
+        pool @Asia_W_pot_3 teams 5 sorting Random -> [@Asia_a,@Asia_b,@Asia_c,@Asia_d,@Asia_e] { get(@Asia_WestZone, 11, 5) }
+        pool @Asia_W_pot_4 teams 5 sorting Random -> [@Asia_a,@Asia_b,@Asia_c,@Asia_d,@Asia_e] { get(@Asia_WestZone, 16, 5) }
+        pool @Asia_W_pot_5 teams 5 sorting Random -> [@Asia_a,@Asia_b,@Asia_c,@Asia_d,@Asia_e] { get(@Asia_WestZone, 21, 5) }
+        pool @Asia_E_pot_1 teams 4 sorting Random -> [@Asia_f,@Asia_g,@Asia_h,@Asia_i] { get(@Asia_EastZone, 1, 4) }
+        pool @Asia_E_pot_2 teams 4 sorting Random -> [@Asia_f,@Asia_g,@Asia_h,@Asia_i] { get(@Asia_EastZone, 5, 4) }
+        pool @Asia_E_pot_3 teams 4 sorting Random -> [@Asia_f,@Asia_g,@Asia_h,@Asia_i] { get(@Asia_EastZone, 9, 4) }
+        pool @Asia_E_pot_4 teams 4 sorting Random -> [@Asia_f,@Asia_g,@Asia_h,@Asia_i] { get(@Asia_EastZone, 13, 4) }
+        pool @Asia_E_pot_5 teams 4 sorting Random -> [@Asia_f,@Asia_g,@Asia_h,@Asia_i] { get(@Asia_EastZone, 17, 4) }
+    }
+}
+
+group @Asia_a "$ID_U20WC_ASIA_Q_GROUP_A" type Round1 teams 5 matchdays M_Q_ASIA_1 -> @Asia_2nd { get([@Asia_W_pot_1,@Asia_W_pot_2,@Asia_W_pot_3,@Asia_W_pot_4,@Asia_W_pot_5], 1); shuffleTeams() }
+group @Asia_b "$ID_U20WC_ASIA_Q_GROUP_B" type Round1 teams 5 matchdays M_Q_ASIA_1 -> @Asia_2nd { get([@Asia_W_pot_1,@Asia_W_pot_2,@Asia_W_pot_3,@Asia_W_pot_4,@Asia_W_pot_5], 2); shuffleTeams() }
+group @Asia_c "$ID_U20WC_ASIA_Q_GROUP_C" type Round1 teams 5 matchdays M_Q_ASIA_1 -> @Asia_2nd { get([@Asia_W_pot_1,@Asia_W_pot_2,@Asia_W_pot_3,@Asia_W_pot_4,@Asia_W_pot_5], 3); shuffleTeams() }
+group @Asia_d "$ID_U20WC_ASIA_Q_GROUP_D" type Round1 teams 5 matchdays M_Q_ASIA_1 -> @Asia_2nd { get([@Asia_W_pot_1,@Asia_W_pot_2,@Asia_W_pot_3,@Asia_W_pot_4,@Asia_W_pot_5], 4); shuffleTeams() }
+group @Asia_e "$ID_U20WC_ASIA_Q_GROUP_E" type Round1 teams 5 matchdays M_Q_ASIA_1 -> @Asia_2nd { get([@Asia_W_pot_1,@Asia_W_pot_2,@Asia_W_pot_3,@Asia_W_pot_4,@Asia_W_pot_5], 5); shuffleTeams() }
+group @Asia_f "$ID_U20WC_ASIA_Q_GROUP_F" type Round1 teams 5 matchdays M_Q_ASIA_1 -> @Asia_2nd { get([@Asia_E_pot_1,@Asia_E_pot_2,@Asia_E_pot_3,@Asia_E_pot_4,@Asia_E_pot_5], 1); shuffleTeams() }
+group @Asia_g "$ID_U20WC_ASIA_Q_GROUP_G" type Round1 teams 5 matchdays M_Q_ASIA_1 -> @Asia_2nd { get([@Asia_E_pot_1,@Asia_E_pot_2,@Asia_E_pot_3,@Asia_E_pot_4,@Asia_E_pot_5], 2); shuffleTeams() }
+group @Asia_h "$ID_U20WC_ASIA_Q_GROUP_H" type Round1 teams 5 matchdays M_Q_ASIA_1 -> @Asia_2nd { get([@Asia_E_pot_1,@Asia_E_pot_2,@Asia_E_pot_3,@Asia_E_pot_4,@Asia_E_pot_5], 3); shuffleTeams() }
+group @Asia_i "$ID_U20WC_ASIA_Q_GROUP_I" type Round1 teams 5 matchdays M_Q_ASIA_1 -> @Asia_2nd { get([@Asia_E_pot_1,@Asia_E_pot_2,@Asia_E_pot_3,@Asia_E_pot_4,@Asia_E_pot_5], 4); shuffleTeams() }
+
+pool @Asia_2nd teams 9 sorting PrevPointsDiff {
+    get(@prev, 2)
+    
+    pool @Asia_main teams 16 sorting CountryStrength {
+        get([@Asia_a,@Asia_b,@Asia_c,@Asia_d,@Asia_e,@Asia_f,@Asia_g,@Asia_h,@Asia_i], 1)
+        get(@prev, 1, 7)
+        
+        pool @Asia_pot_1 teams 4 sorting Random -> [@Asia_a2,@Asia_b2,@Asia_c2,@Asia_d2] { get(@prev, 1, 4) }
+        pool @Asia_pot_2 teams 4 sorting Random -> [@Asia_a2,@Asia_b2,@Asia_c2,@Asia_d2] { get(@prev, 5, 4) }
+        pool @Asia_pot_3 teams 4 sorting Random -> [@Asia_a2,@Asia_b2,@Asia_c2,@Asia_d2] { get(@prev, 9, 4) }
+        pool @Asia_pot_4 teams 4 sorting Random -> [@Asia_a2,@Asia_b2,@Asia_c2,@Asia_d2] { get(@prev, 13, 4) }
+    }
+}
+
+group @Asia_a2 "$ID_U20WC_ASIA_GROUP_A" type Round2 teams 4 matchdays M_Q_ASIA_2 -> @Asia_playoff { get(@prev, 1); shuffleTeams() }
+group @Asia_b2 "$ID_U20WC_ASIA_GROUP_B" type Round2 teams 4 matchdays M_Q_ASIA_2 -> @Asia_playoff { get(@prev, 2); shuffleTeams() }
+group @Asia_c2 "$ID_U20WC_ASIA_GROUP_C" type Round2 teams 4 matchdays M_Q_ASIA_2 -> @Asia_playoff { get(@prev, 3); shuffleTeams() }
+group @Asia_d2 "$ID_U20WC_ASIA_GROUP_D" type Round2 teams 4 matchdays M_Q_ASIA_2 -> @Asia_playoff { get(@prev, 4); shuffleTeams() }
+
+round @Asia_playoff "$ID_U20WC_ASIA_PLAYOFF" type Round3 teams 8 matchdays M_Q_ASIA_3 {
+    get(@Asia_a2, 1); get(@Asia_b2, 1); get(@Asia_c2, 1); get(@Asia_d2, 1)
+    get(@Asia_b2, 2); get(@Asia_a2, 2); get(@Asia_d2, 2); get(@Asia_c2, 2)
+}
+
+// Oceania
+
+pool @OFC_q teams 11 sorting CountryStrength <- @q_main {
+    getNationalTeam(Oceania)
+    changeTeamTypes(YouthA)
+    
+    league @OFC_q_r1 type Round1 "$ID_U20WC_OFC_QUALI" teams 4 matchdays M_Q_OFC_1 {
+        get(@prev, 8, 4)
+        
+        pool @OFC_pot_1 teams 4 sorting Random -> [@OFC_a,@OFC_b] { get(@OFC_q, 1, 4) }
+        pool @OFC_pot_2 teams 4 sorting Random -> [@OFC_a,@OFC_b] { get(@OFC_q, 5, 3); get(@prev, 1); }
+    }
+}
+
+group @OFC_a "$ID_U20WC_OFC_A" teams 4 type Round2 matchdays M_Q_OFC_2 { get(@prev, 1, 2); shuffleTeams() }
+group @OFC_b "$ID_U20WC_OFC_B" teams 4 type Round2 matchdays M_Q_OFC_2 { get(@prev, 3, 2); shuffleTeams() }
+
+round @OFC_playoff "$ID_U20WC_OFC_PLAYOFF" type Round3 teams 4 matchdays M_Q_OFC_3 <- [@OFC_a,@OFC_b] {
+    get(@OFC_a, 1)
+    get(@OFC_b, 1)
+    get(@OFC_b, 2)
+    get(@OFC_a, 2)
+}
+
+}

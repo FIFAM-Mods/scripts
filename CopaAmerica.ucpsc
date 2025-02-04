@@ -1,0 +1,78 @@
+#name "Copa America script"
+#author "FM 2024 Team"
+#version "24.0"
+
+#define CAM_QUALI 337
+#define CAM_G [340,343,346]
+#define CAM_Q 350
+#define CAM_S 354
+#define CAM_T 357
+#define CAM_F 358
+#define FINALISSIMA_MATCH 337
+#define NUM_SUBS 5
+#define QWC_CONCACAF_groups_pool @@NAMNL_2
+#define EURO_final @@EuroCup_18
+
+comp CopaAmerica {
+
+pool @participants teams 18 {  
+    getNatSouthAmerica(Argentina)
+    getNatSouthAmerica(Bolivia)
+    getNatSouthAmerica(Chile)
+    getNatSouthAmerica(Paraguay)
+    getNatSouthAmerica(Uruguay)
+    getNatSouthAmerica(Brazil)
+    getNatSouthAmerica(Colombia)
+    getNatSouthAmerica(Ecuador)
+    getNatSouthAmerica(Peru)
+    getNatSouthAmerica(Venezuela)
+    getPool(QWC_CONCACAF_groups_pool, 1, 8)
+    
+    round type Quali teams 4 subs NUM_SUBS matchdays CAM_QUALI {
+        get(@participants, 15, 4)
+        
+        pool @group_stage_pool teams 16 sorting CountryStrength {
+            get(@participants, 1, 14) // 14 teams
+            get(@prev) // 2 teams
+            
+            pool @pot_1 teams 4 sorting Random -> [@a,@b,@c,@d] { get(@prev, 1, 4) }
+            pool @pot_2 teams 4 sorting Random -> [@a,@b,@c,@d] { get(@prev, 5, 4) }
+            pool @pot_3 teams 4 sorting Random -> [@a,@b,@c,@d] { get(@prev, 9, 4) }
+            pool @pot_4 teams 4 sorting Random -> [@a,@b,@c,@d] { get(@prev, 13, 4) }
+        }
+    }
+}
+
+group @a "A" teams 4 subs NUM_SUBS matchdays CAM_G { get(@prev, 1); shuffleTeams() }
+group @b "B" teams 4 subs NUM_SUBS matchdays CAM_G { get(@prev, 2); shuffleTeams() }
+group @c "C" teams 4 subs NUM_SUBS matchdays CAM_G { get(@prev, 3); shuffleTeams() }
+group @d "D" teams 4 subs NUM_SUBS matchdays CAM_G { get(@prev, 4); shuffleTeams() }
+
+round type Quarterfinal teams 8 subs NUM_SUBS matchdays CAM_Q <- [@a,@b,@c,@d] {
+    get(@a, 1); get(@b, 1); get(@c, 1); get(@d, 1)
+    get(@b, 2); get(@a, 2); get(@d, 2); get(@c, 2)
+    
+    round type Semifinal teams 4 subs NUM_SUBS  matchdays CAM_S {
+        get(@prev)
+        
+        round type Final3rdPlace teams 2 subs NUM_SUBS matchdays CAM_T {
+            getLoser(@prev)
+        }
+        
+        round @final type Final teams 2 subs NUM_SUBS matchdays CAM_F {
+            get(@prev)
+        }
+    }
+}
+
+}
+
+comp "FINALISSIMA" {
+
+round type Final teams 2 subs NUM_SUBS matchdays FINALISSIMA_MATCH {
+    getChamp(EURO_final)
+    getChamp(@final)
+    shuffleTeams()
+}
+
+}

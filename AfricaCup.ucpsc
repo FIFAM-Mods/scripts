@@ -1,0 +1,101 @@
+#name "Total CAF Africa Cup of Nations, with Qualification"
+#author "FM 2024 Team"
+#version "24.0"
+
+#define M_ACN_G [337,340,343]
+#define M_ACN_L 346
+#define M_ACN_Q 349
+#define M_ACN_S 352
+#define M_ACN_T 355
+#define M_ACN_F 357
+
+#define M_Q_ACN_R1 [61,64]
+#define M_Q_ACN_G [94,97,100,129,132,135]
+
+#define ACN_GROUPS [@a,@b,@c,@d,@e,@f]
+#define Q_ACN_GROUPS [@q_a,@q_b,@q_c,@q_d,@q_e,@q_f,@q_g,@q_h,@q_i,@q_j,@q_k,@q_l]
+
+#define NUM_SUBS 5
+
+// Africa Cup of Nations - each 2 years, next 2025 (2022/2023, 2024/2025), June-July
+
+comp AfricaCup {
+
+pool @participants teams 24 sorting CountryStrength <- Q_ACN_GROUPS {
+    get(Q_ACN_GROUPS, 1, 2)
+    
+    pool @pot_1 teams 6 sorting Random -> ACN_GROUPS { get(@prev, 1, 6) }
+    pool @pot_2 teams 6 sorting Random -> ACN_GROUPS { get(@prev, 7, 6) }
+    pool @pot_3 teams 6 sorting Random -> ACN_GROUPS { get(@prev, 13, 6) }
+    pool @pot_4 teams 6 sorting Random -> ACN_GROUPS { get(@prev, 19, 6) }
+}
+
+group @a "A" teams 4 subs NUM_SUBS matchdays M_ACN_G { get(@prev, 1); shuffleTeams() }
+group @b "B" teams 4 subs NUM_SUBS matchdays M_ACN_G { get(@prev, 2); shuffleTeams() }
+group @c "C" teams 4 subs NUM_SUBS matchdays M_ACN_G { get(@prev, 3); shuffleTeams() }
+group @d "D" teams 4 subs NUM_SUBS matchdays M_ACN_G { get(@prev, 4); shuffleTeams() }
+group @e "E" teams 4 subs NUM_SUBS matchdays M_ACN_G { get(@prev, 5); shuffleTeams() }
+group @f "F" teams 4 subs NUM_SUBS matchdays M_ACN_G { get(@prev, 6); shuffleTeams() }
+
+pool @3p teams 6 sorting PrevPointsDiff <- ACN_GROUPS {
+    get(@prev, 3)
+    
+    round "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 subs NUM_SUBS matchdays M_ACN_L {
+        get(@a, 2); get(@e, 1); get(@b, 1); get(@b, 2); get(@d, 1); get(@c, 1); get(@f, 1); get(@a, 1);
+        get(@c, 2); get(@d, 2); get(@3p,2); get(@f, 2); get(@3p,1); get(@3p,3); get(@e, 2); get(@3p, 4);
+        
+        round type Quarterfinal teams 8 subs NUM_SUBS matchdays M_ACN_Q {
+            get(@prev)
+            
+            round type Semifinal teams 4 subs NUM_SUBS matchdays M_ACN_S {
+                get(@prev)
+                
+                round type Final3rdPlace teams 2 subs NUM_SUBS matchdays M_ACN_T {
+                    getLoser(@prev)
+                }
+                
+                round type Final teams 2 subs NUM_SUBS matchdays M_ACN_F {
+                    get(@prev)
+                }
+            }
+        }
+    }
+}
+
+}
+
+comp AfricaCupQ {
+
+pool @q_participants teams 52 sorting CountryStrength {
+    getNationalTeam(Africa)
+    
+    round type Round1 teams 8 subs NUM_SUBS two_legs matchdays M_Q_ACN_R1 {
+        get(@q_participants, 45, 8)
+        getCCSpare() // randomly sort only
+        
+        pool @q_groups teams 48 sorting CountryStrength {
+            get(@q_participants, 1, 44)
+            get(@prev)
+            
+            pool @q_pot_1 teams 12 sorting Random -> Q_ACN_GROUPS { get(@prev, 1, 12) }
+            pool @q_pot_2 teams 12 sorting Random -> Q_ACN_GROUPS { get(@prev, 13, 12) }
+            pool @q_pot_3 teams 12 sorting Random -> Q_ACN_GROUPS { get(@prev, 25, 12) }
+            pool @q_pot_4 teams 12 sorting Random -> Q_ACN_GROUPS { get(@prev, 37, 12) }
+        }
+    }
+}
+
+group @q_a "A" teams 4 rounds 2 subs NUM_SUBS matchdays M_Q_ACN_G { get(@prev, 1); shuffleTeams() }
+group @q_b "B" teams 4 rounds 2 subs NUM_SUBS matchdays M_Q_ACN_G { get(@prev, 2); shuffleTeams() }
+group @q_c "C" teams 4 rounds 2 subs NUM_SUBS matchdays M_Q_ACN_G { get(@prev, 3); shuffleTeams() }
+group @q_d "D" teams 4 rounds 2 subs NUM_SUBS matchdays M_Q_ACN_G { get(@prev, 4); shuffleTeams() }
+group @q_e "E" teams 4 rounds 2 subs NUM_SUBS matchdays M_Q_ACN_G { get(@prev, 5); shuffleTeams() }
+group @q_f "F" teams 4 rounds 2 subs NUM_SUBS matchdays M_Q_ACN_G { get(@prev, 6); shuffleTeams() }
+group @q_g "G" teams 4 rounds 2 subs NUM_SUBS matchdays M_Q_ACN_G { get(@prev, 7); shuffleTeams() }
+group @q_h "H" teams 4 rounds 2 subs NUM_SUBS matchdays M_Q_ACN_G { get(@prev, 8); shuffleTeams() }
+group @q_i "I" teams 4 rounds 2 subs NUM_SUBS matchdays M_Q_ACN_G { get(@prev, 9); shuffleTeams() }
+group @q_j "J" teams 4 rounds 2 subs NUM_SUBS matchdays M_Q_ACN_G { get(@prev, 10); shuffleTeams() }
+group @q_k "K" teams 4 rounds 2 subs NUM_SUBS matchdays M_Q_ACN_G { get(@prev, 11); shuffleTeams() }
+group @q_l "L" teams 4 rounds 2 subs NUM_SUBS matchdays M_Q_ACN_G { get(@prev, 12); shuffleTeams() }
+
+}
