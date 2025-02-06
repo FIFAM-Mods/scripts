@@ -1,6 +1,6 @@
 #name "Copa America script"
-#author "FM 2024 Team"
-#version "24.0"
+#author "FM 2025 Team"
+#version "25.0"
 
 #define CAM_QUALI 337
 #define CAM_G [340,343,346]
@@ -8,7 +8,7 @@
 #define CAM_S 354
 #define CAM_T 357
 #define CAM_F 358
-#define FINALISSIMA_MATCH 337
+#define FINALISSIMA_MATCH 271
 #define NUM_SUBS 5
 #define QWC_CONCACAF_groups_pool @@NAMNL_2
 #define EURO_final @@EuroCup_18

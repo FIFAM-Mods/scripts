@@ -39,10 +39,11 @@
 #define EL_FINAL 325
 #define CONF_FINAL 327
 #define SC_F 38
-#define IC_1 166
-#define IC_2 168
-#define IC_S 170
-#define IC_F 172
+#define IC_1 80
+#define IC_2 115
+#define IC_3 150
+#define IC_S 163
+#define IC_F 166
 #define WC_GROUP_MATCHES [337,341,344]
 #define WC_LAST16_MATCH 347
 #define WC_QUARTERFINAL_MATCH 350
@@ -235,12 +236,12 @@ pool @EL_participants teams 46 constraints @CL_participants {
 }
 
 // Qualifying round - launches on 24.
-round type Quali @EL_quali3_champ "$ID_THIRD_QUALI_CHAMP" teams 12 subs SUBS two_legs without_away_goal bonus [175000,0,0,0] matchdays EL_Q3 <- @EL_quali2 {
+round type Quali @EL_quali3_champ "$ID_CHAMP_PATH_3RD" teams 12 subs SUBS two_legs without_away_goal bonus [175000,0,0,0] matchdays EL_Q3 <- @EL_quali2 {
     getLoser(@CL_quali2_champ) // 12 teams
     getCCSpare()
 }
 
-round type Quali @EL_quali3_league "$ID_THIRD_QUALI_league" teams 14 subs SUBS two_legs without_away_goal bonus [175000,0,0,0] matchdays EL_Q3 <- @EL_quali2 {
+round type Quali @EL_quali3_league "$ID_MAIN_PATH_3RD" teams 14 subs SUBS two_legs without_away_goal bonus [175000,0,0,0] matchdays EL_Q3 <- @EL_quali2 {
     get(@EL_participants, 19, 3) // 3 teams
     getWinner(@EL_quali2) // 8 teams
     getLoser(@CL_quali2_league) // 3 teams
@@ -352,7 +353,7 @@ round type Quali "$ID_FIRST_QUALI" @Conf_quali1 teams 58 subs SUBS two_legs with
     getCCSpare()
 }
 
-round type Quali @Conf_quali2_champ "$ID_CHAMP_PATH_R1" teams 16 subs SUBS two_legs without_away_goal matchdays EL_Q2 bonus [175000,0,150000,0] <- @Conf_quali1 {
+round type Quali @Conf_quali2_champ "$ID_CHAMP_PATH_2ND" teams 16 subs SUBS two_legs without_away_goal matchdays EL_Q2 bonus [175000,0,150000,0] <- @Conf_quali1 {
     getLoser(@CL_quali1) // 16 teams
     getCCSpare()
 }
@@ -365,23 +366,23 @@ pool @Conf_quali2_league_pool teams 88 <- @Conf_quali1 {
     getCCSpare()
 }
 
-round type Quali @Conf_quali2_league_a "$ID_LEAGUE_PATH_R1_A" teams 44 subs SUBS two_legs without_away_goal matchdays EL_Q2 bonus [175000,0,350000,0] <- @Conf_quali2_league_pool {
+round type Quali @Conf_quali2_league_a "$ID_MAIN_PATH_2ND_A" teams 44 subs SUBS two_legs without_away_goal matchdays EL_Q2 bonus [175000,0,350000,0] <- @Conf_quali2_league_pool {
     get(@Conf_quali2_league_pool, 1, 22) // 22 teams
     get(@Conf_quali2_league_pool, 45, 22) // 22 teams
 }
 
-round type Quali @Conf_quali2_league_b "$ID_LEAGUE_PATH_R1_B" teams 44 subs SUBS two_legs without_away_goal matchdays EL_Q2 bonus [175000,0,350000,0] <- @Conf_quali2_league_pool {
+round type Quali @Conf_quali2_league_b "$ID_MAIN_PATH_2ND_B" teams 44 subs SUBS two_legs without_away_goal matchdays EL_Q2 bonus [175000,0,350000,0] <- @Conf_quali2_league_pool {
     get(@Conf_quali2_league_pool, 23, 22) // 22 teams
     get(@Conf_quali2_league_pool, 67, 22) // 22 teams
 }
 
 // third quali
-round type Quali @Conf_quali3_champ "$ID_CHAMP_PATH_R2" teams 8 subs SUBS two_legs without_away_goal matchdays EL_Q3 bonus [175000,0,550000,0] <- @Conf_quali2_champ {
+round type Quali @Conf_quali3_champ "$ID_CHAMP_PATH_3RD" teams 8 subs SUBS two_legs without_away_goal matchdays EL_Q3 bonus [175000,0,550000,0] <- @Conf_quali2_champ {
     getWinner(@Conf_quali2_champ) // 8 teams
     getCCSpare()
 }
 
-round type Quali @Conf_quali3_league "$ID_LEAGUE_PATH_R2" teams 52 subs SUBS two_legs without_away_goal matchdays EL_Q3 bonus [175000,0,550000,0] <- [@Conf_quali2_league_a,@Conf_quali2_league_b] {
+round type Quali @Conf_quali3_league "$ID_MAIN_PATH_3RD" teams 52 subs SUBS two_legs without_away_goal matchdays EL_Q3 bonus [175000,0,550000,0] <- [@Conf_quali2_league_a,@Conf_quali2_league_b] {
     getWinner(@Conf_quali2_league_a) // 22 teams
     getWinner(@Conf_quali2_league_b) // 22 teams
     getLoser(@EL_quali2) // 8 teams
@@ -389,13 +390,13 @@ round type Quali @Conf_quali3_league "$ID_LEAGUE_PATH_R2" teams 52 subs SUBS two
 }
 
 // play-off - launches on 39.
-round type Quali @Conf_po_champ "$ID_CHAMP_PATH_R3" teams 10 subs SUBS two_legs without_away_goal matchdays EL_PO bonus [175000,0,750000,0] <- @Conf_quali3_champ {
+round type Quali @Conf_po_champ "$ID_CHAMP_PATH_PO" teams 10 subs SUBS two_legs without_away_goal matchdays EL_PO bonus [175000,0,750000,0] <- @Conf_quali3_champ {
     getWinner(@Conf_quali3_champ) // 4 teams
     getLoser(@EL_quali3_champ) // 6 teams
     getCCSpare()
 }
 
-round type Quali @Conf_po_league "$ID_LEAGUE_PATH_R3" teams 38 subs SUBS two_legs without_away_goal matchdays EL_PO bonus [175000,0,750000,0] <- @Conf_quali3_league {
+round type Quali @Conf_po_league "$ID_MAIN_PATH_PO" teams 38 subs SUBS two_legs without_away_goal matchdays EL_PO bonus [175000,0,750000,0] <- @Conf_quali3_league {
     get(@Conf_participants, 1, 5) // 5 teams
     getWinner(@Conf_quali3_league) // 26 teams
     getLoser(@EL_quali3_league) // 7 teams
@@ -517,7 +518,7 @@ pool @IC_participants teams 6 {
     getChamp(@@SouthAmerica_ChampionsLeague_22)
     getChamp(@@NorthAmerica_ChampionsLeague_22)
     getChamp(@@Africa_ChampionsLeague_22)
-    getChamp(@@Asia_ChampionsLeague_22)
+    getChamp(@@Asia_ChampionsLeague_28)
     getChamp(@@Oceania_ChampionsLeague_22)
     getCCSpare() // swap teams
     
@@ -531,7 +532,7 @@ pool @IC_participants teams 6 {
         }
     }
     
-    round @IC_phaseB type Round3 teams 2 subs SUBS matchdays IC_2 bonus [500000,0,0,0] {
+    round @IC_phaseB type Round3 teams 2 subs SUBS matchdays IC_3 bonus [500000,0,0,0] {
         get(@IC_participants, 2, 2)
     }
 }

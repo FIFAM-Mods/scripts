@@ -1,6 +1,6 @@
 #name "Euro Cup + Euro Qualification + Nations League script"
-#author "FM 2024 Team"
-#version "24.0"
+#author "FM 2025 Team"
+#version "25.0"
 
 #define Q_POTS_2_5 [@q_p2,@q_p3,@q_p4,@q_p5]
 #define Q_GROUPS [@q_a,@q_b,@q_c,@q_d,@q_e,@q_f,@q_g,@q_h,@q_i,@q_j]
@@ -22,10 +22,11 @@
 #define NL_C [@nl_C_1,@nl_C_2,@nl_C_3,@nl_C_4]
 #define NL_D [@nl_D_1,@nl_D_2]
 #define NL_GROUP_MATCHES [61,64,96,99,131,134]
-#define NL_SEMIFINAL_MATCH 339
-#define NL_3RD_PLACE_MATCH 343
-#define NL_FINAL_MATCH     343
-#define NL_PO_MATCHES [339,343]
+#define NL_QUARTERFINAL_MATCH 212
+#define NL_SEMIFINAL_MATCH 332
+#define NL_3RD_PLACE_MATCH 335
+#define NL_FINAL_MATCH     335
+#define NL_PO_MATCHES [332,335]
 
 #define F_NL_A1 [1,2,3,4, 3,1,4,2, 2,3,4,1, 2,4,1,3, 3,2,1,4, 4,3,2,1]
 #define F_NL_A2 [1,2,4,3, 2,3,4,1, 3,1,2,4, 1,4,3,2, 4,2,1,3, 2,1,3,4]
@@ -256,70 +257,17 @@ round @q_path_C_Final type Final "$ID_PATH_C_FINAL" teams 2 subs NUM_SUBS matchd
 comp EuroNLQ {
 
 pool @nl teams 54 sorting ChampionsCupGroup { // sort NationsLeague (not executes when TeamInit is used)
-    get([@nl_1st_A,@nl_2nd_A,@nl_3rd_A,@nl_1st_B])
-    get([@nl_4th_A,@nl_2nd_B,@nl_3rd_B,@nl_1st_C])
-    get([@nl_4th_B,@nl_2nd_C,@nl_3rd_C,@nl_1st_D]); get(@nl_playoff_pool, 1, 2) // +relegation 2 winners
-    get(@nl_playoff_pool, 3, 2); get([@nl_2nd_D,@nl_3rd_D]) // +relegation 2 losers
+    get([@nl_1st_A,@nl_2nd_A,@nl_1st_B]); get(@nl_playoff_A_B_pool, 1,4) // +relegation 4 winners
+    get([@nl_4th_A,@nl_1st_C]); get(@nl_playoff_A_B_pool, 5,4); get(@nl_playoff_B_C_pool, 1,4) // +relegation 4 losers
+    get([@nl_4th_B,@nl_3rd_C,@nl_1st_D]); get(@nl_playoff_B_C_pool, 5,4); get(@nl_playoff_pool, 1, 2) // +relegation 2 winners
+    get(@nl_4th_C, 3, 2); get (@nl_playoff_pool, 3, 2); get(@nl_3rd_D) // +relegation 2 losers
     // first season teams - use this only when NL is starting NOT in first in-game season
     // for first in-game season, use TeamInit.txt
     // TeamInit.txt can be used ONLY for FIRST in-game season! Otherwise, write teams in script body.
     // When teams are written in script body and groups are already known, sorting for first launch can
     // be disabled in the plugin.
     //
-    getNationalTeamWithoutHost(Spain)
-    getNationalTeamWithoutHost(Croatia)
-    getNationalTeamWithoutHost(Italy)
-    getNationalTeamWithoutHost(Netherlands)
-    getNationalTeamWithoutHost(Denmark)
-    getNationalTeamWithoutHost(Portugal)
-    getNationalTeamWithoutHost(Belgium)
-    getNationalTeamWithoutHost(Hungary)
-    getNationalTeamWithoutHost(Switzerland)
-    getNationalTeamWithoutHost(Germany)
-    getNationalTeamWithoutHost(Poland)
-    getNationalTeamWithoutHost(France)
-    getNationalTeamWithoutHost(Israel)
-    getNationalTeamWithoutHost(BosniaHerzegovina)
-    getNationalTeamWithoutHost(Serbia)
-    getNationalTeamWithoutHost(Scotland)
-    getNationalTeamWithoutHost(Austria)
-    getNationalTeamWithoutHost(CzechRepublic)
-    getNationalTeamWithoutHost(England)
-    getNationalTeamWithoutHost(Wales)
-    getNationalTeamWithoutHost(Finland)
-    getNationalTeamWithoutHost(Ukraine)
-    getNationalTeamWithoutHost(Iceland)
-    getNationalTeamWithoutHost(Norway)
-    getNationalTeamWithoutHost(Slovenia)
-    getNationalTeamWithoutHost(Ireland)
-    getNationalTeamWithoutHost(Albania)
-    getNationalTeamWithoutHost(Montenegro)
-    getNationalTeamWithoutHost(Georgia)
-    getNationalTeamWithoutHost(Greece)
-    getNationalTeamWithoutHost(Turkey)
-    getNationalTeamWithoutHost(Kazakhstan)
-    getNationalTeamWithoutHost(Romania)
-    getNationalTeamWithoutHost(Sweden)
-    getNationalTeamWithoutHost(Armenia)
-    getNationalTeamWithoutHost(Luxembourg)
-    getNationalTeamWithoutHost(Azerbaijan)
-    getNationalTeamWithoutHost(Kosovo)
-    getNationalTeamWithoutHost(Bulgaria)
-    getNationalTeamWithoutHost(FaroeIslands)
-    getNationalTeamWithoutHost(NorthMacedonia)
-    getNationalTeamWithoutHost(Slovakia)
-    getNationalTeamWithoutHost(NorthernIreland)
-    getNationalTeamWithoutHost(Estonia)
-    getNationalTeamWithoutHost(Latvia)
-    getNationalTeamWithoutHost(Cyprus)
-    getNationalTeamWithoutHost(Belarus)
-    getNationalTeamWithoutHost(Lithuania)
-    getNationalTeamWithoutHost(Gibraltar)
-    getNationalTeamWithoutHost(Moldova)
-    getNationalTeamWithoutHost(Malta)
-    getNationalTeamWithoutHost(Andorra)
-    getNationalTeamWithoutHost(SanMarino)
-    getNationalTeamWithoutHost(Liechtenstein)
+    // getNationalTeamWithoutHost(Spain)
 }
 
 group @nl_A_1 "$ID_LEAGUE_A_GROUP_1" teams 4 rounds 2 subs NUM_SUBS matchdays NL_GROUP_MATCHES fixtures F_NL_A1 <- @nl { get(@nl, 1);  get(@nl, 5);  get(@nl, 9);  get(@nl, 13); shuffleTeams() }
@@ -337,21 +285,21 @@ group @nl_C_4 "$ID_LEAGUE_C_GROUP_4" teams 4 rounds 2 subs NUM_SUBS matchdays NL
 group @nl_D_1 "$ID_LEAGUE_D_GROUP_1" teams 3 rounds 2 subs NUM_SUBS matchdays NL_GROUP_MATCHES <- @nl { get(@nl, 49); get(@nl, 51); get(@nl, 53); shuffleTeams() }
 group @nl_D_2 "$ID_LEAGUE_D_GROUP_2" teams 3 rounds 2 subs NUM_SUBS matchdays NL_GROUP_MATCHES fixtures F_NL_D2 <- @nl { get(@nl, 50); get(@nl, 52); get(@nl, 54); shuffleTeams() }
 
-pool @nl_1st_A teams 4 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_A { get(@prev, 1) }
-pool @nl_2nd_A teams 4 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_A { get(@prev, 2) }
-pool @nl_3rd_A teams 4 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_A { get(@prev, 3) }
-pool @nl_4th_A teams 4 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_A { get(@prev, 4) }
-pool @nl_1st_B teams 4 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_B { get(@prev, 1) }
-pool @nl_2nd_B teams 4 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_B { get(@prev, 2) }
-pool @nl_3rd_B teams 4 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_B { get(@prev, 3) }
-pool @nl_4th_B teams 4 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_B { get(@prev, 4) }
-pool @nl_1st_C teams 4 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_C { get(@prev, 1) }
-pool @nl_2nd_C teams 4 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_C { get(@prev, 2) }
-pool @nl_3rd_C teams 4 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_C { get(@prev, 3) }
-pool @nl_4th_C teams 4 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_C { get(@prev, 4) }
-pool @nl_1st_D teams 2 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_D { get(@prev, 1) }
-pool @nl_2nd_D teams 2 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_D { get(@prev, 2) }
-pool @nl_3rd_D teams 2 sorting PrevPointsDiff -> [@nl_finals,@nl_playoff,@nl_ovr2] <- NL_D { get(@prev, 3) }
+pool @nl_1st_A teams 4 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_A { get(@prev, 1) }
+pool @nl_2nd_A teams 4 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_A { get(@prev, 2) }
+pool @nl_3rd_A teams 4 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_A { get(@prev, 3) }
+pool @nl_4th_A teams 4 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_A { get(@prev, 4) }
+pool @nl_1st_B teams 4 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_B { get(@prev, 1) }
+pool @nl_2nd_B teams 4 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_B { get(@prev, 2) }
+pool @nl_3rd_B teams 4 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_B { get(@prev, 3) }
+pool @nl_4th_B teams 4 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_B { get(@prev, 4) }
+pool @nl_1st_C teams 4 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_C { get(@prev, 1) }
+pool @nl_2nd_C teams 4 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_C { get(@prev, 2) }
+pool @nl_3rd_C teams 4 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_C { get(@prev, 3) }
+pool @nl_4th_C teams 4 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_C { get(@prev, 4) }
+pool @nl_1st_D teams 2 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_D { get(@prev, 1) }
+pool @nl_2nd_D teams 2 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_D { get(@prev, 2) }
+pool @nl_3rd_D teams 2 sorting PrevPointsDiff -> [@nl_finalspool,@nl_playoff,@nl_playoff_A_B,@nl_playoff_B_C,@nl_ovr2] <- NL_D { get(@prev, 3) }
 
 pool @nl_ovr2 "Nations League Overall Ranking (NL)" teams 54 {
     get(@nl_1st_A); get(@nl_2nd_A); get(@nl_3rd_A); get(@nl_4th_A) // 1-16   16
@@ -363,9 +311,41 @@ pool @nl_ovr2 "Nations League Overall Ranking (NL)" teams 54 {
     pool @ec_quali_launcher teams 1 ~> @nl_ovr {} // one-direction link
 }
 
-round @nl_playoff "$ID_C_PLAYOFF" type Quali teams 4 two_legs subs NUM_SUBS matchdays NL_PO_MATCHES {
-    get(@nl_4th_C, 4)
-    get(@nl_4th_C, 3)
+round @nl_playoff_A_B "$ID_A_B_PLAYOFF" type Quali teams 8 two_legs subs NUM_SUBS matchdays NL_PO_MATCHES {
+    get(@nl_3rd_A, 4)
+    get(@nl_3rd_A, 3)
+    get(@nl_3rd_A, 1)
+    get(@nl_3rd_A, 2)
+    get(@nl_2nd_B, 4)
+    get(@nl_2nd_B, 3)
+    get(@nl_2nd_B, 1)
+    get(@nl_2nd_B, 2)
+    
+    pool @nl_playoff_A_B_pool teams 8 {
+        getWinner(@prev)
+        getLoser(@prev)
+    }
+}
+
+round @nl_playoff_B_C "$ID_B_C_PLAYOFF" type Quali teams 8 two_legs subs NUM_SUBS matchdays NL_PO_MATCHES {
+    get(@nl_3rd_B, 4)
+    get(@nl_3rd_B, 3)
+    get(@nl_3rd_B, 1)
+    get(@nl_3rd_B, 2)
+    get(@nl_2nd_C, 4)
+    get(@nl_2nd_C, 3)
+    get(@nl_2nd_C, 1)
+    get(@nl_2nd_C, 2)
+    
+    pool @nl_playoff_B_C_pool teams 8 {
+        getWinner(@prev)
+        getLoser(@prev)
+    }
+}
+
+round @nl_playoff "$ID_C_D_PLAYOFF" type Quali teams 4 two_legs subs NUM_SUBS matchdays NL_PO_MATCHES {
+    get(@nl_2nd_D, 2)
+    get(@nl_2nd_D, 1)
     get(@nl_4th_C, 1)
     get(@nl_4th_C, 2)
     
@@ -373,21 +353,26 @@ round @nl_playoff "$ID_C_PLAYOFF" type Quali teams 4 two_legs subs NUM_SUBS matc
         getWinner(@prev)
         getLoser(@prev)
     }
-}
+ }
 
-}
+} 
 
 comp EuroNL {
 
-pool @nl_finals "Nations League Finals pool" teams 4 sorting Random {
+pool @nl_finalspool "NL FINALS Pool" teams 8 {
     get(@nl_1st_A)
     shuffleTeams()
+    get(@nl_2nd_A)
     
-    round type Semifinal teams 4 matchdays NL_SEMIFINAL_MATCH subs NUM_SUBS {
-        get(@prev)
+    round @nl_qfinals type Quarterfinal teams 8 matchdays NL_QUARTERFINAL_MATCH subs NUM_SUBS {
+        get(@nl_finalspool)
         
-        round type Final3rdPlace teams 2 matchdays NL_3RD_PLACE_MATCH subs NUM_SUBS { getLoser(@prev) }
-        round type Final teams 2 matchdays NL_FINAL_MATCH subs NUM_SUBS { getWinner(@prev) }
+        round type Semifinal teams 4 matchdays NL_SEMIFINAL_MATCH subs NUM_SUBS {
+            get(@prev) 
+            
+            round type Final3rdPlace teams 2 matchdays NL_3RD_PLACE_MATCH subs NUM_SUBS { getLoser(@prev) }
+            round type Final teams 2 matchdays NL_FINAL_MATCH subs NUM_SUBS { getWinner(@prev) }
+        }
     }
 }
 

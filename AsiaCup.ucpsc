@@ -1,6 +1,6 @@
 #name "AFC Asian Cup, with Qualification"
-#author "FM 2024 Team"
-#version "24.0"
+#author "FM 2025 Team"
+#version "25.0"
 
 #define M_AC_G [337,340,343]
 #define M_AC_L 346

@@ -1,6 +1,6 @@
 #name "U-20 World Cup and Qualification"
-#author "FM 2024 Team"
-#version "24.0"
+#author "FM 2025 Team"
+#version "25.0"
 
 #define MAIN_G [311,314,317]
 #define MAIN_L 320

@@ -1,6 +1,6 @@
 #name "World Cup + World Cup Qualification"
-#author "FM 2024 Team"
-#version "24.1"
+#author "FM 2025 Team"
+#version "25.0"
 
 #define WC_GROUP_MATCHES [335,338,341]
 #define WC_LAST32_MATCH 344
@@ -25,9 +25,9 @@
 #define CAF_FINAL_MATCHES 499
 #define CAF_GROUPS [@CAF_a,@CAF_b,@CAF_c,@CAF_d,@CAF_e,@CAF_f,@CAF_g,@CAF_h,@CAF_i]
 
-#define N_R1_MATCHES [61,64]
-#define N_R2_MATCHES [96,99,131,215,264]
-#define N_GROUPS [@N_a,@N_b,@N_c,@N_d,@N_e,@N_f]
+#define N_R1_MATCHES [420,423]
+#define N_R2_MATCHES [455,458,490,493,574]
+#define N_GROUPS [@N_a,@N_b,@N_c,@N_d,@N_e]
 
 #define AFC_R1_MATCHES [61,64]
 #define AFC_GROUP1_MATCHES [96,99,131,134,215,218]
@@ -327,19 +327,19 @@ pool @CAF_2nd teams 9 sorting PrevPointsDiff <- CAF_GROUPS {
 round @N_r1 "$ID_WCQ_NAM_R1" type Round1 teams 8 subs NUM_SUBS two_legs matchdays N_R1_MATCHES <- @N_q {
     get(@prev, 27, 8)
     
-    pool @N_pot_1 teams 6 sorting Random -> N_GROUPS { get(@N_q, 1, 6) }
-    pool @N_pot_2 teams 6 sorting Random -> N_GROUPS { get(@N_q, 7, 6) }
-    pool @N_pot_3 teams 6 sorting Random -> N_GROUPS { get(@N_q, 13, 6) }
-    pool @N_pot_4 teams 6 sorting Random -> N_GROUPS { get(@N_q, 19, 6) }
-    pool @N_pot_5 teams 6 sorting Random -> N_GROUPS { get(@N_q, 25, 2); get(@prev) }
+    pool @N_pot_1 teams 5 sorting Random -> N_GROUPS { get(@N_q, 1, 5) }
+    pool @N_pot_2 teams 5 sorting Random -> N_GROUPS { get(@N_q, 6, 5) }
+    pool @N_pot_3 teams 5 sorting Random -> N_GROUPS { get(@N_q, 11, 5) }
+    pool @N_pot_4 teams 5 sorting Random -> N_GROUPS { get(@N_q, 16, 5) }
+    pool @N_pot_5 teams 5 sorting Random -> N_GROUPS { get(@N_q, 21, 5) }
+    pool @N_pot_6 teams 5 sorting Random -> N_GROUPS { get(@N_q, 26, 1); get(@prev) }
 }
 
-group @N_a "$ID_WCQ_NAM_R2_A" teams 5 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 1); shuffleTeams() }
-group @N_b "$ID_WCQ_NAM_R2_B" teams 5 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 2); shuffleTeams() }
-group @N_c "$ID_WCQ_NAM_R2_C" teams 5 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 3); shuffleTeams() }
-group @N_d "$ID_WCQ_NAM_R2_D" teams 5 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 4); shuffleTeams() }
-group @N_e "$ID_WCQ_NAM_R2_E" teams 5 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 5); shuffleTeams() }
-group @N_f "$ID_WCQ_NAM_R2_F" teams 5 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 6); shuffleTeams() }
+group @N_a "$ID_WCQ_NAM_R2_A" teams 6 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 1); shuffleTeams() }
+group @N_b "$ID_WCQ_NAM_R2_B" teams 6 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 2); shuffleTeams() }
+group @N_c "$ID_WCQ_NAM_R2_C" teams 6 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 3); shuffleTeams() }
+group @N_d "$ID_WCQ_NAM_R2_D" teams 6 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 4); shuffleTeams() }
+group @N_e "$ID_WCQ_NAM_R2_E" teams 6 subs NUM_SUBS rounds 1 matchdays N_R2_MATCHES { get(@prev, 5); shuffleTeams() }
 
 pool @N_2nd teams 5 sorting PrevPointsDiff <- N_GROUPS {
     get(@prev, 2)

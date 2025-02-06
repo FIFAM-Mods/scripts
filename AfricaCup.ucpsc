@@ -1,13 +1,13 @@
 #name "Total CAF Africa Cup of Nations, with Qualification"
-#author "FM 2024 Team"
-#version "24.0"
+#author "FM 2025 Team"
+#version "25.0"
 
-#define M_ACN_G [337,340,343]
-#define M_ACN_L 346
-#define M_ACN_Q 349
-#define M_ACN_S 352
-#define M_ACN_T 355
-#define M_ACN_F 357
+#define M_ACN_G [186,190,194]
+#define M_ACN_L 198
+#define M_ACN_Q 201
+#define M_ACN_S 204
+#define M_ACN_T 207
+#define M_ACN_F 208
 
 #define M_Q_ACN_R1 [61,64]
 #define M_Q_ACN_G [94,97,100,129,132,135]
@@ -17,7 +17,7 @@
 
 #define NUM_SUBS 5
 
-// Africa Cup of Nations - each 2 years, next 2025 (2022/2023, 2024/2025), June-July
+// Africa Cup of Nations - each 2 years, next 2025 (2022/2023, 2024/2025), January-February
 
 comp AfricaCup {
 

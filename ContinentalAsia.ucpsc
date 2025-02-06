@@ -2,7 +2,7 @@
 #author "FM 2025 Team"
 #version "25.0"
 
-#define M_ACL_PO 39
+#define M_ACL_PO 17
 #define M_ACL_LG1 73
 #define M_ACL_LG2 87
 #define M_ACL_LG3 108
@@ -11,17 +11,17 @@
 #define M_ACL_LG6 157
 #define M_ACL_LG7 198
 #define M_ACL_LG8 205
-#define M_ACL_L [241,248]
-#define M_ACL_Q [276,283]
-#define M_ACL_S [283,297]
+#define M_ACL_L [227,234]
+#define M_ACL_Q [241,248]
+#define M_ACL_S [276,283]
 #define M_ACL_F 304
-#define M_A2_PO 52
+#define M_A2_PO 31
 #define M_A2_G [74,88,109,123,144,158]
 #define M_A2_L [228,235]
 #define M_A2_Q [242,249]
 #define M_A2_S [277,284]
 #define M_A2_F 305
-#define M_ACH_PRE 38
+#define M_ACH_PRE 45
 #define M_ACH_G [88,109,123]
 #define M_ACH_Q [242,249]
 #define M_ACH_S [277,284]
@@ -32,19 +32,36 @@ comp Asia.ChampionsLeague {
 
 // 26 teams + 4 slots for AFC CL Elite and AFC CL Two winners (2 slots for West/East region)
 pool @ACL_participants teams 30 {
+    
+    // Associations 1-4 delegate a cup winner in this competition
+    
     // West - 15 slots (13 teams + 2 empty slots)
-    getEuropeanAssessmentTeams(1, 1, 3)
-    getEuropeanAssessmentTeams([2-3], 1, 2)
-    getEuropeanAssessmentTeams([4-6], 1, 1)
-    getEuropeanAssessmentTeams([2-3], 3, 1)
-    getEuropeanAssessmentTeams(4, 2, 1)
+    // Teams will play in Group stage
+    getEuropeanAssessmentTeams([1-3], 1, 2) //  6 teams
+    getEuropeanAssessmentTeams(4, 1, 1) // 1 team
+    // Teams potentially may play in Play-Off (if losers count from ACL PO is not 4)
+    reserveAssessmentTeams(1, 1) // 1 team
+    getEuropeanAssessmentCupwinner(1)
+    fillAssessmentReserves()
+    getEuropeanAssessmentTeams([5-6], 1, 1) // 2 teams
+    // Teams will play in Play-Off
+    reserveAssessmentTeams([2-4], 1) // 3 teams
+    getEuropeanAssessmentCupwinner([2-4])
+    fillAssessmentReserves()
     // East (Association ID 100+ is used to indicate East region) - 15 slots (13 teams + 2 empty slots)
-    getEuropeanAssessmentTeams(101, 1, 3)
-    getEuropeanAssessmentTeams([102-103], 1, 2)
-    getEuropeanAssessmentTeams([104-106], 1, 1)
-    getEuropeanAssessmentTeams([102-103], 3, 1)
-    getEuropeanAssessmentTeams(104, 2, 1)
-    // add winners of AFC CL Elite and AFC CL Two
+    // Teams will play in Group stage
+    getEuropeanAssessmentTeams([101-103], 1, 2) //  6 teams
+    getEuropeanAssessmentTeams(104, 1, 1) // 1 team
+    // Teams potentially may play in Play-Off (if losers count from ACL PO is not 4)
+    reserveAssessmentTeams(101, 1) // 1 team
+    getEuropeanAssessmentCupwinner(101)
+    fillAssessmentReserves()
+    getEuropeanAssessmentTeams([105-106], 1, 1) // 2 teams
+    // Teams will play in Play-Off
+    reserveAssessmentTeams([102-104], 1) // 3 teams
+    getEuropeanAssessmentCupwinner([102-104])
+    fillAssessmentReserves()
+    // add winners of AFC CL Elite and AFC CL Two, 3 teams per country limit
     getCCSpare()
     
     round @ACL_PO_W "$ID_PLAYOFF_ROUND_WEST" type PreRound1 teams 6 matchdays M_ACL_PO subs SUBS bonus [0,0,0,0] -> @ACL_league_pool_W {
@@ -133,29 +150,35 @@ round @ACL_last16 "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 two_legs matc
 comp Asia.UefaCup {
     
 pool @ACLTwo_participants teams 34 constraints @ACL_participants {
+    
+    // Associations 1-4 delegated cup winner in previous competition
+    // Associations 5-10 delegate cup winner in this competition
+    
     // West - 16 teams + 1 empty slot
     reserveAssessmentTeams([1-10], 1) // 10 teams
+    getEuropeanAssessmentCupwinner([1-6]) // ensure cup winners from associations 1-4 are added
     fillAssessmentReserves()
     reserveAssessmentTeams([7-12], 1) // 6 teams
-    getEuropeanAssessmentCupwinner([7-12])
+    getEuropeanAssessmentCupwinner([7-10])
     fillAssessmentReserves()
     // East - 16 teams + 1 empty slot
     reserveAssessmentTeams([101-110], 1) // 10 teams
+    getEuropeanAssessmentCupwinner([101-106]) // ensure cup winners from associations 101-104 are added
     fillAssessmentReserves()
     reserveAssessmentTeams([107-112], 1) // 6 teams
-    getEuropeanAssessmentCupwinner([107-112])
+    getEuropeanAssessmentCupwinner([107-110])
     fillAssessmentReserves()
     // add winner of AFC Challenge League (if not already added) at position 1. or 18.
     getCCSpare()
     
     pool @ACLTwo_W teams 20 <- @ACL_PO_W {
+        getLoser(@ACL_PO_W) // 1-3 teams
         get(@ACLTwo_participants, 1, 17) // 16 or 17 teams
-        getLoser(@ACL_PO_W) // 3 teams
     }
     
     pool @ACLTwo_E teams 20 <- @ACL_PO_E {
+        getLoser(@ACL_PO_E) // 1-3 teams
         get(@ACLTwo_participants, 18, 17) // 16 or 17 teams
-        getLoser(@ACL_PO_E) // 3 teams
     }
 }
 
@@ -209,33 +232,49 @@ round @ACLTwo_last16 "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 two_legs m
 comp Asia.ConferenceLeague {
 
 pool @AChallenge_participants teams 25 constraints [@ACL_participants,@ACLTwo_participants] {
+    
+    // Associations 1-10 delegated cup winner in previous competitions
+    // Associations 11-12 delegate cup winner in this competition
+    
     // West - 15 teams
     reserveAssessmentTeams([11-25], 1) // 15 teams
+    getEuropeanAssessmentCupwinner([1-12]) // ensure cup winners from associations 1-10 are added
     fillAssessmentReserves()
     // East - 10 teams
     reserveAssessmentTeams([111-120], 1) // 10 teams
+    getEuropeanAssessmentCupwinner([101-112]) // ensure cup winners from associations 101-110 are added
     fillAssessmentReserves()
     
-    round @AChallenge_prelim_W "$ID_PRELIM_ROUND_WEST" type PreRound1 teams 6 matchdays M_ACH_PRE subs SUBS {
-        get(@AChallenge_participants, 10, 6)
-        getCCSpare()
+    pool @AChallenge_W teams 19 <- @ACLTwo_PO_W {
+        getLoser(@ACLTwo_PO_W) // 1-4 teams
+        get(@AChallenge_participants, 1, 17) // 15 teams
     }
     
-    round @AChallenge_prelim_E "$ID_PRELIM_ROUND_EAST" type PreRound1 teams 4 matchdays M_ACH_PRE subs SUBS {
-        get(@AChallenge_participants, 22, 4)
-        getCCSpare()
+    pool @AChallenge_E teams 14 <- @ACLTwo_PO_E {
+        getLoser(@ACLTwo_PO_E) // 1-4 teams
+        get(@AChallenge_participants, 16, 10) // 10 teams
     }
+}
+
+round @AChallenge_prelim_W "$ID_PRELIM_ROUND_WEST" type PreRound1 teams 14 matchdays M_ACH_PRE subs SUBS <- @AChallenge_W {
+    get(@AChallenge_participants, 6, 14)
+    getCCSpare()
+}
+
+round @AChallenge_prelim_E "$ID_PRELIM_ROUND_EAST" type PreRound1 teams 12 matchdays M_ACH_PRE subs SUBS <- @AChallenge_E {
+    get(@AChallenge_participants, 3, 12)
+    getCCSpare()
 }
 
 // West - 12 teams, 3 groups
 pool @AChallenge_groups_W teams 12 sorting ChampionsCupGroup <- @AChallenge_prelim_W {
-    get(@AChallenge_participants, 1, 9)
+    get(@AChallenge_participants, 1, 5)
     get(@AChallenge_prelim_W)
 }
 
 // East - 8 teams, 2 groups
 pool @AChallenge_groups_E teams 8 sorting ChampionsCupGroup <- @AChallenge_prelim_E {
-    get(@AChallenge_participants, 16, 6)
+    get(@AChallenge_participants, 1, 2)
     get(@AChallenge_prelim_E)
 }
 

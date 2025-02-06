@@ -209,6 +209,7 @@ pool @CaribbeanShield_pool teams 20 sorting countryStrength {
         round type last16 teams 16 subs NUM_SUBS matchdays CARS_2 {
             get(@CaribbeanShield_pool, 1, 12)
             getWinner(@prev)
+            getCCSpare()
             
             round type Quarterfinal teams 8 subs NUM_SUBS  matchdays CARS_Q bonus [200000,0,0,0] {
                 get(@prev)
