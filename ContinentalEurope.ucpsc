@@ -554,7 +554,9 @@ round @IC_FinalPart type Round4 teams 2  subs SUBS matchdays IC_S bonus [2000000
 
 comp Europe.YouthChampionsLeague {
 
-pool @Y_path_NL "National Leagues Path" teams 52 constraints @CL_league_pool <- @CL_league_matches {
+pool @Y_dummy teams 1 {}
+
+pool @Y_path_NL "National Leagues Path" teams 52 constraints @CL_league_pool <- [@Y_dummy,@CL_league_matches] {
     getCCSpare() // add teams
     changeTeamTypes(YouthA)
     

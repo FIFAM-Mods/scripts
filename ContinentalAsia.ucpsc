@@ -247,7 +247,7 @@ pool @AChallenge_participants teams 25 constraints [@ACL_participants,@ACLTwo_pa
     
     pool @AChallenge_W teams 19 <- @ACLTwo_PO_W {
         getLoser(@ACLTwo_PO_W) // 1-4 teams
-        get(@AChallenge_participants, 1, 17) // 15 teams
+        get(@AChallenge_participants, 1, 15) // 15 teams
     }
     
     pool @AChallenge_E teams 14 <- @ACLTwo_PO_E {

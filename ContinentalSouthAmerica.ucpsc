@@ -212,18 +212,7 @@ comp SouthAmerica.YouthChampionsLeague {
 pool @Y_CoL_participants teams 12 sorting CountryStrength {
     getChamp(@Y_final)
     changeTeamTypes(First)
-    getInternationalTeams(Brazil, 1)
-    getInternationalTeams(Argentina, 1)
-    getInternationalTeams(Colombia, 1)
-    getInternationalTeams(Chile, 1)
-    getInternationalTeams(Ecuador, 1)
-    getInternationalTeams(Bolivia, 1)
-    getInternationalTeams(Peru, 1)
-    getInternationalTeams(Paraguay, 1)
-    getInternationalTeams(Uruguay, 1)
-    getInternationalTeams(Venezuela, 1)
-    getInternationalTeams(Brazil, 1)
-    getInternationalTeams(Argentina, 1)
+    getCCSpare() // add teams
     changeTeamTypes(YouthA)
     
     pool @Y_pot1 teams 3 sorting Random -> [@Y_a,@Y_b,@Y_c] { get(@prev, 1, 3) }
