@@ -22,8 +22,8 @@
 comp AsiaCup {
 
 pool @participants teams 24 sorting CountryStrength <- Q_AC_GROUPS {
-    get(@q_participants, 1, 12)
-    get(Q_AC_GROUPS, 1, 2)
+    get(@q_participants, 1, 18)
+    get(Q_AC_GROUPS, 1, 1)
     
     pool @pot_1 teams 6 sorting Random -> AC_GROUPS { get(@prev, 1, 6) }
     pool @pot_2 teams 6 sorting Random -> AC_GROUPS { get(@prev, 7, 6) }
@@ -63,15 +63,17 @@ pool @3p teams 6 sorting PrevPointsDiff <- AC_GROUPS {
 
 comp AsiaCupQ {
 
-pool @q_participants teams 40 {
-    getPool(QWC_AFC_groups_pool, 1, 40) // teaminit for first season (2026/2027) (if WC was just played)
-    
-    round type Round1 teams 8 two_legs matchdays M_Q_AC_R1 subs NUM_SUBS {
-        get(@q_participants, 33, 8)
+pool @q_participants teams 45 {
+    getPool(QWC_AFC_groups_pool, 1, 45) // teaminit for first season (2026/2027) (if WC was just played)
+pool @preq_participants teams 9 sorting countryStrength {
+    get(@prev 37, 9)
+        round type Round1 teams 6 two_legs matchdays M_Q_AC_R1 subs NUM_SUBS {
+        get(@prev, 4, 6)
         shuffleTeams()
         
         pool @q_groups teams 24 sorting CountryStrength {
-            get(@q_participants, 13, 20)
+            get(@q_participants, 19, 18)
+            get(@preq_participants, 1, 3)
             get(@prev)
         
             pool @q_pot_1 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 1, 6) }
@@ -79,6 +81,7 @@ pool @q_participants teams 40 {
             pool @q_pot_3 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 13, 6) }
             pool @q_pot_4 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 19, 6) }
         }
+    }
     }
 }
 
