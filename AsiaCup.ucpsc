@@ -65,23 +65,25 @@ comp AsiaCupQ {
 
 pool @q_participants teams 45 {
     getPool(QWC_AFC_groups_pool, 1, 45) // teaminit for first season (2026/2027) (if WC was just played)
-pool @preq_participants teams 9 sorting countryStrength {
-    get(@prev 37, 9)
+    
+	pool @preq_participants teams 9 sorting countryStrength {
+        get(@prev 37, 9)
+		
         round type Round1 teams 6 two_legs matchdays M_Q_AC_R1 subs NUM_SUBS {
-        get(@prev, 4, 6)
-        shuffleTeams()
-        
-        pool @q_groups teams 24 sorting CountryStrength {
-            get(@q_participants, 19, 18)
-            get(@preq_participants, 1, 3)
-            get(@prev)
-        
-            pool @q_pot_1 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 1, 6) }
-            pool @q_pot_2 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 7, 6) }
-            pool @q_pot_3 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 13, 6) }
-            pool @q_pot_4 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 19, 6) }
+            get(@prev, 4, 6)
+            shuffleTeams()
+            
+            pool @q_groups teams 24 sorting CountryStrength {
+                get(@q_participants, 19, 18)
+                get(@preq_participants, 1, 3)
+                get(@prev)
+            
+                pool @q_pot_1 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 1, 6) }
+                pool @q_pot_2 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 7, 6) }
+                pool @q_pot_3 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 13, 6) }
+                pool @q_pot_4 teams 6 sorting Random -> Q_AC_GROUPS { get(@prev, 19, 6) }
+            }
         }
-    }
     }
 }
 
