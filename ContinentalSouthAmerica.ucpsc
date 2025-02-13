@@ -209,7 +209,7 @@ round type Final teams 2 subs NUM_SUBS  without_away_goal two_legs without_away_
 
 comp SouthAmerica.YouthChampionsLeague {
 
-pool @Y_CoL_participants teams 12 sorting CountryStrength {
+pool @Y_CoL_participants teams 12 sorting ChampionsCupGroup {
     getChamp(@Y_final)
     changeTeamTypes(First)
     getCCSpare() // add teams

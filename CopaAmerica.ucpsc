@@ -16,16 +16,16 @@
 comp CopaAmerica {
 
 pool @participants teams 18 {  
-    getNatSouthAmerica(Argentina)
-    getNatSouthAmerica(Bolivia)
-    getNatSouthAmerica(Chile)
-    getNatSouthAmerica(Paraguay)
-    getNatSouthAmerica(Uruguay)
-    getNatSouthAmerica(Brazil)
-    getNatSouthAmerica(Colombia)
-    getNatSouthAmerica(Ecuador)
-    getNatSouthAmerica(Peru)
-    getNatSouthAmerica(Venezuela)
+    getNationalTeam(Argentina)
+    getNationalTeam(Bolivia)
+    getNationalTeam(Chile)
+    getNationalTeam(Paraguay)
+    getNationalTeam(Uruguay)
+    getNationalTeam(Brazil)
+    getNationalTeam(Colombia)
+    getNationalTeam(Ecuador)
+    getNationalTeam(Peru)
+    getNationalTeam(Venezuela)
     getPool(QWC_CONCACAF_groups_pool, 1, 8)
     
     round type Quali teams 4 subs NUM_SUBS matchdays CAM_QUALI {

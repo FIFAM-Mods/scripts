@@ -594,7 +594,7 @@ pool @Y_path_NL "National Leagues Path" teams 52 constraints @CL_league_pool <- 
     }
 }
 
-pool @Y_league_sorted_pool teams 36 <- [@Y_lg1,@Y_lg2,@Y_lg3,@Y_lg4,@Y_lg5,@Y_lg6,@Y_round_2_path_NL] {
+pool @Y_league_sorted_pool teams 36 <- [@Y_lg1,@Y_lg2,@Y_lg3,@Y_lg4,@Y_lg5,@Y_lg6,@Y_round_3_path_NL] {
     get(@Y_league_pool)
     getCCSpare() // sort League table
     

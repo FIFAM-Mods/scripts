@@ -233,16 +233,15 @@ comp Asia.ConferenceLeague {
 
 pool @AChallenge_participants teams 25 constraints [@ACL_participants,@ACLTwo_participants] {
     
-    // Associations 1-10 delegated cup winner in previous competitions
     // Associations 11-12 delegate cup winner in this competition
     
     // West - 15 teams
     reserveAssessmentTeams([11-25], 1) // 15 teams
-    getEuropeanAssessmentCupwinner([1-12]) // ensure cup winners from associations 1-10 are added
+    getEuropeanAssessmentCupwinner([11-12])
     fillAssessmentReserves()
     // East - 10 teams
     reserveAssessmentTeams([111-120], 1) // 10 teams
-    getEuropeanAssessmentCupwinner([101-112]) // ensure cup winners from associations 101-110 are added
+    getEuropeanAssessmentCupwinner([111-112])
     fillAssessmentReserves()
     
     pool @AChallenge_W teams 19 <- @ACLTwo_PO_W {
@@ -257,24 +256,24 @@ pool @AChallenge_participants teams 25 constraints [@ACL_participants,@ACLTwo_pa
 }
 
 round @AChallenge_prelim_W "$ID_PRELIM_ROUND_WEST" type PreRound1 teams 14 matchdays M_ACH_PRE subs SUBS <- @AChallenge_W {
-    get(@AChallenge_participants, 6, 14)
+    get(@AChallenge_W, 6, 14)
     getCCSpare()
 }
 
 round @AChallenge_prelim_E "$ID_PRELIM_ROUND_EAST" type PreRound1 teams 12 matchdays M_ACH_PRE subs SUBS <- @AChallenge_E {
-    get(@AChallenge_participants, 3, 12)
+    get(@AChallenge_E, 3, 12)
     getCCSpare()
 }
 
 // West - 12 teams, 3 groups
 pool @AChallenge_groups_W teams 12 sorting ChampionsCupGroup <- @AChallenge_prelim_W {
-    get(@AChallenge_participants, 1, 5)
+    get(@AChallenge_W, 1, 5)
     get(@AChallenge_prelim_W)
 }
 
 // East - 8 teams, 2 groups
 pool @AChallenge_groups_E teams 8 sorting ChampionsCupGroup <- @AChallenge_prelim_E {
-    get(@AChallenge_participants, 1, 2)
+    get(@AChallenge_E, 1, 2)
     get(@AChallenge_prelim_E)
 }
 

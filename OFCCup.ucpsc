@@ -14,7 +14,7 @@
 
 comp OfcCup {
 
-pool @p teams 8 <- @OFC_r1 {
+pool @p teams 8 sorting CountryStrength <- @OFC_r1 {
     get(@q_participants, 1, 7)
     get(@OFC_r1, 1);
     
