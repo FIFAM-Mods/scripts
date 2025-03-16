@@ -179,7 +179,11 @@ round @CaribbeanCup_semi type Semifinal teams 4 subs NUM_SUBS two_legs matchdays
 
 comp NorthAmerica.Continental1 {
 
-pool @CaribbeanShield_pool teams 20 sorting countryStrength {
+pool @CaribbeanShield_pool teams 24 sorting countryStrength constraints @CaribbeanCup_pool {
+    getInternationalTeams(DominicanRepublic, 1)
+    getInternationalTeams(Haiti, 1)
+    getInternationalTeams(Jamaica, 1)
+    getInternationalTeams(TrinidadTobago, 1)
     getInternationalTeams(AntiguaAndBarbuda, 1)
     getInternationalTeams(Aruba, 1)
     getInternationalTeams(Bahamas, 1)
@@ -201,13 +205,13 @@ pool @CaribbeanShield_pool teams 20 sorting countryStrength {
     getInternationalTeams(TurksAndCaicos, 1)
     getInternationalTeams(USVirginIslands, 1)
     
-    round @CaribbeanShield_round1 type preRound1 teams 8 subs NUM_SUBS matchdays CARS_1 bonus [10000,0,0,0] {
-        get(@CaribbeanShield_pool, 12, 8)
+    round @CaribbeanShield_round1 type preRound1 teams 16 subs NUM_SUBS matchdays CARS_1 bonus [10000,0,0,0] {
+        get(@CaribbeanShield_pool, 9, 16)
         getCCSpare()   
         shuffleTeams()
         
         round type last16 teams 16 subs NUM_SUBS matchdays CARS_2 {
-            get(@CaribbeanShield_pool, 1, 12)
+            get(@CaribbeanShield_pool, 1, 8)
             getWinner(@prev)
             getCCSpare()
             

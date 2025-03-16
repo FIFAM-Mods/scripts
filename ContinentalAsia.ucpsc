@@ -81,14 +81,14 @@ pool @ACL_league_pool_W teams 12 {
     pool @ACL_league_matches_W teams 96 {
         getCCSpare() // generate 8 matchdays
         
-        round @ACL_lg1_W "$ID_LEAGUE_PHASE_WEST_MATCH_1" type Round1 teams 12 no_flags matchdays M_ACL_LG1 bonus [767000,0,0,0] subs SUBS { get(@prev, 1, 12); }
-        round @ACL_lg2_W "$ID_LEAGUE_PHASE_WEST_MATCH_2" type Round1 teams 12 no_flags matchdays M_ACL_LG2 bonus [0,0,0,0] subs SUBS { get(@prev, 13, 12); }
-        round @ACL_lg3_W "$ID_LEAGUE_PHASE_WEST_MATCH_3" type Round1 teams 12 no_flags matchdays M_ACL_LG3 bonus [0,0,0,0] subs SUBS { get(@prev, 25, 12); }
-        round @ACL_lg4_W "$ID_LEAGUE_PHASE_WEST_MATCH_4" type Round1 teams 12 no_flags matchdays M_ACL_LG4 bonus [0,0,0,0] subs SUBS { get(@prev, 37, 12); }
-        round @ACL_lg5_W "$ID_LEAGUE_PHASE_WEST_MATCH_5" type Round1 teams 12 no_flags matchdays M_ACL_LG5 bonus [0,0,0,0] subs SUBS { get(@prev, 49, 12); }
-        round @ACL_lg6_W "$ID_LEAGUE_PHASE_WEST_MATCH_6" type Round1 teams 12 no_flags matchdays M_ACL_LG6 bonus [0,0,0,0] subs SUBS { get(@prev, 61, 12); }
-        round @ACL_lg7_W "$ID_LEAGUE_PHASE_WEST_MATCH_7" type Round1 teams 12 no_flags matchdays M_ACL_LG7 bonus [0,0,0,0] subs SUBS { get(@prev, 73, 12); }
-        round @ACL_lg8_W "$ID_LEAGUE_PHASE_WEST_MATCH_8" type Round1 teams 12 no_flags matchdays M_ACL_LG8 bonus [0,0,0,0] subs SUBS { get(@prev, 85, 12); }
+        round @ACL_lg1_W "$ID_LEAGUE_PHASE_WEST_MATCH_1" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG1 bonus [767000,0,0,0] subs SUBS { get(@prev, 1, 12); }
+        round @ACL_lg2_W "$ID_LEAGUE_PHASE_WEST_MATCH_2" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG2 bonus [0,0,0,0] subs SUBS { get(@prev, 13, 12); }
+        round @ACL_lg3_W "$ID_LEAGUE_PHASE_WEST_MATCH_3" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG3 bonus [0,0,0,0] subs SUBS { get(@prev, 25, 12); }
+        round @ACL_lg4_W "$ID_LEAGUE_PHASE_WEST_MATCH_4" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG4 bonus [0,0,0,0] subs SUBS { get(@prev, 37, 12); }
+        round @ACL_lg5_W "$ID_LEAGUE_PHASE_WEST_MATCH_5" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG5 bonus [0,0,0,0] subs SUBS { get(@prev, 49, 12); }
+        round @ACL_lg6_W "$ID_LEAGUE_PHASE_WEST_MATCH_6" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG6 bonus [0,0,0,0] subs SUBS { get(@prev, 61, 12); }
+        round @ACL_lg7_W "$ID_LEAGUE_PHASE_WEST_MATCH_7" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG7 bonus [0,0,0,0] subs SUBS { get(@prev, 73, 12); }
+        round @ACL_lg8_W "$ID_LEAGUE_PHASE_WEST_MATCH_8" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG8 bonus [0,0,0,0] subs SUBS { get(@prev, 85, 12); }
     }
 }
 
@@ -100,14 +100,14 @@ pool @ACL_league_pool_E teams 12 {
     pool @ACL_league_matches_E teams 96 {
         getCCSpare() // generate 8 matchdays
         
-        round @ACL_lg1_E "$ID_LEAGUE_PHASE_EAST_MATCH_1" type Round1 teams 12 no_flags matchdays M_ACL_LG1 bonus [767000,0,0,0] subs SUBS { get(@prev, 1, 12); }
-        round @ACL_lg2_E "$ID_LEAGUE_PHASE_EAST_MATCH_2" type Round1 teams 12 no_flags matchdays M_ACL_LG2 bonus [0,0,0,0] subs SUBS { get(@prev, 13, 12); }
-        round @ACL_lg3_E "$ID_LEAGUE_PHASE_EAST_MATCH_3" type Round1 teams 12 no_flags matchdays M_ACL_LG3 bonus [0,0,0,0] subs SUBS { get(@prev, 25, 12); }
-        round @ACL_lg4_E "$ID_LEAGUE_PHASE_EAST_MATCH_4" type Round1 teams 12 no_flags matchdays M_ACL_LG4 bonus [0,0,0,0] subs SUBS { get(@prev, 37, 12); }
-        round @ACL_lg5_E "$ID_LEAGUE_PHASE_EAST_MATCH_5" type Round1 teams 12 no_flags matchdays M_ACL_LG5 bonus [0,0,0,0] subs SUBS { get(@prev, 49, 12); }
-        round @ACL_lg6_E "$ID_LEAGUE_PHASE_EAST_MATCH_6" type Round1 teams 12 no_flags matchdays M_ACL_LG6 bonus [0,0,0,0] subs SUBS { get(@prev, 61, 12); }
-        round @ACL_lg7_E "$ID_LEAGUE_PHASE_EAST_MATCH_7" type Round1 teams 12 no_flags matchdays M_ACL_LG7 bonus [0,0,0,0] subs SUBS { get(@prev, 73, 12); }
-        round @ACL_lg8_E "$ID_LEAGUE_PHASE_EAST_MATCH_8" type Round1 teams 12 no_flags matchdays M_ACL_LG8 bonus [0,0,0,0] subs SUBS { get(@prev, 85, 12); }
+        round @ACL_lg1_E "$ID_LEAGUE_PHASE_EAST_MATCH_1" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG1 bonus [767000,0,0,0] subs SUBS { get(@prev, 1, 12); }
+        round @ACL_lg2_E "$ID_LEAGUE_PHASE_EAST_MATCH_2" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG2 bonus [0,0,0,0] subs SUBS { get(@prev, 13, 12); }
+        round @ACL_lg3_E "$ID_LEAGUE_PHASE_EAST_MATCH_3" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG3 bonus [0,0,0,0] subs SUBS { get(@prev, 25, 12); }
+        round @ACL_lg4_E "$ID_LEAGUE_PHASE_EAST_MATCH_4" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG4 bonus [0,0,0,0] subs SUBS { get(@prev, 37, 12); }
+        round @ACL_lg5_E "$ID_LEAGUE_PHASE_EAST_MATCH_5" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG5 bonus [0,0,0,0] subs SUBS { get(@prev, 49, 12); }
+        round @ACL_lg6_E "$ID_LEAGUE_PHASE_EAST_MATCH_6" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG6 bonus [0,0,0,0] subs SUBS { get(@prev, 61, 12); }
+        round @ACL_lg7_E "$ID_LEAGUE_PHASE_EAST_MATCH_7" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG7 bonus [0,0,0,0] subs SUBS { get(@prev, 73, 12); }
+        round @ACL_lg8_E "$ID_LEAGUE_PHASE_EAST_MATCH_8" type Round1 teams 12 no_flags without_away_goal matchdays M_ACL_LG8 bonus [0,0,0,0] subs SUBS { get(@prev, 85, 12); }
     }
 }
 
