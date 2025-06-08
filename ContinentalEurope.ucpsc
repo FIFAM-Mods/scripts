@@ -349,7 +349,7 @@ pool @Conf_participants teams 112 constraints [@CL_participants,@EL_participants
 
 // first quali - launches on 1.
 round type Quali "$ID_FIRST_QUALI" @Conf_quali1 teams 58 subs SUBS two_legs without_away_goal matchdays EL_Q1 bonus [175000,0,150000,0] <- @Conf_participants {
-    get(@Conf_participants, 57, 56) // 56 teams (2 teams auto-qualify to next round)
+    get(@Conf_participants, 56, 57) // 57 teams (1 team auto-qualify to next round)
     getCCSpare()
 }
 
