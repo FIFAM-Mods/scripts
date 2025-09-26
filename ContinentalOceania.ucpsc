@@ -1,6 +1,6 @@
 #name "OFC Chamions League"
-#version "25.0"
-#author "FM 2025 Team"
+#version "26.0"
+#author "FM 2026 Team"
 
 #define QG [227,234,241]  // quali group matches
 #define QR [227,234] // quali round matches
@@ -21,32 +21,21 @@ pool @CL_participants teams 18 {
     getInternationalTeams(Tahiti, 1)
     getInternationalTeams(PapuaNewGuinea, 1)
     getInternationalTeams(SolomonIslands, 1)
-    getRunnerUp(@@NewZealand_LeagueCup_0) // National League Grand Final runner-up
-    getInternationalTeams(Fiji, 1)
-    getInternationalTeams(NewCaledonia, 1)
-    getInternationalTeams(Vanuatu, 1)
-    getInternationalTeams(Tahiti, 1)
-    getInternationalTeams(PapuaNewGuinea, 1)
-    getInternationalTeams(SolomonIslands, 1)
     getInternationalTeams(AmericanSamoa, 1)
     getInternationalTeams(CookIslands, 1)
     getInternationalTeams(Samoa, 1)
     getInternationalTeams(Tonga, 1)
     
     group @CL_preliminary "$ID_PRELIMINARY_GROUP" type Quali teams 4 matchdays QG att 10 trn 10 sorting DM subs NUM_SUBS {
-        get(@CL_participants, 15, 4)
+        get(@CL_participants, 8, 4)
         shuffleTeams()
     }
     
-    round @CL_nationalPO "$ID_NATIONAL_PLAY_OFFS" type Quali2 teams 14 two_legs without_away_goal matchdays QR subs NUM_SUBS {
-        get(@CL_participants, 8, 7)
-        get(@CL_participants, 1, 7)
-    }
 }
 
-pool @CL_groups teams 8 sorting ChampionsCupGroup <- [@CL_preliminary,@CL_nationalPO] {
+pool @CL_groups teams 8 sorting ChampionsCupGroup <- [@CL_preliminary] {
     get(@CL_preliminary, 1)
-    getWinner(@CL_nationalPO)
+    get(@CL_participants, 1, 7)
     
     group @CL_a "A" teams 4 matchdays GM fixtures GF bonus [5000,0,0,0] att 10 trn 10 sorting DM subs NUM_SUBS { get(@prev, 1, 4) }
     group @CL_b "B" teams 4 matchdays GM fixtures GF bonus [5000,0,0,0] att 10 trn 10 sorting DM subs NUM_SUBS { get(@prev, 5, 4) }
