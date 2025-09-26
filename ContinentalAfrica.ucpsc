@@ -1,20 +1,20 @@
 #name "CAF Champions League, CAF Confederation Cup, CAF Super Cup, Arab Club Champions Cup"
-#author "FM 2025 Team"
-#version "25.0"
+#author "FM 2026 Team"
+#version "26.0"
 
 #define M_CL_P [17,24] // CL preliminary
 #define M_CL_1 [31,38] // CL first round (before CC play-off)
 #define M_CL_G [73,87,108,122,143,157] // CL group stage
 #define M_CL_Q [227,241] // CL quarterfinal
 #define M_CL_S [283,297] // CL semifinal
-#define M_CL_F 327 // CL final
+#define M_CL_F [320,327] // CL final
 #define M_CC_1 [18,25] // CC preliminary
 #define M_CC_2 [32,39] // CC first round
 #define M_CC_3 [46,53] // CC play-off (after CL round 1)
 #define M_CC_G [74,88,109,123,144,158] // CC group stage
 #define M_CC_Q [228,242] // CC quarterfinal
 #define M_CC_S [284,298] // CC semifinal
-#define M_CC_F 324 // CC final
+#define M_CC_F [324,329] // CC final
 #define M_SC 20 // SuperCup
 #define M_AC_0 3
 #define M_AC_1 9
@@ -64,7 +64,7 @@ round type Quarterfinal teams 8 subs NUM_SUBS two_legs matchdays M_CL_Q bonus [1
     round type Semifinal teams 4 subs NUM_SUBS two_legs matchdays M_CL_S bonus [288000,0,0,0] {
         get(@prev)
         
-        round @CAFCL_final index 22 type Final teams 2 subs NUM_SUBS matchdays M_CL_F bonus [770000,1920000,0,0] { get(@prev) }
+        round @CAFCL_final index 22 type Final teams 2 subs NUM_SUBS two_legs  matchdays M_CL_F bonus [770000,1920000,0,0] { get(@prev) }
     }
 }
 
@@ -109,7 +109,7 @@ round type Quarterfinal teams 8 subs NUM_SUBS two_legs matchdays M_CC_Q bonus [1
     round type Semifinal teams 4 subs NUM_SUBS two_legs matchdays M_CC_S bonus [192000,0,0,0] {
         get(@prev)
         
-        round @CAFCup_final index 22 type Final teams 2 subs NUM_SUBS matchdays M_CC_F bonus [240000,960000,0,0] { get(@prev) }
+        round @CAFCup_final index 22 type Final teams 2 subs NUM_SUBS two_legs matchdays M_CC_F bonus [240000,960000,0,0] { get(@prev) }
     }
 }
 
