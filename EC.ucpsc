@@ -1,9 +1,9 @@
 #name "Euro Cup + Euro Qualification + Nations League script"
-#author "FM 2025 Team"
-#version "25.0"
+#author "FM 2026 Team"
+#version "26.0"
 
-#define Q_POTS_2_5 [@q_p2,@q_p3,@q_p4,@q_p5]
-#define Q_GROUPS [@q_a,@q_b,@q_c,@q_d,@q_e,@q_f,@q_g,@q_h,@q_i,@q_j]
+#define Q_POTS_2_4 [@q_p2,@q_p3,@q_p4]
+#define Q_GROUPS [@q_a,@q_b,@q_c,@q_d,@q_e,@q_f,@q_g,@q_h,@q_i,@q_j,@q_k,@q_l]
 #define POTS [@pot_1,@pot_2,@pot_3,@pot_4]
 #define GROUPS [@a,@b,@c,@d,@e,@f]
 
@@ -14,6 +14,7 @@
 #define EC_FINAL_MATCH     357
 
 #define EQ_GROUP_MATCHES [215,218,264,267,426,429,461,464,496,499]
+#define EQ_GROUP_MATCHES2 [264,267,461,464,496,499]
 #define EQ_SEMIFINAL_MATCH 629
 #define EQ_FINAL_MATCH 632
 
@@ -170,42 +171,43 @@ pool @q_pool "EC Quali Pool" teams 53 constraints @q_host <- @q_host {
     
     // 6 pots
     pool @q_pUnl teams 4  sorting Random -> Q_GROUPS { get(@q_pool, 1, 4) }
-    pool @q_p1   teams 6  sorting Random -> Q_GROUPS { get(@q_pool, 5, 6) }
-    pool @q_p2   teams 10 sorting Random -> Q_GROUPS { get(@q_pool, 11, 10) }
-    pool @q_p3   teams 10 sorting Random -> Q_GROUPS { get(@q_pool, 21, 10) }
-    pool @q_p4   teams 10 sorting Random -> Q_GROUPS { get(@q_pool, 31, 10) }
-    pool @q_p5   teams 10 sorting Random -> Q_GROUPS { get(@q_pool, 41, 10) }
-    pool @q_p6   teams 3  sorting Random -> Q_GROUPS { get(@q_pool, 51, 3) }
+    pool @q_p1   teams 8  sorting Random -> Q_GROUPS { get(@q_pool, 5, 8) }
+    pool @q_p2   teams 12 sorting Random -> Q_GROUPS { get(@q_pool, 13, 12) }
+    pool @q_p3   teams 12 sorting Random -> Q_GROUPS { get(@q_pool, 25, 12) }
+    pool @q_p4   teams 12 sorting Random -> Q_GROUPS { get(@q_pool, 37, 12) }
+    pool @q_p5   teams 5 sorting Random -> Q_GROUPS { get(@q_pool, 49, 5) }
 }
 
 // Matches will take place from 21 March to 19 November 2019
-group @q_a "A" teams 5 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_pUnl, 1); get(Q_POTS_2_5, 1); shuffleTeams() }
-group @q_b "B" teams 5 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_pUnl, 2); get(Q_POTS_2_5, 2); shuffleTeams() }
-group @q_c "C" teams 5 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_pUnl, 3); get(Q_POTS_2_5, 3); shuffleTeams() }
-group @q_d "D" teams 5 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_pUnl, 4); get(Q_POTS_2_5, 4); shuffleTeams() }
-group @q_e "E" teams 5 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_p1, 1);   get(Q_POTS_2_5, 5); shuffleTeams() }
-group @q_f "F" teams 5 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_p1, 2);   get(Q_POTS_2_5, 6); shuffleTeams() }
-group @q_g "G" teams 5 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_p1, 3);   get(Q_POTS_2_5, 7); shuffleTeams() }
-group @q_h "H" teams 6 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_p1, 4);   get(Q_POTS_2_5, 8);  get(@q_p6, 1); shuffleTeams() }
-group @q_i "I" teams 6 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_p1, 5);   get(Q_POTS_2_5, 9);  get(@q_p6, 2); shuffleTeams() }
-group @q_j "J" teams 6 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_p1, 6);   get(Q_POTS_2_5, 10); get(@q_p6, 3); shuffleTeams() }
+group @q_a "A" teams 4 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES2 { get(@q_pUnl, 1); get(Q_POTS_2_4, 1); shuffleTeams() }
+group @q_b "B" teams 4 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES2 { get(@q_pUnl, 2); get(Q_POTS_2_4, 2); shuffleTeams() }
+group @q_c "C" teams 4 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES2 { get(@q_pUnl, 3); get(Q_POTS_2_4, 3); shuffleTeams() }
+group @q_d "D" teams 4 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES2 { get(@q_pUnl, 4); get(Q_POTS_2_4, 4); shuffleTeams() }
+group @q_e "E" teams 4 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES2 { get(@q_p1, 1);   get(Q_POTS_2_4, 5); shuffleTeams() }
+group @q_f "F" teams 4 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES2 { get(@q_p1, 2);   get(Q_POTS_2_4, 6); shuffleTeams() }
+group @q_g "G" teams 4 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES2 { get(@q_p1, 3);   get(Q_POTS_2_4, 7); shuffleTeams() }
+group @q_h "H" teams 5 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_p1, 4);   get(Q_POTS_2_4, 8);  get(@q_p5, 1); shuffleTeams() }
+group @q_i "I" teams 5 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_p1, 5);   get(Q_POTS_2_4, 9);  get(@q_p5, 2); shuffleTeams() }
+group @q_j "J" teams 5 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_p1, 6);   get(Q_POTS_2_4, 10); get(@q_p5, 3); shuffleTeams() }
+group @q_k "K" teams 5 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_p1, 7);   get(Q_POTS_2_4, 11);  get(@q_p5, 4); shuffleTeams() }
+group @q_l "L" teams 5 rounds 2 subs NUM_SUBS matchdays EQ_GROUP_MATCHES { get(@q_p1, 8);   get(Q_POTS_2_4, 12); get(@q_p5, 5); shuffleTeams() }
 
-pool @q_1st teams 10 sorting PrevPointsDiff <- Q_GROUPS -> @q_ovr { get(@prev, 1) }
-pool @q_2nd teams 10 sorting PrevPointsDiff <- Q_GROUPS -> @q_ovr { get(@prev, 2) }
-pool @q_3rd teams 10 sorting PrevPointsDiff <- Q_GROUPS -> @q_ovr { get(@prev, 3) }
-pool @q_4th teams 10 sorting PrevPointsDiff <- Q_GROUPS -> @q_ovr { get(@prev, 4) }
-pool @q_5th teams 10 sorting PrevPointsDiff <- Q_GROUPS -> @q_ovr { get(@prev, 5) }
-pool @q_6th teams  3 sorting PrevPointsDiff <- Q_GROUPS -> @q_ovr { get([@q_h,@q_i,@q_j], 6) }
+pool @q_1st teams 12 sorting PrevPointsDiff <- Q_GROUPS -> @q_ovr { get(@prev, 1) }
+pool @q_2nd teams 12 sorting PrevPointsDiff <- Q_GROUPS -> @q_ovr { get(@prev, 2) }
+pool @q_3rd teams 12 sorting PrevPointsDiff <- Q_GROUPS -> @q_ovr { get(@prev, 3) }
+pool @q_4th teams 12 sorting PrevPointsDiff <- Q_GROUPS -> @q_ovr { get(@prev, 4) }
+pool @q_5th teams 5 sorting PrevPointsDiff <- Q_GROUPS -> @q_ovr { get([@q_h,@q_i,@q_j,@q_k,@q_l], 5) }
 
 pool @q_ovr teams 53 { get(@prev) }
 
 pool @q_21 "Qualified teams" teams 21 <- @q_ovr {
     getHost()
-    get([@q_1st,@q_2nd])
+    get(@q_1st)
+    get(@q_2nd, 1,8)
 
-    pool @q_path_C "Path C Pool" teams 4 constraints @q_21 { get(@nl_ovr, 33, 16); get(@nl_ovr, 49, 2); get(@q_pool) }
-    pool @q_path_B "Path B Pool" teams 4 constraints [@q_21,@q_path_C] { get(@nl_ovr, 17, 16); get(@nl_ovr, 49, 2); get(@q_pool) }
-    pool @q_path_A "Path A Pool" teams 4 constraints [@q_21,@q_path_C,@q_path_B] { get(@nl_ovr, 1, 16); get(@nl_ovr, 49, 2); get(@q_pool) }
+    pool @q_path_C "Path C Pool" teams 4 constraints @q_21 { get(@q_2nd, 9); get(@q_2nd, 12)get(@nl_ovr, 33, 16); get(@nl_ovr, 49, 2) }
+    pool @q_path_B "Path B Pool" teams 4 constraints [@q_21,@q_path_C] { get(@q_2nd, 11);get(@nl_ovr, 17, 16); get(@nl_ovr, 49, 2); get(@q_pool) }
+    pool @q_path_A "Path A Pool" teams 4 constraints [@q_21,@q_path_C,@q_path_B] { get(@q_2nd, 10);get(@nl_ovr, 1, 16); get(@nl_ovr, 49, 2); get(@q_pool) }
 }
 
 pool @q_path_A_sorter "Path A Pool Sorter" teams 49 constraints @q_path_A <- @q_path_A {
