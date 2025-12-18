@@ -244,7 +244,7 @@ pool @LeaguesCup_pool teams 36 { // plugin: if Mexico or US is not playable, cha
    
     pool @LeaguesCup_poolMEX teams 18 sorting ChampionsCupGroup {
         get(@LeaguesCup_pool, 1, 18)
-       }
+       
       pool @LeaguesCup_poolUS teams 18 sorting ChampionsCupGroup {  
         get(@LeaguesCup_pool, 19, 18)
         
@@ -253,15 +253,15 @@ pool @LeaguesCup_pool teams 36 { // plugin: if Mexico or US is not playable, cha
         group @LEAG_b "B" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolMEX, 5, 4) }
         group @LEAG_c "C" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolMEX, 9, 5) }
         group @LEAG_d "D" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolMEX, 14, 5) }
-        group @LEAG_e "E" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@prev, 1, 4) }
-        group @LEAG_f "F" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@prev, 5, 4) }
-        group @LEAG_g "G" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@prev, 9, 5) }
-        group @LEAG_h "H" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@prev, 14, 5) }
+        group @LEAG_e "E" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolUS, 1, 4) }
+        group @LEAG_f "F" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolUS, 5, 4) }
+        group @LEAG_g "G" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolUS, 9, 5) }
+        group @LEAG_h "H" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolUS, 14, 5) }
+        }
         
-        
-
-
 }
+
+
 
  pool @LEAG_2ndMEX teams 4 sorting random  {
         get([@LEAG_a,@LEAG_c,@LEAG_b,@LEAG_d], 2, 1)
