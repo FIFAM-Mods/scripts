@@ -79,7 +79,7 @@ comp NamNLQ {
 
 pool @nl_q_participants teams 34 { // teaminit for first season (always)
     get(@nl_ovr) // get teams from Overall Table pool
-    
+    getNationalTeamWithoutHost(NorthAmerica)
     // Note: teams will be sorted with special sorter.
     // When sorting is not needed, remove teams from script body and move them to TeamInit (this is possible only for first in-game season!)
     

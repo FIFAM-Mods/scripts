@@ -269,7 +269,7 @@ pool @nl teams 54 sorting ChampionsCupGroup { // sort NationsLeague (not execute
     // When teams are written in script body and groups are already known, sorting for first launch can
     // be disabled in the plugin.
     //
-    // getNationalTeamWithoutHost(Spain)
+    getNationalTeamWithoutHost(Europe)
     getNationalTeam(France)
     getNationalTeam(Belgium)
     getNationalTeam(Italy)
