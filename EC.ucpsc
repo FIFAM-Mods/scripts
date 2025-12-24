@@ -102,6 +102,7 @@ round "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 matchdays EC_LAST16_MATCH
 comp QualiEC {
 
 pool @q_main teams 54 {
+    getNationalTeamWithoutHost(Europe)
     getNationalTeam(France)
     getNationalTeam(Belgium)
     getNationalTeam(Italy)
