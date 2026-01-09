@@ -242,46 +242,48 @@ pool @LeaguesCup_pool teams 36 { // plugin: if Mexico or US is not playable, cha
     getChamp(@@UnitedStates_LeagueCup_0) // MLS Cup winner (will add one team from regular league if there's no winner)
     getInternationalTeams(UnitedStates, 18)
    
-    pool @LeaguesCup_poolMEX teams 18 sorting ChampionsCupGroup {
-        get(@LeaguesCup_pool, 1, 18)
+    pool @LeaguesCup_poolMEX teams 18 sorting ChampionsCupGroup -> [@LEAG_a,@LEAG_b,@LEAG_c,@LEAG_d,@LEAG_e,@LEAG_f,@LEAG_g,@LEAG_h] 
+        { 	get(@LeaguesCup_pool, 1, 18) }
        
-      pool @LeaguesCup_poolUS teams 18 sorting ChampionsCupGroup {  
-        get(@LeaguesCup_pool, 19, 18)
+      pool @LeaguesCup_poolUS teams 18 sorting ChampionsCupGroup -> [@LEAG_a,@LEAG_b,@LEAG_c,@LEAG_d,@LEAG_e,@LEAG_f,@LEAG_g,@LEAG_h] 
+        {   get(@LeaguesCup_pool, 19, 18) }
         
         
-        group @LEAG_a "A" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolMEX, 1, 4) }
-        group @LEAG_b "B" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolMEX, 5, 4) }
-        group @LEAG_c "C" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolMEX, 9, 5) }
-        group @LEAG_d "D" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolMEX, 14, 5) }
-        group @LEAG_e "E" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolUS, 1, 4) }
-        group @LEAG_f "F" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolUS, 5, 4) }
-        group @LEAG_g "G" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolUS, 9, 5) }
-        group @LEAG_h "H" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS -> @LeaguesCup_last16 { get(@LeaguesCup_poolUS, 14, 5) }
+        
         }
+        group @LEAG_a "A" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS  { get(@LeaguesCup_poolMEX, 1, 4) }
+        group @LEAG_b "B" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS { get(@LeaguesCup_poolMEX, 5, 4) }
+        group @LEAG_c "C" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS  { get(@LeaguesCup_poolMEX, 9, 5) }
+        group @LEAG_d "D" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS  { get(@LeaguesCup_poolMEX, 14, 5) }
+        group @LEAG_e "E" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS { get(@LeaguesCup_poolUS, 1, 4) }
+        group @LEAG_f "F" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS  { get(@LeaguesCup_poolUS, 5, 4) }
+        group @LEAG_g "G" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS  { get(@LeaguesCup_poolUS, 9, 5) }
+        group @LEAG_h "H" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS  { get(@LeaguesCup_poolUS, 14, 5) }
         
-}
+        
 
 
 
- pool @LEAG_2ndMEX teams 4 sorting random  {
+
+ pool @LEAG_2ndMEX teams 4 sorting random <- [@LEAG_a,@LEAG_b,@LEAG_c,@LEAG_d,@LEAG_e,@LEAG_f,@LEAG_g,@LEAG_h] {
         get([@LEAG_a,@LEAG_c,@LEAG_b,@LEAG_d], 2, 1)
  }   
  
- pool @LEAG_2ndUS teams 4 sorting random  {
+ pool @LEAG_2ndUS teams 4 sorting random  <- [@LEAG_a,@LEAG_b,@LEAG_c,@LEAG_d,@LEAG_e,@LEAG_f,@LEAG_g,@LEAG_h] {
         get([@LEAG_e,@LEAG_g,@LEAG_f,@LEAG_h], 2, 1)
  }    
  
- pool @LEAG_1stMEX teams 4 sorting random  {
+ pool @LEAG_1stMEX teams 4 sorting random <- [@LEAG_a,@LEAG_b,@LEAG_c,@LEAG_d,@LEAG_e,@LEAG_f,@LEAG_g,@LEAG_h] {
         get([@LEAG_a,@LEAG_c,@LEAG_b,@LEAG_d], 1, 1)
  }   
  
- pool @LEAG_1stUS teams 4 sorting random  {
+ pool @LEAG_1stUS teams 4 sorting random <- [@LEAG_a,@LEAG_b,@LEAG_c,@LEAG_d,@LEAG_e,@LEAG_f,@LEAG_g,@LEAG_h]  {
         get([@LEAG_e,@LEAG_g,@LEAG_f,@LEAG_h], 1, 1)
  }    
  
-         
+             
 
-    round @LeaguesCup_last16 "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 subs NUM_SUBS matchdays LC_16 bonus [100000,50000,0,0] {
+    round @LeaguesCup_last16 "$ID_TOURNAMENT_EIGHTFINAL" type Last16 teams 16 subs NUM_SUBS matchdays LC_16 bonus [100000,50000,0,0] <- [@LEAG_1stUS,@LEAG_1stMEX,@LEAG_2ndMEX,@LEAG_2ndUS] {
     get(@LEAG_1stUS, 1, 4)
     get(@LEAG_1stMEX, 1, 4)
     get(@LEAG_2ndMEX, 1, 4)
@@ -299,7 +301,7 @@ pool @LeaguesCup_pool teams 36 { // plugin: if Mexico or US is not playable, cha
             }
         }
     }
-}
+
 
 }
 
