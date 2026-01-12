@@ -73,17 +73,51 @@ round type Quarterfinal teams 8 subs NUM_SUBS matchdays M_GC_Q <- GC_GROUPS {
 
 }
 
-// Nations League - each 2 years, next 2024 (2024/2025, 2025/2027)
+// Nations League - each 2 years, next 2026 (2024/2025, 2026/2027)
 
 comp NamNLQ {
 
 pool @nl_q_participants teams 34 { // teaminit for first season (always)
     get(@nl_ovr) // get teams from Overall Table pool
-    getNationalTeamWithoutHost(NorthAmerica)
+
+    //getNationalTeamWithoutHost(NorthAmerica)
     // Note: teams will be sorted with special sorter.
-    // When sorting is not needed, remove teams from script body and move them to TeamInit (this is possible only for first in-game season!)
-    
-    // getNationalTeam(Mexico)
+    // When sorting is not needed, remove teams from script body and move them to TeamInit (this is possible only for first in-game season!-means fm27, fm29)
+    getNationalTeam(Mexico)
+    getNationalTeam(Canada)
+    getNationalTeam(Panama)
+    getNationalTeam(UnitedStates)    
+    getNationalTeam(CostaRica)
+    getNationalTeam(Jamaica)
+    getNationalTeam(Honduras)
+    getNationalTeam(Surinam)
+    getNationalTeam(Guatemala)
+    getNationalTeam(Nicaragua)
+    getNationalTeam(TrinidadTobago)
+    getNationalTeam(ElSalvador)  
+    getNationalTeam(Haiti)
+    getNationalTeam(Curacao)  
+    getNationalTeam(DominicanRepublic)
+    getNationalTeam(Cuba) 
+    getNationalTeam(Guyana)
+    getNationalTeam(StVincentGren)
+    getNationalTeam(Bermuda)
+    getNationalTeam(PuertoRico)
+    getNationalTeam(StLucia)  
+    getNationalTeam(Grenada)
+    getNationalTeam(Dominica)
+    getNationalTeam(Barbados)
+    getNationalTeam(Belize)  
+    getNationalTeam(StKittsNevis)
+    getNationalTeam(CaymanIslands)
+    getNationalTeam(Montserrat)
+    getNationalTeam(AntiguaandBarbuda)
+    getNationalTeam(Aruba)    
+    getNationalTeam(Bahamas) 
+    getNationalTeam(TurksandCaicos) 
+    getNationalTeam(USVirginIslands)
+    getNationalTeam(BritishVirginIs)
+       
     
     group @A_a "$ID_LEAGUE_A_GROUP_1" teams 5 subs NUM_SUBS rounds 1 matchdays M_NL_G -> [@nl_q_first_places] { get(@prev, 5); get(@prev, 7); get(@prev, 9); get(@prev, 11); get(@prev, 13); shuffleTeams() }
     group @A_b "$ID_LEAGUE_A_GROUP_2" teams 5 subs NUM_SUBS rounds 1 matchdays M_NL_G { get(@prev, 6); get(@prev, 8); get(@prev, 10); get(@prev, 12); get(@prev, 14); shuffleTeams() }
@@ -105,8 +139,9 @@ pool @nl_q_second_places teams 2 sorting PrevPointsDiff -> @nl_ovr {
 
 pool @nl_ovr teams 34 -> @nl_participants { // CONCACAF Nations League Overall Table
     // Direct Quarterfinal - 4 teams
-    getNationalTeam(Canada)
     getNationalTeam(Mexico)
+    getNationalTeam(Canada)
+   
     getNationalTeam(Panama)
     getNationalTeam(UnitedStates)
     // League A - 10 teams
