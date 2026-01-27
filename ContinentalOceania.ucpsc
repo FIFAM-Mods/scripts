@@ -23,7 +23,7 @@ comp Oceania.ChampionsLeague {
 pool @PL_participants teams 8 { // TeamInit for first season
     get(@PL_stored_teams) // Get teams from previous season
     
-    league "$ID_OFC_PRO_LEAGUE" teams 8 rounds 2 matchdays PL_LG subs NUM_SUBS -> [@PL_Leaders,@PL_Challengers] {
+    league "$ID_OFC_PRO_LEAGUE" teams 8 rounds 2 matchdays PL_LG subs NUM_SUBS bonus [0,0,0,2000000] -> [@PL_Leaders,@PL_Challengers] {
         get(@prev)
         shuffleTeams()
     }
@@ -52,7 +52,7 @@ round @PL_QualiPO "$ID_OFC_QUALI_PO" type Quali teams 2 matchdays PL_Q subs NUM_
         get(@PL_Leaders, 1, 1);               get(@PL_Leaders, 2, 1)
         get(@prev);                           get(@PL_Leaders, 3, 1)
         
-        round @PL_Final index 22 type Final teams 2 matchdays PL_F subs NUM_SUBS {
+        round @PL_Final index 22 type Final teams 2 matchdays PL_F subs NUM_SUBS bonus [1000000,2000000,0,0] {
             get(@prev)
         }
     }
