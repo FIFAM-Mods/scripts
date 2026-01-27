@@ -242,15 +242,15 @@ pool @LeaguesCup_pool teams 36 { // plugin: if Mexico or US is not playable, cha
     getChamp(@@UnitedStates_LeagueCup_0) // MLS Cup winner (will add one team from regular league if there's no winner)
     getInternationalTeams(UnitedStates, 18)
    
-    pool @LeaguesCup_poolMEX teams 18 sorting ChampionsCupGroup -> [@LEAG_a,@LEAG_b,@LEAG_c,@LEAG_d,@LEAG_e,@LEAG_f,@LEAG_g,@LEAG_h] 
+    pool @LeaguesCup_poolMEX teams 18 sorting ChampionsCupGroup -> [@LeaguesCup_poolUS] 
         { 	get(@LeaguesCup_pool, 1, 18) }
-       
+      } 
       pool @LeaguesCup_poolUS teams 18 sorting ChampionsCupGroup -> [@LEAG_a,@LEAG_b,@LEAG_c,@LEAG_d,@LEAG_e,@LEAG_f,@LEAG_g,@LEAG_h] 
         {   get(@LeaguesCup_pool, 19, 18) }
         
         
         
-        }
+        
         group @LEAG_a "A" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS  { get(@LeaguesCup_poolMEX, 1, 4) }
         group @LEAG_b "B" teams 4 matchdays LC_G bonus [100000,50000,0,0] sorting DM subs NUM_SUBS { get(@LeaguesCup_poolMEX, 5, 4) }
         group @LEAG_c "C" teams 5 matchdays LC_G2 bonus [100000,50000,0,0] sorting DM subs NUM_SUBS  { get(@LeaguesCup_poolMEX, 9, 5) }
