@@ -1,6 +1,6 @@
 #name "Euro Cup + Euro Qualification + Nations League script"
 #author "FM 2026 Team"
-#version "26.0"
+#version "26.1"
 
 #define Q_POTS_2_4 [@q_p2,@q_p3,@q_p4]
 #define Q_GROUPS [@q_a,@q_b,@q_c,@q_d,@q_e,@q_f,@q_g,@q_h,@q_i,@q_j,@q_k,@q_l]
@@ -422,7 +422,7 @@ pool @nl_ovr2 "Nations League Overall Ranking (NL)" teams 54 {
     pool @ec_quali_launcher teams 1 ~> @nl_ovr {} // one-direction link
 }
 
-round @nl_playoff_A_B "$ID_A_B_PLAYOFF" type Quali teams 8 two_legs subs NUM_SUBS matchdays NL_PO_MATCHES {
+round @nl_playoff_A_B "$ID_A_B_PLAYOFF" type Quali teams 8 two_legs subs NUM_SUBS without_away_goal matchdays NL_PO_MATCHES {
     get(@nl_3rd_A, 4)
     get(@nl_3rd_A, 3)
     get(@nl_3rd_A, 1)
@@ -438,7 +438,7 @@ round @nl_playoff_A_B "$ID_A_B_PLAYOFF" type Quali teams 8 two_legs subs NUM_SUB
     }
 }
 
-round @nl_playoff_B_C "$ID_B_C_PLAYOFF" type Quali teams 8 two_legs subs NUM_SUBS matchdays NL_PO_MATCHES {
+round @nl_playoff_B_C "$ID_B_C_PLAYOFF" type Quali teams 8 two_legs subs NUM_SUBS without_away_goal matchdays NL_PO_MATCHES {
     get(@nl_3rd_B, 4)
     get(@nl_3rd_B, 3)
     get(@nl_3rd_B, 1)
@@ -454,7 +454,7 @@ round @nl_playoff_B_C "$ID_B_C_PLAYOFF" type Quali teams 8 two_legs subs NUM_SUB
     }
 }
 
-round @nl_playoff "$ID_C_D_PLAYOFF" type Quali teams 4 two_legs subs NUM_SUBS matchdays NL_PO_MATCHES {
+round @nl_playoff "$ID_C_D_PLAYOFF" type Quali teams 4 two_legs subs NUM_SUBS without_away_goal matchdays NL_PO_MATCHES {
     get(@nl_2nd_D, 2)
     get(@nl_2nd_D, 1)
     get(@nl_4th_C, 1)
