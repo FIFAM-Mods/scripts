@@ -1,6 +1,6 @@
 #name "CONCACAF Gold Cup, CONCACAF Nations League"
-#author "FM 2025 Team"
-#version "25.0"
+#author "FM 2027 Team"
+#version "27.0"
 
 #define M_GC_G [337,341,345]
 #define M_GC_Q 349
@@ -84,9 +84,9 @@ pool @nl_q_participants teams 34 { // teaminit for first season (always)
     // Note: teams will be sorted with special sorter.
     // When sorting is not needed, remove teams from script body and move them to TeamInit (this is possible only for first in-game season!-means fm27, fm29)
     getNationalTeam(Mexico)
+    getNationalTeam(UnitedStates)   
     getNationalTeam(Canada)
-    getNationalTeam(Panama)
-    getNationalTeam(UnitedStates)    
+    getNationalTeam(Panama) 
     getNationalTeam(CostaRica)
     getNationalTeam(Jamaica)
     getNationalTeam(Honduras)
@@ -140,10 +140,10 @@ pool @nl_q_second_places teams 2 sorting PrevPointsDiff -> @nl_ovr {
 pool @nl_ovr teams 34 -> @nl_participants { // CONCACAF Nations League Overall Table
     // Direct Quarterfinal - 4 teams
     getNationalTeam(Mexico)
-    getNationalTeam(Canada)
-   
-    getNationalTeam(Panama)
     getNationalTeam(UnitedStates)
+    getNationalTeam(Canada)
+    getNationalTeam(Panama)
+    
     // League A - 10 teams
     get(NL_GROUPS_A, 1) // 5.
     get(NL_GROUPS_A, 2) // 7.
