@@ -1,6 +1,6 @@
 #name "U-20 World Cup and Qualification"
-#author "FM 2025 Team"
-#version "25.0"
+#author "FM 2027 Team"
+#version "27.0"
 
 #define MAIN_G [311,314,317]
 #define MAIN_L 320
@@ -29,18 +29,27 @@
 #define Q_GROUPS [@q_a,@q_b,@q_c,@q_d,@q_e,@q_f,@q_g,@q_h,@q_i,@q_j,@q_k,@q_l,@q_m]
 #define E_GROUPS [@e_a,@e_b,@e_c,@e_d,@e_e,@e_f,@e_g,@e_h]
 
+#define M_Q_ASIA_PO_S 220 // AFC-Vorqualifikation (Verlierer @Asia_playoff) - Halbfinale
+#define M_Q_ASIA_PO_F 227 // AFC-Vorqualifikation - Finale
+#define M_Q_OFC_4 226 // OFC-Entscheidungsspiel um direkten Slot
+#define M_Q_IC_S 290 // Interkontinentales Play-off - Halbfinale
+#define M_Q_IC_F 297 // Interkontinentales Play-off - Finale
+
 // every 2 years, starting in 2024/2025
 // only quali is launched at startup
 
 comp U20WorldCup {
 
-pool @main teams 24 sorting CountryStrength <- [@f_a,@f_b,@NAM_q_a,@NAM_q_b,@Africa_a,@Africa_b,@OFC_playoff] {
-    get([@f_a,@f_b], 1, 3) // Europe - first 3 teams from final quali groups A and B (6 teams)
-    get(@SA_final, 1, 4) // South America - first 4 teams in final group (4 teams)
-    get([@NAM_q_a,@NAM_q_b], 1, 2) // North America - first 2 teams from final groups A and B (4 teams)
-    get([@Africa_a,@Africa_b], 1, 2) // Africa - first 2 teams from final groups A and B (4 teams)
-    get(@Asia_playoff) // Asia - play-off winners (4 teams)
-    get(@OFC_playoff) // Oceania - play-off winners (2 teams)
+pool @main teams 24 sorting CountryStrength <- [@NAM_q_a,@NAM_q_b,@Africa_a,@Africa_b,@IC_final] {
+    get([@f_a,@f_b], 1, 2)      // Europa: Top 2 je Gruppe (4)
+    get(@f_3rd, 1, 1)           // Europa: bester Gruppendritter (5.)
+    get(@SA_final, 1, 4)        // Südamerika: Top 4
+    get([@NAM_q_a,@NAM_q_b], 1, 2) // Nordamerika: unverändert (4)
+    get([@Africa_a,@Africa_b], 1, 2) // Afrika: unverändert (4)
+    get(@Asia_playoff)          // Asien: 4 direkte Sieger
+    get(@Asia_po_final)         // Asien: 5. Slot
+    get(@OFC_final)             // Ozeanien: 1 direkter Slot
+    get(@IC_final)              // interkontinentales Play-off: 1 Slot
     
     pool @pot_1 teams 6 sorting Random -> [@a,@b,@c,@d,@e,@f] { get(@prev, 1, 6) }
     pool @pot_2 teams 6 sorting Random -> [@a,@b,@c,@d,@e,@f] { get(@prev, 7, 6) }
@@ -201,6 +210,11 @@ pool @final teams 8 sorting Random <- E_GROUPS {
     group @f_b "$ID_U20WC_EURO_FINAL_B" type Group2 teams 4 matchdays M_Q_EURO_3 { get(@prev, 5, 4); shuffleTeams() }
 }
 
+pool @f_3rd teams 2 sorting PrevPointsDiff <- [@f_a,@f_b] -> @IC_playoff {
+    get(@f_a, 3, 1)
+    get(@f_b, 3, 1)
+}
+
 // South America
 
 pool @SA_q teams 10 sorting CountryStrength <- @q_main {
@@ -217,7 +231,7 @@ pool @SA_q teams 10 sorting CountryStrength <- @q_main {
 group @SA_a "$ID_U20WC_SOUTHAM_A" type Group1 teams 5 matchdays M_Q_SA_1 -> @SA_final { get(@prev, 1); shuffleTeams() }
 group @SA_b "$ID_U20WC_SOUTHAM_B" type Group1 teams 5 matchdays M_Q_SA_1 -> @SA_final { get(@prev, 2); shuffleTeams() }
 
-group @SA_final "$ID_U20WC_SOUTHAM_FINAL" type Group2 teams 6 matchdays M_Q_SA_2 { get(@prev, 1, 3); shuffleTeams() }
+group @SA_final "$ID_U20WC_SOUTHAM_FINAL" type Group2 teams 6 matchdays M_Q_SA_2 -> @IC_playoff  { get(@prev, 1, 3); shuffleTeams() }
 
 // North America
 
@@ -377,6 +391,15 @@ group @Asia_d2 "$ID_U20WC_ASIA_GROUP_D" type Round2 teams 4 matchdays M_Q_ASIA_2
 round @Asia_playoff "$ID_U20WC_ASIA_PLAYOFF" type Round3 teams 8 matchdays M_Q_ASIA_3 {
     get(@Asia_a2, 1); get(@Asia_b2, 1); get(@Asia_c2, 1); get(@Asia_d2, 1)
     get(@Asia_b2, 2); get(@Asia_a2, 2); get(@Asia_d2, 2); get(@Asia_c2, 2)
+      
+    round @Asia_po_semi "$ID_U20WC_ASIA_PO_SEMI" type Semifinal teams 4 matchdays M_Q_ASIA_PO_S {
+        getLoser(@Asia_playoff)
+        
+        round @Asia_po_final "$ID_U20WC_ASIA_PO_FINAL" type Final teams 2 matchdays M_Q_ASIA_PO_F {
+            get(@prev)
+        }
+    }
+
 }
 
 // Oceania
@@ -401,6 +424,26 @@ round @OFC_playoff "$ID_U20WC_OFC_PLAYOFF" type Round3 teams 4 matchdays M_Q_OFC
     get(@OFC_b, 1)
     get(@OFC_b, 2)
     get(@OFC_a, 2)
+    
+    round @OFC_final "$ID_U20WC_OFC_FINAL" type Final -> @IC_playoff teams 2 matchdays M_Q_OFC_4 {
+        get(@prev)
+    }
 }
 
+// Interkontinentales Play-off
+
+pool @IC_playoff teams 4 sorting Random <- @Asia_po_final {
+    get(@f_3rd, 2, 1) // UEFA
+    get(@SA_final, 5, 1) // CONMEBOL
+    getLoser(@Asia_po_final) // AFC
+    getLoser(@OFC_final) // OFC
+    shuffleTeams()
+    
+    round @IC_semi type Semifinal teams 4 matchdays M_Q_IC_S {
+        get(@prev)
+        
+        round @IC_final type Final teams 2 matchdays M_Q_IC_F {
+            get(@prev)
+        }
+    }
 }
