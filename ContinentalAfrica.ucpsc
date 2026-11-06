@@ -1,9 +1,10 @@
 #name "CAF Champions League, CAF Confederation Cup, CAF Super Cup, Arab Club Champions Cup"
-#author "FM 2026 Team"
-#version "26.0"
+#author "FM 2027 Team"
+#version "27.0"
 
 #define M_CL_P [17,24] // CL preliminary
 #define M_CL_1 [31,38] // CL first round (before CC play-off)
+#define M_CL_2 [45,52] // CL second round 
 #define M_CL_G [73,87,108,122,143,157] // CL group stage
 #define M_CL_Q [227,241] // CL quarterfinal
 #define M_CL_S [283,297] // CL semifinal
@@ -30,28 +31,35 @@
 
 comp Africa.ChampionsLeague {
 
-pool @CAFCL_participants teams 64 {
+pool @CAFCL_participants teams 68 {
     getChamp(@CAFCL_final) // 1 team
-    getEuropeanAssessmentTeams([1-11], 1, 2) // 22 teams
-    getEuropeanAssessmentTeams([12-52], 1, 1) // 41 teams
+    getEuropeanAssessmentTeams([1-16], 1, 2) // 32 teams
+    getEuropeanAssessmentTeams([17-52], 1, 1) // 36 teams
     getCCSpare() // 2 teams limit
     
-    round "$ID_PRELIMINARY_ROUND" type Quali teams 64 subs NUM_SUBS two_legs matchdays M_CL_P bonus [48000,0,0,0] {
-        get(@prev)
+    round "$ID_PRELIMINARY_ROUND" type Quali teams 8 subs NUM_SUBS two_legs matchdays M_CL_P bonus [48000,0,0,0] {
+        get(@CAFCL_participants, 61, 8)
         getCCSpare()
         
-        round @CAFCL_round1 "$ID_FIRST_ROUND" type Quali2 teams 32 subs NUM_SUBS two_legs matchdays M_CL_1 bonus [48000,0,0,0]{ // finishes on 38.
+        round @CAFCL_round1 "$ID_FIRST_ROUND" type Quali2 teams 64 subs NUM_SUBS two_legs matchdays M_CL_1 bonus [48000,0,0,0]{ // finishes on 38.
+            get(@prev)
+            get(@CAFCL_participants, 1, 60)
+            getCCSpare()
+            
+            
+            round @CAFCL_round2 "$ID_SECOND_ROUND" type Quali3 teams 32 subs NUM_SUBS two_legs matchdays M_CL_2 bonus [48000,0,0,0]{ // finishes on 38.
             get(@prev)
             getCCSpare()
             
-            pool teams 16 sorting ChampionsCupGroup {
-                get(@prev)
+           		pool teams 16 sorting ChampionsCupGroup {
+                	get(@prev)
                 
-                group @CAFCL_a "A" teams 4 subs NUM_SUBS rounds 2 matchdays M_CL_G sorting DM bonus [112000,0,0,0] fixtures G_FIXTURES { get(@prev, 1, 4) }
-                group @CAFCL_b "B" teams 4 subs NUM_SUBS rounds 2 matchdays M_CL_G sorting DM bonus [112000,0,0,0] fixtures G_FIXTURES { get(@prev, 5, 4) }
-                group @CAFCL_c "C" teams 4 subs NUM_SUBS rounds 2 matchdays M_CL_G sorting DM bonus [112000,0,0,0] fixtures G_FIXTURES { get(@prev, 9, 4) }
-                group @CAFCL_d "D" teams 4 subs NUM_SUBS rounds 2 matchdays M_CL_G sorting DM bonus [112000,0,0,0] fixtures G_FIXTURES { get(@prev, 13, 4) }
-            }
+                	group @CAFCL_a "A" teams 4 subs NUM_SUBS rounds 2 matchdays M_CL_G sorting DM bonus [112000,0,0,0] fixtures G_FIXTURES { get(@prev, 1, 4) }
+                	group @CAFCL_b "B" teams 4 subs NUM_SUBS rounds 2 matchdays M_CL_G sorting DM bonus [112000,0,0,0] fixtures G_FIXTURES { get(@prev, 5, 4) }
+                	group @CAFCL_c "C" teams 4 subs NUM_SUBS rounds 2 matchdays M_CL_G sorting DM bonus [112000,0,0,0] fixtures G_FIXTURES { get(@prev, 9, 4) }
+                	group @CAFCL_d "D" teams 4 subs NUM_SUBS rounds 2 matchdays M_CL_G sorting DM bonus [112000,0,0,0] fixtures G_FIXTURES { get(@prev, 13, 4) }
+            	}
+       	 }
         }
     }
 }
@@ -72,30 +80,36 @@ round type Quarterfinal teams 8 subs NUM_SUBS two_legs matchdays M_CL_Q bonus [1
 
 comp Africa.UEFACup {
 
-pool @cc_all_participants teams 64 constraints @CAFCL_participants {
+pool @cc_all_participants teams 68 constraints @CAFCL_participants {
     getChamp(@CAFCup_final) // 1 team
-    reserveAssessmentTeams([1-11], 1) // 11 teams
+    reserveAssessmentTeams([1-16], 1) // 16 teams
     fillAssessmentReserves()
     reserveAssessmentTeams([1-52], 1) // 52 teams
     getEuropeanAssessmentCupwinner([1-52])
     fillAssessmentReserves()
     getCCSpare() // 2 teams limit
     
-    round type Quali "$ID_PRELIMINARY_ROUND" teams 64 subs NUM_SUBS two_legs matchdays M_CC_1 {
-        get(@prev)
+    round type Quali "$ID_PRELIMINARY_ROUND" teams 8 subs NUM_SUBS two_legs matchdays M_CC_1 {
+        get(@cc_all_participants, 61, 8)
         getCCSpare()
         
-        round @CAFCup_first_r type Quali2 "$ID_FIRST_ROUND" teams 32 subs NUM_SUBS two_legs matchdays M_CC_2 {
+        round @CAFCup_first_r type Quali2 "$ID_FIRST_ROUND" teams 64 subs NUM_SUBS two_legs matchdays M_CC_2 {
+            get(@prev)
+            get(@cc_all_participants, 1, 60)
+            getCCSpare()
+            
+            round @CAFCup_second_r "$ID_SECOND_ROUND" type Quali3 teams 32 subs NUM_SUBS two_legs matchdays M_CC_3 bonus [48000,0,0,0]{ // finishes on 38.
             get(@prev)
             getCCSpare()
             
-            pool teams 16 sorting ChampionsCupGroup {
-                get(@prev)
+            	pool teams 16 sorting ChampionsCupGroup {
+                	get(@prev)	
                 
-                group @CAFCup_a "A" teams 4 subs NUM_SUBS rounds 2 matchdays M_CC_G sorting DM bonus [64000,0,0,0] fixtures G_FIXTURES { get(@prev, 1, 4) }
-                group @CAFCup_b "B" teams 4 subs NUM_SUBS rounds 2 matchdays M_CC_G sorting DM bonus [64000,0,0,0] fixtures G_FIXTURES { get(@prev, 5, 4) }
-                group @CAFCup_c "C" teams 4 subs NUM_SUBS rounds 2 matchdays M_CC_G sorting DM bonus [64000,0,0,0] fixtures G_FIXTURES { get(@prev, 9, 4) }
-                group @CAFCup_d "D" teams 4 subs NUM_SUBS rounds 2 matchdays M_CC_G sorting DM bonus [64000,0,0,0] fixtures G_FIXTURES { get(@prev, 13, 4) }
+                	group @CAFCup_a "A" teams 4 subs NUM_SUBS rounds 2 matchdays M_CC_G sorting DM bonus [64000,0,0,0] fixtures G_FIXTURES { get(@prev, 1, 4) }
+                	group @CAFCup_b "B" teams 4 subs NUM_SUBS rounds 2 matchdays M_CC_G sorting DM bonus [64000,0,0,0] fixtures G_FIXTURES { get(@prev, 5, 4) }
+                	group @CAFCup_c "C" teams 4 subs NUM_SUBS rounds 2 matchdays M_CC_G sorting DM bonus [64000,0,0,0] fixtures G_FIXTURES { get(@prev, 9, 4) }
+                	group @CAFCup_d "D" teams 4 subs NUM_SUBS rounds 2 matchdays M_CC_G sorting DM bonus [64000,0,0,0] fixtures G_FIXTURES { get(@prev, 13, 4) }
+            	}
             }
         }
     }
