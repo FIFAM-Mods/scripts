@@ -1,6 +1,6 @@
 #name "UEFA Champions League, UEFA Europe League, UEFA Conference League, UEFA SuperCup, UEFA Youth League, FIFA Club World Cup, FIFA Intercontinental Cup"
-#author "FM 2025 Team"
-#version "25.0"
+#author "FM 2027 Team"
+#version "27.0"
 
 #define CL_Q1 [7,9]
 #define CL_Q2 [17,24]
